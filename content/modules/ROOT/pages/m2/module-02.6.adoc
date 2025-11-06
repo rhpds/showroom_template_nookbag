@@ -1,0 +1,87 @@
+:imagesdir: ../../assets/images
+
+== Activity: Enabling GitLab Entity Discovery & TechDocs
+
+include::../style.adoc[]
+
+Now that the import of User and Group entities and authentication is enabled for those same users, let's focus on importing more Entities from your Git repositories. Having a rich and complete Software Catalog increases the value of the your IDP.
+
+=== Enable GitLab Entity Discovery and TechDocs
+
+Much like the Keycloak provider, you can use a https://backstage.io/docs/integrations/gitlab/discovery/[GitLab provider to discover^, window="console"] and import Entities from repositories in GitLab. This functionality is provided by the
+https://npmjs.com/package/@backstage/plugin-catalog-backend-module-gitlab/v/0.3.21[@backstage/plugin-catalog-backend-module-gitlab plugin^, window="content"]. You can see that this is a supported https://docs.redhat.com/en/documentation/red_hat_developer_hub/1.5/html/dynamic_plugins_reference/con-preinstalled-dynamic-plugins[dynamic plugin in the {product_name_rhdh} documentation^, window="content"].
+
+To install and configure this plugin:
+
+. Visit the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/developer-hub-config/-/blob/main/values.yaml[rhdh/developer-hub-config repository^, window="gitlab"] in your GitLab instance.
+. Select *Edit > Edit single file*.
+. Uncomment the `--- TECHDOCS_PLUGIN ---` section in `dynamic.plugins` section of the YAML, to enable the TechDocs and GitLab dynamic plugins.
++
+[NOTE]
+====
+To uncomment multiple lines of code, highlight the lines and press `CMD + /` (on macOS) or `CTRL + /` (on Linux/Windows).
+====
++
+image:m2/gitlab-techdoc-plugin.png[TechDocs and GitLab dynamic plugins, width=60%]
+. Look for the YAML between the `--- TECHDOCS_CONFIG ---` block and uncomment it.
++
+image:m2/gitlab-techdoc-config.png[TechDocs Config for Local Builder, width=50%]
+. Find the `appConfig.catalog.providers` configuration and uncomment the `--- GITLAB_CATALOG_PROVIDER ---` block as shown below. +
++
+image:m2/gitlab-catalog-provider.png[GitLab Catalog Provider, width=70%]
+// . Verify that you indentation matches that shown in the screenshot,
+. Commit your changes with the message `feat: add gitlab autodiscovery`.
+// +
+// image:m2/gitlab-discovery.png[GitLab code editor showing catalog providers configuration for {product_name_rhdh}]
+. Click the *Refresh* button on the https://openshift-gitops-server-openshift-gitops.{openshift_cluster_ingress_domain}/applications[`backstage` Application in OpenShift GitOps^, window="argo"] (login as `admin` / `{openshift_gitops_password}`).
+
+=== Verify GitLab Entity Discovery is Active
+
+. After a few moments your new {product_name_rhdh} configuration will finish rolling out. Check the logs for the new https://console-openshift-console.{openshift_cluster_ingress_domain}/k8s/ns/backstage/core%7Ev1%7EPod[{product_name_rhdh} Pod^, window="console"]. You should see that a repository was discovered - that means the repository contains https://backstage.io/docs/features/software-catalog/descriptor-format/[catalog-info.yaml, window="blank"] file.
++
+image:m2/rhdh-logs-gitlab-discovery.png[GitLab Autodiscovery Logs in the OpenShift Console]
+. The repository in question is the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/global/global-techdocs[global/global-techdocs^, window="gitlab"]. This repository contains a __catalog-info.yaml__ that defines a Component, and an annotation `backstage.io/techdocs-ref` that tells the TechDocs plugin where to find the source for documentation builds for the Component.
++
+image:m2/global-techdocs-cat-info.png[Global TechDocs catalog-info.yaml file]
+
+. Visit your https://backstage-backstage.{openshift_cluster_ingress_domain}/[instance of {product_name_rhdh}^, window="rhdh"] and view the Software Catalog. Make sure that the `Kind` dropdown is set to _Component_. You should see the _global-techdocs_ Component.
++
+image:m2/global-techdocs-component.png[The Global TechDocs Component in the Software Catalog]
+
+=== Viewing TechDocs
+
+. Click the _global-techdocs_ Component name in the Software Catalog, and select the `Docs` tab.
++
+image:m2/global-techdocs-component-view.png[Global TechDocs being rendered, width=70%]
+. It should compile and render the TechDocs.
++
+image:m2/global-techdocs-docs.png[Global TechDocs being rendered]
+. You might have noticed that the side menu has a new *Docs* entry too. This appeared when you enabled the TechDocs plugin!
+//+
+//image:m2/global-docs-menu.png[Docs side menu]
+
+== TechDocs Generation and Storage Configuration
+
+Recall the `techdocs` configuration from your https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/developer-hub-config/-/blob/main/values.yaml[values.yaml file in GitLab, window="gitlab"]. It should resemble the following example:
+
+[source,yaml,subs=attributes+]
+----
+techdocs:
+  builder: 'local'
+  publisher:
+    type: 'local'
+  generator:
+    runIn: local
+----
+
+This particular configuration is instructing TechDocs to build (`builder`) and store documentation locally (`publisher.type`), in the running {product_name_rhdh} container.
+
+The `generator: local` option instructs TechDocs to build the documentation on-demand. This requires the underlying container to have the necessary dependencies installed - {product_name_rhdh} has these dependencies in place.
+
+It's possible to offload the TechDocs build process to a CI/CD pipeline that uses the TechDocs CLI. In this scenario, the pipeline builds and publishes the TechDocs to https://backstage.io/docs/features/techdocs/using-cloud-storage/[S3 or other storage solution, window="content"]. The platform engineer must configure a `builder` of type `external` and the `publisher` to read from the same storage system to load the desired TechDocs for a given Entity if an alternative storage solution is used.
+
+Using the `external` builder strategy reduces load on the {product_name_rhdh} instance, but places the burden of building and publishing the TechDocs on authors. Repository owners and authors can build their TechDocs using the https://backstage.io/docs/features/techdocs/cli/[TechDocs CLI, window="content"].
+
+== Conclusion
+
+Congratulations! You've learned the core concepts of Backstage and {product_name_rhdh}. You also learned how to deploy and manage an instance of {product_name_rhdh} using the official Helm Chart via OpenShift GitOps.

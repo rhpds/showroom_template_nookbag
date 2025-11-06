@@ -1,0 +1,96 @@
+:imagesdir: ../../assets/images
+
+include::../style.adoc[]
+
+== Observability
+
+As a Platform Engineer and Red Hat Developer Hub administrator, you can track user activities, system events, and data changes with Developer Hub audit logs. These logs are accessible through the Red Hat OpenShift Container Platform web console, where administrators can view, search, filter, and manage log data.
+
+
+
+== Monitoring and logging
+
+In OpenShift Container Platform, metrics are exposed through an HTTP service endpoint under the `/metrics` path. You can create a ServiceMonitor custom resource (CR) to scrape metrics from a service endpoint in a user-defined project.
+
+=== Set up monitoring for user-defined projects
+
+To begin, create create the `cluster-monitoring-config` ConfigMap object:
+
+. Navigate to the https://console-openshift-console.{openshift_cluster_ingress_domain}/topology/ns/backstage?view=graph[OpenShift console^, window="console"]. Login as *admin/{common_password}* if prompted.
+
+. Select the image:common/plus-icon.png[width=15px] icon on the top navigation bar of OpenShift Console to create a new resource.
++
+image:m7/create-yaml.png[] 
+
+. In the YAML editor, input the following ConfigMap. Setting the `enableUserWorkload` parameter to `true`, enables monitoring of user-defined projects in the OpenShift cluster.
++
+[.console-input]
+[source,shell script]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cluster-monitoring-config
+  namespace: openshift-monitoring
+data:
+  config.yaml: |
+    enableUserWorkload: true
+----
+. Click the *Save* button to create this ConfigMap.
++
+image:m7/save-user-workload.png[]
+
+
+=== Enable metrics monitoring on OpenShift
+
+Next, enable metrics monitoring for  {product_name_rhdh}.
+
+. Open your https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/developer-hub-config/-/blob/main/values.yaml[values.yaml file, window="gitlab"].
+. Select *Edit > Edit single file*. Login as a Platform Engineer with `pe1` / `{common_password}` when prompted.
+. Find the YAML surrounded by `--- MONITORING ---` and uncomment this section by highlighting the lines, and pressing `CMD + /` or `CTRL + /`.
++
+image:m7/uncomment-monitoring.png[width=50%]
+. Scroll down and enter a commit message `feat: Enable monitoring`.
+. Click the *Commit changes* button.
+
+
+=== Refresh the `backstage` Argo CD application
+
+To apply the changes
+
+. Navigate to view the https://openshift-gitops-server-openshift-gitops.{openshift_cluster_ingress_domain}/applications[`backstage` Argo CD Application in OpenShift GitOps^, window="argo"]. Login as `admin/{openshift_gitops_password}` if prompted.
+. Click the *Refresh* button for the `backstage` Argo CD application.
+. Wait until the Application status is *Healthy*.
+. A new `servicemonitor` for {product_name_rhdh} should now be created. You can verify this by viewing the `backstage` Argo CD application.
++
+image:m7/new-service-monitor.png[]
+
+
+=== View {product_name_rhdh} metrics on OpenShift
+
+You can view the {product_name_rhdh}'s metrics  from the Developer perspective of the OpenShift web console within the `backstage` namespace
+
+. Visit the https://console-openshift-console.{openshift_cluster_ingress_domain}/dev-monitoring/ns/backstage[metrics^, window="console"] page to view this *Observe* menu on OpenShift
+. Click the Metrics tab, and from the `Select query` drop down, choose `Custom query`
++
+image:m7/select-custom-query.png[]
+. You can query a number of parameters by entering a query into the the `Expression` text area,
++
+image::m7/expression-area.png[]
+.. Enter `catalog_entities_count` into the textarea and hit `Enter` to view metrics such as how many components, users, templates etc are present in the
++
+image::m7/catalog-entities-count.png[]
+.. `scaffolder_task_count` results in the count and user details
++
+image::m7/scaffolder-task-count.png[]
+.. Other examples are `scaffolder_step_count`, `scaffolder_task_count` can yield interesting info about the template usage as well. The below screenshot shows output for `scaffolder_step_count`
++
+image::m7/scaffolder-step-count.png[]
+
+. You can leverage the metrics to build custom Grafana dashboards to visualise them as well.
+
+== Audit logging and Telemetry
+
+You can monitor user activities, system events, and data changes with Developer Hub audit logs. Telemetry data collection supports collecting and analyzing telemetry data to enhance {product_name_rhdh} experience.
+
+These topics are beyond the scope of this workshop, but you can explore them further in the Observability section of  https://docs.redhat.com/en/documentation/red_hat_developer_hub/latest[{product_name_rhdh} product documentation^, window="content"].

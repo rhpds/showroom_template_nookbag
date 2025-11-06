@@ -1,0 +1,53 @@
+:imagesdir: ../../assets/images
+
+== Platform Engineer Activity: Update the Component Template
+
+include::../style.adoc[]
+
+While the developer can add the necessary annotations to their Component, it's best to update the Template so future developers can benefit from the Argo CD integration without having to manually add the annotation.
+
+=== Login as Platform Engineer
+
+IMPORTANT: Please make sure to log in as a *Platform Engineer* with `pe1` / `{common_password}`. Expand to the below note to familiarise yourself with the process.
+
+.Click to learn how to login as a Platform Engineer
+[%collapsible]
+====
+include::../login-pe.adoc[]
+====
+
+=== Update the Quarkus Service template in GitLab
+
+. Visit the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/template-quarkus-simple/-/blob/main/skeleton/catalog-info.yaml[rhdh/template-quarkus-simple/skeleton/catalog-info.yaml,  window="gitlab"] file in GitLab.
+. Select _Edit > Edit single file_.
+. Uncomment the following in the `annotations` section of the file:
++
+[source,yaml,role=execute,subs="attributes"]
+----
+argocd/app-selector: rht-gitops.com/${{ values.gitops_namespace }}=${{ values.owner }}-${{values.component_id}}
+----
++
+image:m3/gitlab-template-edit.png[Edit the Template in Argo CD]
+. Scroll down and enter a commit message `feat: Enable argocd/app-selector annotation`.
+. Use the *Commit changes* button to commit the new annotation.
+
+The annotation value will be automatically generated, similar to the Argo CD label, using the values provided by developers when they use the Template.
+
+=== Refresh the Quarkus Service Template on {product_name_rhdh}
+
+Return to your {product_name_rhdh} instance to view the https://backstage-backstage.{openshift_cluster_ingress_domain}/catalog/default/template/quarkus-web-template[quarkus-web-template^, window="rhdh"] after committing the change. Use the *Schedule entity refresh* button to pull this change from Git to {product_name_rhdh} for your Quarkus application. 
+
+NOTE: Manually refreshing is an optional step, since {product_name_rhdh} will check for upstream Entity changes every few minutes.
+
+image:m3/rhdh-template-refresh.png[Refresh Template Button]
+
+From this point forward any new Component created using the Template will display the CD tab automatically.
+
+== Conclusion
+
+Congratulations! You've learned how to:
+
+* Create and Import Software Templates
+* Create new Components using a Software Template
+* Use annotations to provide information to plugins
+* Force refresh Entities in the Software Catalog

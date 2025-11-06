@@ -1,0 +1,12 @@
+//TO-DO
+0) git clone 
+
+1) Script to get environment variables and git settings (via terminal)
+
+2) Endpoints to get cosign/gitsign
+
+3) Set environment variables and git configuration
+
+4) Open IDE & commit
+
+5) Auth

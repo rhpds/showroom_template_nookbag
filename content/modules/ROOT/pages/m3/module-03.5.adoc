@@ -1,0 +1,43 @@
+:imagesdir: ../../assets/images
+
+== Developer Activity: Update a Component's Catalog Info
+
+include::../style.adoc[]
+
+The Argo CD Backstage plugin brings sync status, health status, and update history of your Argo CD Application to your {product_name_rhdh}'s Component view. However, simply installing the Argo CD plugin doesn't automatically make the associated deployment information visible when viewing Components in the Software Catalog. An `argocd/app-selector` annotation must be added to the Component's YAML definition. This annotation instructs the Argo CD plugin to fetch the information related to the Component from the Argo CD instance you configured.
+
+Your lab environment's {product_name_rhdh} has the Argo CD plugin enabled and preconfigured, as can be seen in the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/developer-hub-config/-/blob/main/values.yaml[valyes.yaml in the rhdh/developer-hub-config^, window="gitlab"].
+
+IMPORTANT: Please ensure you are logged in as a Developer with `dev1` / `{common_password}` as you were guided to in a previous step.
+
+=== Update the Catalog Info
+
+Update your Quarkus application's _catalog-info.yaml_ with the correct annotation:
+
+. Visit the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/dev1/my-quarkus-app/-/blob/main/catalog-info.yaml[dev1/my-quarkus-app/catalog-info.yaml, window="gitlab"] file in GitLab.
+. Select _Edit > Edit single file_.
+. Uncomment the following annotation:
++
+[source,bash,role=execute,subs="attributes"]
+----
+argocd/app-selector: rht-gitops.com/rhdh-gitops=dev1-my-quarkus-app
+----
+. You can confirm this annotation is correct by visiting the https://rhdh-gitops-server-rhdh-gitops.{openshift_cluster_ingress_domain}/applications/rhdh-gitops/dev1-my-quarkus-app-dev[dev1-my-quarkus-app-dev in the rhdh-gitops instance, window="proj_argo"] and clicking the *Details* button to view the applied labels. Login as `admin` using `{common_password}` if prompted.
++
+image:m3/argocd-label.png[Argo CD Details with Labels]
+. Scroll down and enter a commit message `feat: Add argocd/app-selector annotation`.
+. Use the *Commit changes* button to commit the annotation.
+
+=== Refresh the Entity's Catalog Info
+
+. Return to your https://backstage-backstage.{openshift_cluster_ingress_domain}/catalog/default/component/my-quarkus-app[instance of {product_name_rhdh}^, window="rhdh"] after committing the change to view the newly created `my-quarkus-app` Component. Use the *Schedule entity refresh* button to pull this change from Git to {product_name_rhdh} for your Quarkus application. 
++
+image:m3/rhdh-entity-refresh.png[Entity Refresh Button]
+
+. Next, refresh your browser. The *CD* tab should appear, and you can view the Argo CD Application's information.
++
+image:m3/rhdh-cd-tab.png[CD Tab in Component]
+
+=== Summary
+
+Congratulations! You updated your Component's https://gitlab-gitlab.{openshift_cluster_ingress_domain}/dev1/my-quarkus-app/-/blob/main/catalog-info.yaml[dev1/my-quarkus-app/catalog-info.yaml, window="gitlab"], and enabled new functionality using a plugin specific annotation.

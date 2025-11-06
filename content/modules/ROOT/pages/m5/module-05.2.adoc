@@ -1,0 +1,49 @@
+:imagesdir: ../../assets/images
+
+include::../style.adoc[]
+
+== Explore updates to Production Argo CD Manifests
+
+* In the previous section, we noted that a Merge Request has been raised on the Prod Argo CD manifest to update the prod image.
+* On {product_name_rhdh}, in the `parasol-store` component's https://backstage-backstage.{openshift_cluster_ingress_domain}/catalog/default/component/parasol-store/pr[Pull/Merge Requests page, window="rhdh"], you can view the a list of Gitlab Merge Request Statuses.
+* Click on the Revision link shown for `parasol-store-prod`. This will take you to the `parasol-store-manifests` repo showing the current commits to the `parasol-store-manifests` repository. 
++
+image:m5/parasol-store-deployment-summary.png[]
+* From the left-hand navigation, access the *Merge requests* menu. Or click https://gitlab-gitlab.{openshift_cluster_ingress_domain}/parasol/parasol-store-manifests/-/merge_requests[here^, window="gitlab"] to navigate to the Merge requests page.
+* You can see the Merge Request created for the `parasol-store-manifests` repo to update the prod image. 
++
+image:m5/parasol-store-prod-pr.png[]
+
+* Click on the _Changes_ tab, and you can see that the `value-prod.yaml` file is now updated to match the same image tag we noticed for the dev & staging deployments.
++
+image:m5/parasol-store-prod-pr-changes.png[]
+
+== Merge updates to Production Argo CD Manifests
+
+* For the sake of the workshop, assume the persona of a release manager. Navigate back to the _Overview_ tab of the Merge Request and proceed to _Merge_ it.
++
+image:m5/parasol-store-prod-pr-merge.png[width=70%]
+
+* Navigate to the {product_name_rhdh} https://backstage-backstage.{openshift_cluster_ingress_domain}/catalog/default/component/parasol-store[`parasol-store` component, window="rhdh"]. From the *CD* tab, access the `parasol-store-prod` Argo CD app by clicking on the arrow.
++
+image:m5/parasol-store-go2argo.png[width=80%]
+
+* Click on the *Refresh* button. Login as (`admin` / `{common_password}`) if prompted.
++
+image:m5/parasol-store-prod-argo-sync-start.png[width=70%]
+* The Argo CD app will begin syncing.
++
+image:m5/parasol-store-prod-argo-sync-progress.png[width=70%]
+* In less than a minute, the new image will be deployed on Prod as well. 
++
+image:m5/parasol-store-prod-argo-sync-done.png[width=70%]
++
+NOTE: In Argo CD, open the *parasol-store* deployment, and you can validate that the image deployed on Prod is the same image as in Dev and Staging that we saw earlier.
+
+== Conclusion
+
+A developer can effortlessly set up an ephemeral development environment, build and test their code, and seamlessly advance it to production with the necessary guardrails in place.
+
+All of this is accessible through a single-pane-of-glass experience on {product_name_rhdh}, eliminating the need to switch between multiple tools and platforms to track both inner-loop and outer-loop progress and statuses. 
+
+The dynamic plugins that you enabled in previous modules provide incredible value to this experience by integrating real-time insights and providing contextual visibility, ensuring a smooth and efficient development lifecycle, there by reducing developer cognitive overload and streamlining the development lifecycle.

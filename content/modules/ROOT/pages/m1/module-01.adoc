@@ -1,0 +1,46 @@
+:imagesdir: ../../assets/images
+
+= Module 1: Discovery
+
+include::../style.adoc[]
+
+
+== Objectives
+
+* Discuss the challenges currently faced by developers and the need for an Internal Developer Platform
+* Learn why a developer platform is necessary for rapid innovation
+
+== Hello Parasol!
+
+Parasol is an Insurance company but looking at rapidly expanding into different other verticals such as retail etc. With business booming, and their online presence increasing, the teams also grow in numbers. But the team, while being quite technically proficient, is quite siloed in their way of working especially because they are widespread and this results in difficulties in collaborating with each other.
+
+With a rapidly evolving and expanding team, it is getting harder and harder for the team to keep up with
+
+* knowing who is doing what
+* onboarding new team members and get them to be effective ASAP
+* identifying existing reusable artifacts - reuse please!
+* providing self-service for developers without need to be listening to a please-wait music tone
+* offering choices of features, and easy ways to hit the road running
+
+The team hears about the magic words - _Internal Developer Platform (IDP)_, and some research shows that {product_name_rhdh} would be perfect because of how customizable it is and especially the fact that it can run on on-prem to air gap sensitive content.
+
+
+== Hello {product_name_rhdh}!
+
+{product_name_rhdh} streamlines development through a unified and open platform that reduces cognitive load and frustration for developers. It provides pre-architected and supported approaches that can help Parasol get their applications into production faster and more securely—without sacrificing code quality.
+
+{product_name_rhdh} and its associated plugins extend the popular upstream Backstage project by providing additional features such as integration with OpenShift, enterprise role-based access control (RBAC), and dynamic plugins - while including all the nice goodies that come with Backstage project itself.
+
+
+== Hello Workshop!
+
+In this workshop, you will walk through in the steps of the platform engineers
+
+* discover what this Internal Developer Platform (IDP) is all about
+* how to design, architect and roll out a TVP (Thinnest Viable Product)
+* gain feedback from developers through a test-drive
+* onboard existing applications for a single-pane-of-glass approach
+* setup workflows - from laptop to Production
+
+All of this boiling down to _how to setup Development Teams up for success in a cloud native, AI infused world_!
+

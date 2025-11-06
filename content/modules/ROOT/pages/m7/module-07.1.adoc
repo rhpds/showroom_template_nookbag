@@ -1,0 +1,102 @@
+:imagesdir: ../../assets/images
+
+include::../style.adoc[]
+
+
+== Enable Continuous Platform Improvements
+In Module 1, we looked at how a well-designed platform can support a wide range of user and application needs. However, user requirements evolve quickly. Platforms that do not adapt risk becoming bottlenecks. Agile, flexible platforms are crucial for platform engineers who must account for shifting technologies, security concerns, and business objectives. By continuously improving platform capabilities, teams keep pace with organizational goals.
+
+This chapter examines why static platforms fall behind, how unchecked platform divergence happens, and how to keep your platform current. The aim is to guide platform engineers in avoiding unnecessary complexity and in delivering consistent value.
+
+=== 1. Pitfalls of the Wrong Platform Approach
+When a platform remains static, it often struggles to match changing user requirements. As new development frameworks, security demands, and application patterns arise, a rigid platform may not accommodate them. 
+
+image:m7/pittfals-wrong-platform.png[] 
+
+*Multiple Needs and Requirements*
+
+The large overlapping circles and speech bubbles indicate various application demands. Some teams need support for legacy Java Enterprise Edition (JEE) applications, while others want to run artificial intelligence and machine learning (AI/ML) workloads or adopt dynamic microservices and serverless approaches. These diverging needs reflect how application requirements can shift and broaden over time.
+
+*Challenges with a Static Platform*
+
+The left side highlights the original platform, which was once suitable for “cloud ready” apps. However, as new security and networking needs emerge, or as developers experiment with different architectures, a single, unchanging platform struggles to accommodate them all. This often leads to difficult onboarding processes and delays in adopting new technologies.
+
+*Fragmentation Leads to Different Platforms*
+
+On the right, the diagram shows teams choosing separate platforms for new applications. Meanwhile, legacy apps may stay on the old platform. This splits resources and expertise, making it more complex to maintain consistent standards. Each new need or project risks introducing another independent solution, increasing overhead and inconsistency.
+
+By not evolving the existing platform, organizations inadvertently encourage each group to find its own way. Over time, this “platform drift” becomes “platform sprawl,” where many platforms coexist, each requiring specialized upkeep. The picture illustrates how seemingly small decisions—such as onboarding difficulties or adding AI/ML capabilities—can drive teams to adopt new platforms rather than improve the existing one.
+
+All this leads to several issues:
+
+==== Limited Flexibility
+Teams that cannot easily adopt new technologies or best practices may experience development slowdowns and become dependent on legacy systems. Over time, the platform may also fail to meet updated security standards or to support emerging frameworks. While a static approach might minimize the initial effort of implementing changes, it restricts growth and can increase maintenance challenges in the long term.
+
+==== Fragmented User Experience
+If teams cannot unify their approach, users end up working with outdated or incompatible tools that hamper productivity. Different groups may also adopt their own ad hoc solutions to fill gaps, causing inconsistencies. Although multiple toolsets can sometimes address unique needs, they often create friction when individuals move between projects or departments, leading to confusion about which processes to follow.
+
+==== Higher Operational Costs
+Maintaining older frameworks usually requires specialized support, which can drive up overall costs. Updates become more complicated, and troubleshooting requires deeper knowledge of systems that may no longer be widely used. Although sticking to a familiar platform can feel safe, these added expenses often outweigh any short-term savings from delaying upgrades.
+
+=== 2. Platform Drift and Platform Sprawl
+When a platform does not evolve, various teams may choose their own solutions to fill gaps. This piecemeal adoption eventually leads to multiple platforms in the same organization. 
+
+image:m7/platform-drift.png[] 
+
+*Multiple Platforms for Different Apps*
+
+Above image shows two large circles representing new apps and legacy apps. The speech bubbles indicate teams saying, “We’ll use a different platform.” This illustrates how, rather than adapting an existing platform, different groups often choose new solutions when they introduce or update applications.
+
+*Expansion into Many Independent Solutions*
+
+On the right, numerous circles repeat the statement, “We use a different platform,” highlighting the spread of multiple platforms across the organization. Each circle represents yet another group or project that opted to break away from the common infrastructure.
+
+*Consequences for the Organization*
+
+This repetition leads to “platform sprawl,” where every team manages its own platform or environment. Over time, this creates a patchwork of separate solutions, each with its own standards and support needs. Although teams might appreciate the autonomy, the organization faces higher operational costs, inconsistent security policies, and complex maintenance.
+
+Instead of enhancing a single platform to handle emerging requirements, teams scatter to different tools, making it harder to unify practices or share knowledge. This fragmentation raises barriers to collaboration and undermines efficiency.
+
+The resulting “platform drift” has several implications:
+
+==== Redundant Infrastructure
+Using several platforms that serve similar functions wastes resources on duplicate hosting, licensing, and maintenance. These overlapping systems may reduce performance efficiency, as each platform consumes time and attention from the operations team. While different platforms might appear beneficial for specialized uses, the overall organization ends up paying for repeated efforts.
+
+==== Inconsistent Standards
+Every new platform can bring its own security controls, compliance measures, and operational practices. Running multiple parallel environments complicates oversight, since each might require a separate auditing process. Though this allows teams some autonomy, it increases the risk of missed updates or overlooked vulnerabilities.
+
+==== Increased Complexity
+Adding platforms escalates administrative workloads, from user onboarding to system monitoring and disaster recovery planning. With more platforms, organizations face more potential failure points, making root-cause analysis harder. While specialized platforms can address niche needs, the cumulative effect is more operational overhead and a steeper learning curve for platform teams.
+
+=== 3. Continuously Evolving the Platform
+A regularly updated platform remains aligned with today’s user requirements and prepares for tomorrow’s. 
+
+image:m7/evolving-platform.png[] 
+
+*Evolving from Basic Capabilities to Advanced Workloads*
+
+The left side of the image shows a platform initially designed for simpler needs such as “cloud ready apps” and “zero trust architectures.” Over time, the platform expands to accommodate more demanding use cases like data science, machine learning, and dynamic serverless architectures.
+
+*Golden Paths for Development*
+
+The center highlights “fast moving monoliths,” “dynamic microservices,” and “data science & MLOps workflows.” The concept of “Golden Paths” refers to a set of recommended approaches that developers can follow without needing to configure everything from scratch. By providing these guidelines, the platform streamlines common tasks and ensures consistent practices.
+
+*Continual Improvement for Future Readiness*
+
+As the platform progresses, it not only addresses current demands but also anticipates future ones. The circle labeled “The future of your org” reflects this forward-looking stance. Meanwhile, the note “Technical debt is continually addressed, legacy estate reduced” emphasizes the importance of ongoing maintenance. By gradually phasing out outdated components and refining the platform’s features, organizations stay agile.
+
+The image demonstrates how a single platform can grow and adapt instead of stagnating or fracturing into multiple independent solutions. It illustrates that through steady, iterative enhancements—covering everything from foundational security to cutting-edge workloads—a platform can remain aligned with evolving business needs while minimizing the pitfalls of drift and sprawl.
+
+Maintaining a cycle of continuous improvement prevents drift and sprawl, producing clear benefits:
+
+=== Streamlined Operations
+Relying on a single, adaptable platform simplifies monitoring, patching, and user management. Standardizing tasks reduces the risk that changes in one environment unintentionally affect another. However, centralizing on a single platform means the entire organization depends on that platform’s reliability, so ongoing testing and maintenance are vital to preventing disruptions.
+
+==== Improved User Satisfaction
+Developers and operators are more likely to trust and embrace a platform that keeps pace with technology trends. This confidence can lead to higher productivity, as teams do not need to find or build workarounds. Still, continuous upgrades require clear communication and training, since abrupt changes can disrupt established workflows if not managed properly.
+
+==== Long-Term Relevance
+By refining both technical features and governance guidelines, platform teams reduce complexity and keep their systems from becoming outdated. This approach helps organizations swiftly accommodate emerging tools and practices. The main challenge lies in balancing frequent updates with stability, as each change can introduce new considerations for testing and integration.
+
+Through measured, ongoing enhancements, a platform stays dependable for existing projects and flexible enough for future needs. This approach helps teams reduce costs, improve user satisfaction, and maintain a standard that evolves at the same pace as the organization.
+

@@ -1,0 +1,60 @@
+= Platform Engineering Workshop in a Single Page
+:doctype: book
+:imagesdir: assets/images
+
+++++
+    <style>
+.nav-container { display: none }
+</style>
+++++
+
+include::style.adoc[]
+
+include::index.adoc[] 
+
+// module 1
+
+include::m1/module-01.adoc[]
+
+:imagesdir: ../assets/images
+// module 2
+include::m2/module-02.0.adoc[]
+include::m2/module-02.1.adoc[]
+include::m2/module-02.2.adoc[]
+include::m2/module-02.3.adoc[]
+include::m2/module-02.4.adoc[]
+include::m2/module-02.5.adoc[]
+include::m2/module-02.6.adoc[]
+
+// module 3
+include::m3/module-03.0.adoc[]
+include::m3/module-03.1.adoc[]
+include::m3/module-03.2.adoc[]
+include::m3/module-03.3.adoc[]
+include::m3/module-03.4.adoc[]
+include::m3/module-03.5.adoc[]
+include::m3/module-03.6.adoc[]
+include::m3/module-03.7.adoc[]
+
+// module 4
+include::m4/module-04.0.adoc[]
+include::m4/module-04.1.adoc[]
+include::m4/module-04.2.adoc[]
+include::m4/module-04.3.adoc[]
+include::m4/module-04.4.adoc[]
+include::m4/module-04.5.adoc[]
+
+// module 5
+include::m5/module-05.0.adoc[]
+include::m5/module-05.1.adoc[]
+include::m5/module-05.2.adoc[]
+
+// module 6
+// include::m6/module-06.adoc[]
+
+// module 7
+include::m7/module-07.0.adoc[]
+include::m7/module-07.1.adoc[]
+include::m7/module-07.2.adoc[]
+include::m7/module-07.3.adoc[]
+include::m7/module-07.4.adoc[]

@@ -1,0 +1,42 @@
+:imagesdir: ../../assets/images
+
+
+== Platform Engineer Activity: Setup an Ephemeral Dev Environment on OpenShift
+
+include::../style.adoc[]
+
+When developers are assigned a JIRA task or feature to enhance an application, they start by creating a *feature branch* on Git. They continue working on this branch until their changes are ready to be merged into the main branch. Providing an _ephemeral development environment_ for these developers enables a continuous inner loop, enhancing productivity and accelerating development.
+
+The Platform Engineer creates a new Software Template to set up an ephemeral development environment for Developers working on the `parasol-store` application. This template performs several tasks:
+
+* Creates a dedicated namespace for the feature branch in OpenShift
+* Connects the ephemeral development environment to a *dev* DB instance running in the same namespace OpenShift
+* Sets up development pipelines to build and deploy the developer's changes in the environment
+* Generates GitOps/Argo CD manifests to manage CI/CD for the developer's environment
+
+With this approach, the Platform Engineers enable developers to just focus on coding. The templates simplify the set up of these ephemeral dev environments in a self-service manner. This allows the developers to create them repeatedly and easily, thereby rapidly increasing developer productivity.
+
+
+IMPORTANT: Please make sure to log in as a *Platform Engineer* with `pe1` / `{common_password}`. Refer to the below guide for assistance.
+
+.Click to learn how to login as a Platform Engineer
+[%collapsible]
+====
+include::../login-pe.adoc[]
+====
+
+
+== Create parasol-store Dev Template
+
+. Access your https://backstage-backstage.{openshift_cluster_ingress_domain}/[{product_name_rhdh} instance^, window="rhdh"]. If prompted login using `pe1` / `{common_password}`
+. Click on the image:common/plus-icon.png[width=15px] icon on the top navigation to access the *Create* menu, and choose *Register Existing Component*. 
+. Create a Software Template by pasting this template URL into the *URL* textbox 
++
+[source,bash,role=execute,subs="attributes"]
+----
+https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/parasol-store-dev-template/-/blob/main/template.yaml
+----
+. Click on the *Analyze* button followed by clicking the *Import* button to import the template.
+. The Template will appear on the Create screen.
++
+image::m4/parasol-store-dev-template-create.png[]

@@ -1,43 +1,41 @@
-= {lab_name}
+:imagesdir: ../assets/images
 
-The `lab_name` var, known as an asciidoc attribute, above was set in `./content/antora.yml` and can be used to set the lab_name or title of your content.
-You are both free to change its value and if you prefer to use a different var name, you can change the value of `lab_name`, for example to `title` in `./content/antora.yml` and then reference it in your content as `\{title}`. +
 
-image::rhel-logo-black.jpg[rhel-logo-black,55%,55%]
+= Platform Engineering Workshop
 
-== Variables
+include::style.adoc[]
 
-Other vars can also be set there, such as `ssh_user` and `ssh_password`, and referenced inline in the lab content by using the `\{foo}` syntax.
+== Introduction
+Many organizations today are grappling with serious challenges that hinder their development teams’ productivity. High cognitive load, lack of standardization, and fragmented domain knowledge are common issues that lead to inefficiencies, increased maintenance costs, and even security vulnerabilities.
 
-This is another var, or asciidoc attribute, from `./content/antora.yml` {my_var}
+Red Hat provides the tools and know-how to help "The Providers" (Platform Engineers) to create "The Product" (their internal developer portal) based on the needs of "The Customers" (all Development Teams within the organization).
 
-== Writing your lab
+== Primary Audience
 
-Whatever type of content you are writing we'll refer to your *content* as "your lab" in this document.
+This workshop is designed for Platform Engineers who are in charge of:
 
-=== Lab structure
+* Creating standards for technologies that are used across environments (Development, Testing, Production)
+* Defining processes that maximize Development Teams' efficiency, by unburdening them from platform details.
 
-Wether you are writing a lab
+This workshop is built in a learn-by-example style, where we show you how to create, set up, and manage an IDP using Red Hat Developer Hub. The workshop is opinionated and should be viewed as an example of how to approach things. As always, make sure you, as a Platform Engineer, build what your customers (Development Teams) need by soliciting early feedback to ensure you're on the right track.
 
-* First, we will build a monolithic application already compiled as RPM packages and put it into a container. This will allow us to deploy the application, copy it between machines, and update it separately from the operating system. This process affords us a portable and easily maintained component instead of tightly coupling the application with your operating system maintenance.
+== Secondary Audience
 
-* In closing we will build a second container on a different operating system version that makes an application not packaged into RPMs. This will be similar to a web application deployment, positioning the correct files at the right locations. To do this, we will pull a project from GitHub and position the component files within our container image. The purpose of this is to achieve a portable application container that can deploy on several different versions of Red Hat Enterprise Linux. This also provides the benefit of decoupling your application maintenance, which would all happen by building new containers versus operating system maintenance. The container is no longer reliant on the operating system installed on the machine where the application is deployed.
+This workshop can also help Development Teams who are in charge of creating a software solution, and empower (traditionally speaking) in picking their own tools for coding, building, deploying, running, monitoring and documentation.
 
-. Now let's examine this cluster a bit more by describing the cluster (the `$GUID` environment variable is already set for you so you can immediately describe your individual cluster):
-+
-[source,sh,role=execute]
-----
-podman ps
-----
-+
-.Sample Output
-[source,texinfo,subs="attributes"]
-----
-CONTAINER ID  IMAGE                        COMMAND           CREATED      STATUS      PORTS                 NAMES
-2dcfee9e50c4  docker.io/library/httpd:2.4  httpd-foreground  3 hours ago  Up 3 hours  0.0.0.0:8080->80/tcp  showroom-httpd
-----
 
-=== Lab Access
+== Key Takeways
 
-The terminal window to your right is *already* logged into the lab environment as the `{ssh_user}` user via `ssh`.
-All steps of this lab are to be completed as the `{ssh_user}` user.
+After completing this workshop you'll:
+
+* Understand the need to implement Platform Engineering disciplines within your organization.
+* See clear benefits from improving Developer Productivity.
+* Be ready to deploy a Thinnest Viable Platform (TVP) based on the needs of the development teams in your organization, and focus on increasing their productivity.
+* Assess the investments into your own IDP and understand how it can be enhanced, and convince development teams to start adopting it.
+* View Red Hat as a partner in your Platform Engineering journey.
+
+
+The following image is a journey map of the workshop modules. The modules must be executed sequentially.
+
+image:common/pew-journey-map.png[]
+

@@ -1,0 +1,42 @@
+:imagesdir: ../assets/images
+
+= Module 2: Design the Internal Developer Portal
+
+include::../style.adoc[]
+
+== Overview
+
+{product_name_rhdh} is based on the https://backstage.io/[Backstage^, window="content"] project for building internal developer portals. This project was donated to the https://www.cncf.io/projects/backstage/[CNCF^, window="content"] by Spotify in 2020. Platform engineers can use {product_name_rhdh} to build internal developer portals. Doing so involves integrating {product_name_rhdh} with various data sources, cataloging existing software components, infrastructure, and resources, configuring single sign-on, and more.
+
+In this module you'll learn how to architect, install, and bootstrap an instance of {product_name_rhdh} to create a minimum viable internal developer portal for a select group of developers within your organization.
+
+The initial use cases for your developer portal are:
+
+* Self-service discovery of software components and dependencies.
+* Visibility into CI/CD pipelines.
+* Hosting documentation.
+* Scaffolding projects that adhere to organizational best practices.
+
+== Module Objectives
+
+Satisfying the previously defined use cases involves configuring {product_name_rhdh} to integrate with your existing platforms, tools, and infrastructure. For example, if your organization uses OpenShift Pipelines for continuous integration, you'll need to configure the {product_name_rhdh} instance with the appropriate integration to fetch and display data from an OpenShift cluster used to perform https://tekton.dev/docs/pipelines/pipelineruns/[Pipeline Runs^, window="content"].
+
+It could be said that the value of an internal developer portal is proportional to the thought and energy invested into it by the platform engineer(s), and developers using it.
+
+In this module you'll:
+
+* Identify the platform requirements and dependencies, such as single sign-on (SSO), source code management (SCM), RBAC, resources, existing assets
+* Integrate {product_name_rhdh} with the dependant services, such as GitLab and Keycloak
+* Learn about https://backstage.io/docs/features/software-catalog/[Backstage Entities^, window="content"], e.g. Components, APIs, and Docs
+* Ready the platform for developer onboarding
+
+== Workshop Environment
+
+Your workshop environment has been preconfigured with the following software and platform components:
+
+* Red Hat Build of Keycloak
+* OpenShift GitOps
+* OpenShift Pipelines
+* GitLab
+
+For the purposes of this workshop, we'll assume that your organization has standardized on these tools, and it's your objective as the platform engineer to integrate them with {product_name_rhdh}.

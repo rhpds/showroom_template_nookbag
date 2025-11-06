@@ -1,0 +1,27 @@
+:imagesdir: ../../assets/images
+
+
+= Module 5: Build, Test, & Deploy (Outer-Loop)
+
+include::../style.adoc[]
+
+== Overview
+
+With the development inner-loop complete, the code running in the ephemeral environment's feature branch namespace is now ready for deployment to Dev, Staging, and Production environments.
+
+* Platform Engineers set up production-grade CI pipelines to handle merge requests from Developer. OpenShift Pipelines, based on Tekton, makes it easy to build cloud-native pipelines that can be tailored to organizational need.
++
+NOTE: We use Tekton in this workshop, however all major CI providers are supported by {product_name_rhdh}.
+* When a developer submits a merge request from the feature branch to the main branch, a peer review process ensures code quality before merging.
+* Once merged, the pipeline updates manifests in the Dev and Staging environments to use the newly created container image. Additionally, it raises a merge request for the Production manifest.
+* Manifest updates and deployments to the Production environment require explicit approvals. In this case, production updates are triggered only by manually merging the PR raised by the post-merge pipeline.
+
+
+== Module objectives
+
+* To handle the outer-loop, Platform Engineer has built a production-level pipeline (pre and post merge) based on organization's needs using Tekton.
+* When a developer creates a new merge request, the pre-merge pipeline is triggered via a GitLab webhook, initiating the image build process.
+* An application owner/team member reviews and approves the merge request.
+* This approval triggers a post-merge pipeline that updates manifests in the Dev and Staging environments.
+* The pipeline also generates a merge request for deploying to the Production environment.
+* Once this production merge request is accepted, the application is deployed to production using a GitOps process powered by OpenShift GitOps (Argo CD).

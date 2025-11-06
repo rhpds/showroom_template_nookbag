@@ -1,0 +1,128 @@
+:imagesdir: ../../assets/images
+
+== Introduction to Concepts
+
+include::../style.adoc[]
+
+{product_name_rhdh}, and internal developer portals in general, can be thought of as a modular system where you aggregate and display data related to the software within an organization.
+
+The core features of {product_name_rhdh} are the:
+
+* Software Catalog
+* Software Templates
+* TechDocs
+* Kubernetes Integration
+* Dynamic Plugins
+* Role-Based Access Control (RBAC)
+
+=== Software Templates
+
+Software Templates have been referred to as "Golden Paths" in the past. These templates are designed and curated by platform engineers to provide a starting point for new software components that adhere to best practices within an organization. Templates can also be used to patch and update existing source code repositories, and provide general automation and self-service for developer chores.
+
+We'll dive deeper into Software Templates in another module!
+
+=== Software Catalog
+
+The Software Catalog is a centralised asset tracker for all of the software in your organization. It stores and tracks *Entities*:
+
+* Components: Units of software, e.g. microservices, websites, libraries.
+* Resources: Databases, S3 buckets, brokers.
+* APIs: Represent interfaces such as REST, gRPC, and GraphQL APIs.
+* Systems: Collections of Components that make up an application or platform.
+* Domains: A higher-level grouping of Systems and Entities.
+* User: Individual users that are part of your organization.
+* Group: Groups of Users.
+
+NOTE: Custom Entity types can be defined and added to the Software Catalog using plugins. We'll talk more about on plugins in subsequent sections.
+
+Entities are typically imported and synchronized in one of three ways:
+
+. Using plugins that automatically find and import them.
+. Manually registering entities via the UI by providing a link to a repository containing them.
+. Declaring them in the Backstage configuration.
+
+In all cases, the Entities will be synchronized on a regular schedule to ensure the information in the Software Catalog remains up to date. You'll utilize all three methods throughout this workshop.
+
+If Entity information is stored in a Git repository, the convention is to place them in a _catalog-info.yaml_. This file will look similar to the following example:
+
+```yaml
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: my-amazing-microservice
+  description: A microservice written to do amazing things
+
+  # Annotations are typically used to provide extra context to plugins, e.g TechDocs
+  annotations:
+    # Tells the TechDocs plugin where to find documentation sources. In this case
+    # "dir:." means in the root of the repo containing this catalog-info.yaml
+    backstage.io/techdocs-ref: dir:.
+
+  # Arbitrary list of string that can be used to filter Entities in the Software Catalog
+  tags:
+    - docs
+
+spec:
+  type: Documentation
+  lifecycle: development
+
+  # Reference to the User or Group Entity that is responsible this Component
+  owner: "pe1"
+```
+
+Users and Groups can be specified as owners of other Entities. If this seems abstract, don't worry, you'll see it in definitive terms shortly. A well curated Software Catalog will enable your developers to find API documentation and teams that are responsible for the Components powering those APIs, for example.
+
+=== Plugins
+
+Backstage - and by extension {product_name_rhdh} - supports the concept of plugins. Utilizing plugins is a critical part of enabling the desired functionality for your IDP.
+
+Currently, running an instance of Backstage and adding plugins to upstream Backstage requires a platform engineer to:
+
+. Create a Backstage project using Node.js and npm.
+. Manage new releases and updates via Backstage CLI.
+. Install plugin(s) from npm.
+. Edit the Backstage React and Node.js source code to load plugins, and add customizations.
+. Test their changes.
+. Build a container image and deploy it.
+
+The ability to load plugins dynamically is a value added feature included in {product_name_rhdh} that's currently unavailable in upstream Backstage - you can read more about it in the https://docs.redhat.com/en/documentation/red_hat_developer_hub/1.5/html/introduction_to_plugins/index#con-rhdh-plugins[{product_name_rhdh} documentation^, window="content"]. The dynamic plugin support in {product_name_rhdh} means that new plugins can be installed without the need to edit code and rebuild the {product_name_rhdh} container image.
+
+You'll see dynamic plugins in action shortly.
+
+=== Understanding the {product_name_rhdh} Configuration
+
+Upstream Backstage uses an https://backstage.io/docs/conf/[app-config.yaml^, window="content"] file to define configuration values. {product_name_rhdh} is no different.
+
+A simple Backstage configuration file looks similar to the following example:
+
+```yaml
+# Define authentication configuration (this example is for testing only!)
+auth:
+  providers:
+    guest:
+      dangerouslyAllowOutsideDevelopment: true
+
+# Static configuration for the Software Catalog. Can be used to import
+# entities on startup, and restrict the entity types that can be imported.
+catalog:
+  rules:
+    - allow: [Component, System, API, Resource, Location, Template]
+  locations:
+    - type: file
+      target: https://github.com/org-name/repo-name/entities.yaml
+
+# A configuration for the TechDocs plugin. This example instructs the plugin to
+# build documentation at runtime, instead of pulling prebuilt HTML from S3
+techdocs:
+  builder: 'local'
+  publisher:
+    type: 'local'
+  generator:
+    runIn: local
+```
+
+Since you'll be using the {product_name_rhdh} Helm Chart to install and manage your internal developer portal, your configuration is nested under an `upstream.backstage.appConfig` property in a Helm Values file. View your configuration by visiting your https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/developer-hub-config/-/blob/main/values.yaml[rhdh/developer-hub-config repository on GitLab^, window="gitlab"].
+
+Your workshop environment has been pre-configured such that this repository in GitLab is continuously monitored and deployed using OpenShift GitOps. We'll cover this in more detail shortly.
+
+With that out of the way, let's get to work on configuring your instance of {product_name_rhdh}!

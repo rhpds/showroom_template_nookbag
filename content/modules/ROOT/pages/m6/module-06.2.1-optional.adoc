@@ -1,0 +1,38 @@
+
+NOTE: You can easily test and try it out by going to your https://marketplace.visualstudio.com/items?itemName=redhat.fabric8-analytics[VSCode] or https://plugins.jetbrains.com/plugin/12541-red-hat-dependency-analytics[IntelliJ] Marketplace (check the links) and run it on code you have on your laptop. Below you'll find how to follow the workshop examples.
+
+
+To reproduce the examples further below in this chapter, please clone the parasol-store application: 
+
+* Navigate to the https://backstage-backstage.{openshift_cluster_ingress_domain}/catalog/default/component/parasol-store[parasol store component, window="rhdh"] in {product_name_rhdh}. If prompted, login as `dev1` / `{common_password}`.
+* Click on the *View Source* link to access the git repo of this Component.
+* Copy the *HTTPS* URL (this environment hasn't been setup to allow ssh connections to GitLab)
+** Based on your local setup (mime-types configured) you can also try to open it directly in your preferred IDE
+
+image::m6/git clone url.png[]
+
+Then, use `git clone` to download it.
+
+Or, for your convenience, use this:
+[source,bash,role=execute,subs=attributes+]
+----
+git clone https://gitlab-gitlab.{openshift_cluster_ingress_domain}/parasol/parasol-store.git
+----
+
+When you open this repository, your IDE will automatically activate required plugins (VSCode) or ask you to activate them (IntelliJ), including Red Hat Dependency Analytics. 
+
+By including `.vscode/extensions.json` and `.idea/externalDependencies.xml` to the repository, the developer's IDE will have the plugins that support them doing their job - in this case, identifying possible vulnerabilities via `redhat.fabric8-analytics` (VSCode) and `org.jboss.tools.intellij.analytics` (IntelliJ), respectively.
+
+image::m6/parasol_gitlab_ide.png[]
+image::m6/parasol_vscode_ide_plugin.png[]
+image::m6/parasol_intellij_ide_plugin.png[]
+
+TIP: As Platform Engineers, we can support our developers by adding appropriate plugin configuration to the Red Hat Developer Hub templates we provide them with. If you go back to xref:m3/module-03.0.adoc[Chapter 3], where we introduced templates, or take a look at the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/template-quarkus-simple/-/tree/main/skeleton["skeleton" part of the simple template] (the "code skeleton"), you can see that we included these files there as well. This way, you can add IDE plugins based on programming language, framework, etc - to make lives easier for developers starting new projects or components.
+
+
+
+
+
+
+
+

@@ -1,0 +1,44 @@
+:imagesdir: ../../assets/images
+
+== Activity: Synchronize User & Group Entities
+
+include::../style.adoc[]
+
+In xref:m2/module-02.1.adoc[module 2.1] you learned that the Software Catalog contains Entities, and saw a sample `appConfig` that contained a `catalog.locations` configuration. That example configuration imported entities from a file located in a hardcoded Git repository. This pattern is known as a https://backstage.io/docs/features/software-catalog/#static-catalog-configuration[static configuration^, window="content"]. {product_name_rhdh} will occasionally poll for updates to the specified file locations and update the Entities in the Software Catalog accordingly.
+
+An option for dynamically importing and synchronizing Entities is via _providers_. Providers are added to {product_name_rhdh} using plugins, and are configured using the `catalog.providers` entry in the `appConfig`. Let's use the Keycloak plugin to synchronize Users and Groups to your Software Catalog.
+
+NOTE: Synchronizing Users and Groups to your Software Catalog is important for two reasons. Doing so will enable developers and platform engineers to associate Users and Groups with other Entities in the Software Catalog - very useful for finding out which individual or team is responsible for a particular microservice or database, for example. Secondly, only users that have a corresponding User Entity in the Software Catalog can successfully login to {product_name_rhdh}.
+
+. View your https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/developer-hub-config/-/blob/main/values.yaml[values.yaml file in the developer-hub-config repository^, window="gitlab"].
+. Select **Edit > Edit single file**. When prompted, login as `pe1` / `{common_password}`.
+. You will find the `backstage-community-plugin-catalog-backend-module-keycloak-dynamic` package under the `dynamic.plugins` field that is set to `disabled: false`. This means that, this plugin has been enabled in your installation.
++
+image:m2/keycloak-dynamic-plugin.png[width=60%]
+. Uncomment the `keycloakOrg` configuration within the `appConfig.catalog.providers` block (look for `--- KEYCLOAK_CATALOG_PROVIDERS ---`, highlight the block, then press `CMD + /` or `CTRL + /`).
++
+image:m2/keycloak-commented-block.png[width=70%]
+
+This block of configuration instructs the Keycloak provider to synchronize *Users and Groups* from the specified Keycloak Realm to the Software Catalog.
+
+. Scroll down and enter a commit message: `feat: enable the keycloak catalog provider`
+. Click the *Commit* button.
+. Visit the https://openshift-gitops-server-openshift-gitops.{openshift_cluster_ingress_domain}/applications[`backstage` Application in OpenShift GitOps^, window="argo"] and click *Refresh*. 
++
+If needed, login using `admin`/`{openshift_gitops_password}`.
++
+NOTE: Argo CD has been setup to auto-sync every two minutes. Instead of having to wait for auto-sync to kick in, you are instructed to manually sync the Argo CD application.
+
+Your changes will start to rollout. Confirm this by visiting the https://console-openshift-console.{openshift_cluster_ingress_domain}/topology/ns/backstage?view=graph[backstage project, window="console"] on OpenShift and checking that a new Pod is being started, or waiting until the Application in OpenShift GitOps reports *Healthy* instead of *Progressing*.
+
+image:m2/gitops-progressing.png[Backstage Application in Progressing Status]
+
+Once the new Pod has started, navigate to https://console-openshift-console.{openshift_cluster_ingress_domain}/k8s/ns/backstage/core%7Ev1%7EPod[OpenShift^, window="console"]. If needed, login as `admin`/`{common_password}`. Check the logs for lines that reference the `KeycloakOrgEntityProvider`. You should see a line stating that a number of Users and Groups have been read from Keycloak.
+
+image:m2/openshift-pod-logs.png[{product_name_rhdh} Pod logs as seen in the OpenShift Console]
+
+You can further confirm that the Users and Groups have been synchronized by visiting the Software Catalog in https://backstage-backstage.{openshift_cluster_ingress_domain}[{product_name_rhdh}^, window="rhdh"] and setting the *Kind* dropdown to User. 
+
+image:m2/rhdh-users-list.png[User Entities listed in {product_name_rhdh}]
+
+Nice work! You enabled a dynamic plugin and configured a catalog provider based on it!

@@ -1,0 +1,22 @@
+:imagesdir: ../../assets/images
+
+= Module 6: Software Supply Chain Security
+
+include::../style.adoc[]
+
+== Overview
+
+So far, as Platform Engineers, we have provided our developers with templates to start new development activities as well as straightforward means to contribute to existing projects, including ephemeral development environments on our cluster.
+
+However, there is one aspect that we have not discussed so far: *How can we add security guardrails to the software development process, without hampering developer productivity?* 
+
+In this chapter, we will discuss:
+
+==  Module Objectives
+
+* Supporting Developers with easy to use guidance regarding vulnerabilities hidden in their dependencies
+* Adding container image scanning capabilities to our Continuous Integration (CI) flow
+* Providing artifact integrity by automatically signing and verifying artifacts
+* Adding (attesting) artifact provenance information to our artifacts and verify the attestation before deployment
+* Using Admission Controllers to protect our namespaces from untrusted workloads 
+

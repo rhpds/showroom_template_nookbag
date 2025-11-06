@@ -1,0 +1,68 @@
+
+:imagesdir: ../../assets/images
+
+include::../style.adoc[]
+
+== {product_name_rhdh} Deployment
+
+=== Deploying {product_name_rhdh}
+
+Platform Engineers can deploy {product_name_rhdh} on OpenShift using the Operator or Helm Chart. Both of these installation methods are outlined in the https://docs.redhat.com/en/documentation/red_hat_developer_hub/1.5/html/installing_red_hat_developer_hub_on_openshift_container_platform/index#assembly-install-rhdh-ocp-helm[{product_name_rhdh} documentation^, window="content"]. In this lab you'll use the Helm Chart to deploy and manage your instance of {product_name_rhdh}. The source code for this Helm Chart can be found at https://github.com/openshift-helm-charts/charts/tree/main/charts/redhat/redhat/redhat-developer-hub[openshift-helm-charts repository on GitHub^, window="content"].
+
+=== Using GitOps to Manage {product_name_rhdh}
+
+The instance of OpenShift Container Platform used in this workshop environment has been preconfigured with OpenShift GitOps (Argo CD). Your deployment of {product_name_rhdh} is kept up to date using a GitOps workflow, as illustrated below.
+
+NOTE: https://www.redhat.com/en/topics/devops/what-is-gitops[GitOps^] is the practice of automating application deployment using Git repositories as the "source of truth" for an https://www.redhat.com/en/topics/automation/what-is-infrastructure-as-code-iac[infrastructure as code (IaC)^] for the deployment configuration. The Git repository contains declaritive configuration, typically in YAML format, that describes the desired deployment state and a GitOps tool such as OpenShift GitOps ensures the application is deployed according to the configuration. Drifts from configuration can automatically be patched.
+
+// TODO: replace with product icons
+
+image:m2/gitops-helm.png[GitOps Architecture Overview, width=80%]
+
+Since this isn't a GitOps-focused workshop, we've setup the basic GitOps workflow ahead of time. Specifically we've pre-created a https://openshift-gitops-server-openshift-gitops.{openshift_cluster_ingress_domain}/applications/openshift-gitops/backstage-bootstrap[backstage-bootstrap Application in OpenShift GitOps, window="argo"]. Login by clicking that link, *ignoring the Login with OpenShift button*, and entering the username `admin` and password `{openshift_gitops_password}`.
+
+The https://openshift-gitops-server-openshift-gitops.{openshift_cluster_ingress_domain}/applications/openshift-gitops/backstage-bootstrap[backstage-bootstrap, window="argo"] Argo CD Application creates Secrets, ConfigMaps, and another Argo CD Application named https://openshift-gitops-server-openshift-gitops.{openshift_cluster_ingress_domain}/applications/openshift-gitops/backstage[backstage, window="argo"]. The https://openshift-gitops-server-openshift-gitops.{openshift_cluster_ingress_domain}/applications/openshift-gitops/backstage[backstage, window="argo"] Argo CD Application deploys {product_name_rhdh} using the Helm Chart. The configuration values passed to the Helm Chart are sourced from the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/developer-hub-config/-/blob/main/values.yaml[rhdh/developer-hub-config/values.yaml file in GitLab, window="gitlab"]. OpenShift GitOps will detect changes to this file and redeploy {product_name_rhdh} in response. You can see these two sources in the *Details* tab of the `backstage` Application as shown.
+
+image:m2/gitops-sources.png[GitOps Sources for the Backstage Application]
+
+=== Platform Engineer Activity: Verify GitOps is Working
+
+*Update the App Title of {product_name_rhdh}*
+
+Let's verify that changes to the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/developer-hub-config/-/blob/main/values.yaml[values.yaml file in GitLab, window="gitlab"] actually get rolled out by OpenShift GitOps.
+
+. Open your https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/developer-hub-config/-/blob/main/values.yaml[values.yaml file, window="gitlab"].
+. Select *Edit > Edit single file*. When prompted, login as a Platform Engineer with `pe1` / `{common_password}`
+. Find the YAML surrounded by `--- APP TITLE ---` and uncomment it by highlighting it and pressing `CMD + /` or `CTRL + /`.
++
+[NOTE]
+====
+If  `CMD + /` or `CTRL + /` doesn't work, you can uncomment the lines by highlighting the appropriate code, choose the function *F1* from your keyboard, and select the option *Remove Line Comment* as shown below.
+
+image:m2/gitlab-f1-uncomment.png[Uncomment options in GitLab]
+====
+. The file should now look like this after uncommenting:
++
+image:m2/gitlab-change-app-title.png[Customizing the Title]
+. Scroll down and enter a commit message `feat: change application title`.
+. Click the *Commit changes* button.
+
+
+*Verify update to {product_name_rhdh}'s Custom Title*
+
+Let's ensure that a new deployment of {product_name_rhdh} is triggered and your new title is applied.
+
+. Return to the https://openshift-gitops-server-openshift-gitops.{openshift_cluster_ingress_domain}/applications/openshift-gitops/backstage[backstage Application in Argo CD, window="argo"]. Depending on your timing, it might already be progressing the latest sync, but if not, click the *Refresh* button. When the sync is in progress, you'll see a new Pod starting - this Pod will run the latest version of your configuration.
++
+image:m2/rhdh-new-pod.png[{product_name_rhdh} with a Custom Title]
+
+. Once the new Pod has started, visit your https://backstage-backstage.{openshift_cluster_ingress_domain}[{product_name_rhdh} instance, window="rhdh"]. You should see the new title *PE Developer Hub* in the page header.
++
+image:m2/rhdh-title.png[{product_name_rhdh} with a Custom Title]
+
+[NOTE]
+====
+You may need to logout to see the title change. Click the Guest user icon in the top right corner and select *Sign out*. Then log back in to the https://backstage-backstage.{openshift_cluster_ingress_domain}[{product_name_rhdh} instance, window="rhdh"]  as a Platform Engineer with `pe1` / `{common_password}`.
+
+image:m2/rhdh-title-logout.png[] 
+====

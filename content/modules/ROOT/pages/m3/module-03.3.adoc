@@ -1,0 +1,60 @@
+:imagesdir: ../../assets/images
+
+== Developer Activity: Developer On-Boarding Example
+
+include::../style.adoc[]
+
+Until now, you've been acting in the role of a platform engineer. Let's switch persona to that of a developer: `dev1`. 
+
+Let's assume that this developer needs to create a development environment to work on a new feature - we can use a Software Template to assist with this task. A prerequisite to using this template is that the developer has a Quay account, so their code can be built into a container image and pushed to an image registry for storage and scanning. 
+
+While OpenShift has a built-in image registry, there are various reasons we're using Quay as our image registry:
+
+* Security scanning for container images via Clair.
+* Support for image signing and trust policies.
+* Vulnerability detection with detailed reports.
+* RBAC and repository/organisation permissions.
+* Better suited for multi-tenant and multi-cluster environments.
+
+
+IMPORTANT: Please make sure to log in to {product_name_rhdh} as a *Developer* with *dev1/{common_password}* as described in the next step to avoid errors.
+
+include::../login-developer.adoc[]
+
+
+=== Create an Account in Quay
+
+You'll need an account in Quay to push your developer's container images for scanning and deployment.
+
+. Visit the https://quay.{openshift_cluster_ingress_domain}[Quay Registry^, window="quay"] deployed in your workshop environment.
+. Click the *Create Account* link.
++
+image:m3/quay-create-account-link.png[Creating a Quay Account, width="60%"]
+. Enter the following information.
+
+.. Username:
++
+[source,bash,role=execute,subs=attributes+]
+----
+dev1
+----
+
+.. Email:
++
+[source,bash,role=execute,subs=attributes+]
+----
+dev1@rhdh.com
+----
+
+.. Password:
++
+[source,bash,role=execute,subs=attributes+]
+----
+{common_password}
+----
+
++
+image:m3/quay-create-account.png[Creating a Quay Account]
+. Click *Create Account*.
+
+You're almost ready to create an application from a Template!

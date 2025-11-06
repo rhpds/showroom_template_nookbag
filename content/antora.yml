@@ -1,11 +1,12 @@
 name: modules
-title: Default Title
+title: Platform Engineering Workshop
 version: master
 nav:
   - modules/ROOT/nav.adoc
 
 asciidoc:
   attributes:
+    product_name_rhdh: Red Hat Developer Hub
     lab_name: "I'm the lab_name var"
     release-version: master
     page-pagination: true
@@ -17,3 +18,6 @@ asciidoc:
     page-links:
     - url: https://redhat.com
       text: Red Hat
+    - url: https://www.redhat.com/en/engage/state-of-platform-engineering-age-of-ai
+      text: State of PE Report
+  

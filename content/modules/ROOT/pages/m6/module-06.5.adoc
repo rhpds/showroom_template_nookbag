@@ -1,0 +1,44 @@
+:imagesdir: ../../assets/images
+
+
+include::../style.adoc[]
+
+== Image Signing (and verification)
+
+So far, we have made sure that we're only building from signed commits, using *Trusted Artifact Signer's* keyless signing capabilities. 
+
+But what of our images? When we build an image, we want to sign it, so we're able to verify its integrity and authenticity before we deploy it.
+
+image:m6/Software Supply Chain Security_artifact-signing.png[]
+
+=== The post-merge pipeline
+
+In our scenario (yours might look different), the pre-merge pipeline is building an image to prove it can be built, but the generated image tag will not be deployed anywhere. 
+
+The image generated in our post-merge pipeline is the one that will be deployed (using a GitOps approach) to higher-level stages. Therefore, we should add image signing to *_this_* pipeline. 
+
+Since we already changed the post-merge pipeline to a security-augmented version, we are now also signing the created image using Trusted Artifact Signer:
+
+image:m6/post-merge-signing-tekton.png[]
+
+How is this done? Since a pipeline task cannot authenticate via a browser...
+
+If you look at the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/parasol/parasol-store-build-manifests/-/blob/main/helm/parasol-store-build/templates/task-sign-image.yaml?ref_type=heads[signing task^, window="gitlab"] in the pipeline, you can see that we are getting an OIDC token for a "Pipeline User" - and this token is (along with a number of endpoints) stored as environment variable - and this is what `cosign` (the signing CLI) uses.
+
+Therefore, the actual signing task is as simple as
+
+[source,bash,subs=attributes+]
+----
+cosign sign $(params.IMAGE)
+----
+
+When you open the https://quay.{openshift_cluster_ingress_domain}/repository/parasol/parasol-store?tab=tags[Parasol Quay Repository^, window="quay"], you can see that Quay recognises the signature:
+
+image:m6/quay_signed_image.png[]
+
+And similarly to our commit signing exercise, we have an entry in the https://rekor-search-ui-trusted-artifact-signer.{openshift_cluster_ingress_domain}[Rekor Transparency Database^, window="rekor"]
+
+image:m6/rekor_signed_image.png[]
+
+Given this flexibility, we can e.g. sign different pipelines with different users and later validate where the artifact came from, who signed it and when.
+

@@ -1,0 +1,63 @@
+:imagesdir: ../../assets/images
+
+== Developer Activity: Create a new Component from the Template
+
+IMPORTANT: Please make sure you are logged in as a Developer with `dev1` / `{common_password}` as you were guided to in the previous step.
+
+include::../style.adoc[]
+
+Create a new software Component and supporting infrastructure using the *Quarkus Service* template that was created by the platform engineer:
+
+=== Run the Template
+
+. Access https://backstage-backstage.{openshift_cluster_ingress_domain}[{product_name_rhdh}^, window="rhdh"].
+. Click the *Create* icon (plus symbol) in the top menu.
++
+image:m3/rhdh-create.png[The {product_name_rhdh} Create UI]
+. Click the *Choose* button on the *Quarkus Service*. The Template parameters collection screen will be displayed.
+. In Step 1, you'll be prompted to enter a set of application parameters. Thankfully, defaults are provided by the template, so you can simply click *Next*.
+. In Step 2, when prompted to *Provide Image Registry Information*:
+  * Select the *Quay* image registry.
+  * Enter your Quay password: `{common_password}`
+  * Click *Next*.
++
+NOTE: Your username is automatically determined by the Template using your current session.
++
+image:m3/quarkus-service-step2.png[] 
+. In Step 3, select the default *Repository Location*. In this case we just have GitLab available so you can't change this.
+. Click *Review*.
++
+image:m3/quarkus-service-step3.png[] 
+. Confirm you're satisfied with your parameters and click *Create*. These will be passed to the scaffolder when it runs the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/template-quarkus-simple/-/blob/main/template.yaml[steps defined in the template, window="gitlab"].
++
+image:m3/rhdh-template-review.png[Reviewing template parameters in {product_name_rhdh}]
+
+After a few moments the process should be finished, and you'll see a screen with a series of green checkmarks.
+
+image:m3/rhdh-template-success.png[A successful template run in {product_name_rhdh}]
+
+=== Inspect the new Component and Container Image
+
+Click the *Open Component in catalog* link to view the new `my-quarkus-component` Component. 
+
+You'll see links to the GitLab repository (*View Source* link) and note that you're listed as the owner since your identity was passed to the skeleton code used to create the https://gitlab-gitlab.apps.{openshift_cluster_ingress_domain}/dev1/my-quarkus-app/-/blob/main/catalog-info.yaml?ref_type=heads[Component's *catalog-info.yaml* file, window="gitlab"]. 
+
+NOTE: You can see the user identity `values` being passed to the `fetch:template` action in the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/template-quarkus-simple/-/blob/main/template.yaml[template.yaml, window="gitlab"].
+
+image:m3/rhdh-new-component.png[A successful template run in {product_name_rhdh}]
+
+Select the *CI* tab to view the status of the OpenShift Pipelines (Tekton) build. It might take a moment or two for the currently to appear in the *Pipeline Runs* pane. The Pipeline Run is triggered by a set of build manifests that were created in a separate GitOps repository from the Quarkus application's source code - you can find the manifests in the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/dev1/my-quarkus-app-gitops/-/tree/main/helm/quarkus-build[helm/quarkus-build, window="gitlab"] folder. The GitOps Application responsible for applying the build manifests can be seen in the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/dev1/my-quarkus-app-gitops/-/blob/main/argocd/argocd-app-dev-build.yaml[*argocd/argocd-app-dev-build.yaml*, window="gitlab"] file that was added to Argo CD by the `argocd:create-resources` action in the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/template-quarkus-simple/-/blob/main/template.yaml[*template.yaml*, window="gitlab"].
+
+NOTE: Manifests related to the developer's applications are managed by a second instance of OpenShift GitOps named *rhdh-gitops*. This second instance is used to manage Parasol's development team's applications, whereas the OpenShift GitOps instance you accessed earlier manages platform components - including the second instance of OpenShift GitOps. View the https://openshift-gitops-server-openshift-gitops.{openshift_cluster_ingress_domain}/applications?search=rhdh[rhdh-gitops ArgoCD Application^, window="argo"] by logging in to the *primary* OpenShift GitOps instance using `admin` / `{openshift_gitops_password}`.
+
+image:m3/rhdh-new-component-ci.png[CI status for the Quarkus Service]
+
+Wait for the build to complete, and visit the https://quay.{openshift_cluster_ingress_domain}/user/dev1/[dev1 organization in Quay^, window="quay"]. You'll be able to view the new _my-quarkus-app_ repository and see the newly pushed _latest_ image tag.
+
+image:m3/quay-image-tag.png[Quay Latest Image Tag]
+
+=== Summary
+
+Nice work! You created a new Component and associated source code from a Software Template.
+
+In the next section you'll learn how to enable and disable different plugin integrations with your Components, using OpenShift GitOps (Argo CD) as an example.

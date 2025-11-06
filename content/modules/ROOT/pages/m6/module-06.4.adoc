@@ -1,0 +1,138 @@
+:imagesdir: ../../assets/images
+
+include::../style.adoc[]
+
+== Image Scanning
+
+This might come as yesterday's news to you - but from a holistic security view of what we build as Platform Engineers, *Vulnerability Scanning* is still an important part of strengthening the Software Supply Chain's security posture for two reasons:
+
+1) We don't want to allow any image with known vulnerabilities onto our clusters
+
+2) We also want to surface that information as early as possible and make it available to our developers and architects, so they can act on it. 
+
+image:m6/Software Supply Chain Security_image-scanning.png[]
+
+=== Concepts, Quay, ACS et. al.
+
+The concept of scanning an image for vulnerabilities is not new, but *_scanning_* is only the beginning.
+
+Scans generate a list of vulnerabilities, but ideally we want to *_react_* on what was found in our CI - and maybe break the pipeline if what was found is too dangerous to let it continue.
+
+Ideally, this would happen in a flexible, automated fashion - not only during *build* time, but also blocking pods using vulnerable images from being *deployed* (using Admission Controllers). On top of that - we also need to continuously monitor our *runtime*, because new vulnerabilities will also be discovered after the images have made it to our clusters.
+
+These policies (what do I do with the result, how should I react during build, deployment or runtime?) should be manageable in a flexible, best: _Policy as Code_ (GitOps) approach. 
+
+You see, *_scanning_* is just the beginning. 
+
+For your production needs, we would definitely recommend considering products such as https://www.redhat.com/en/technologies/cloud-computing/openshift/advanced-cluster-security-kubernetes[*Red Hat Advanced Cluster Security for Kubernetes*^, window="_blank"] as it provides 
+
+* Vulnerability Scanning across the whole Software Supply Chain (Build, Deploy, Runtime)
+* Admission Controllers
+* Policies as Code
+* Runtime protection by monitoring process execution and network activity
+* Correlation of vulnerabilities to namespaces, running deployments, and images
+* Vulnerability and Risk assessment dashboards
+* Cluster compliance monitoring against industry controls (PCI, NIST, etc) or your own
+* Network connectivity graphs between namespaces, internal and external traffic, network policies
+* Analysis of Kubernetes role-based access control (RBAC) settings to determine user or service account privileges and misconfigurations
+* An API and prebuilt plugins to integrate with DevOps systems, including CI/CD tools, image scanners, sigstore, registries, container runtimes, SIEM solutions, and notification tools
+
+...just to name a few highlights.
+
+This is far beyond the scope of this Platform Engineering workshop - however, there is a specific https://www.redhat.com/de/events/openshift-roadshows/security[*OpenShift Security Roadshow*^, window="_blank"] that goes into detail on how you can secure your Kubernetes / OpenShift platform using Red Hat Advanced Cluster Security for Kubernetes and manage platform compliance.
+
+This is not a product-specific workshop; we are focusing on the *Platform Engineering* concepts. As such, it is important we add the scanning capability to our CI - because we need to make this vulnerability information available to developers and architects as early as possible. We'll add scanning to our CI pipeline - to show you the basic principles, but we will leave it at that.
+
+In this workshop, we will add image scanning using https://www.redhat.com/en/technologies/cloud-computing/quay[Red Hat Quay^, window="_blank"]'s built-in image scanning capability - which is by the way the same scanning engine that Advanced Cluster Security uses.
+
+=== Adding Scans to our pipeline
+
+For this developer build (remember, we are still working in our development branch), we aren't using the "final" image that will ultimately be promoted to higher level stages - but still, we want to surface vulnerabilities, so our developers and architects can react.
+
+We will add a similar task to our pre-merge and post-merge pipelines, to make sure that we do not introduce vulnerabilities by using different base images, for example. 
+However, at this point, we want to simply show the scan results. 
+
+Remember, the earlier a developer gets this information, the sooner he can make an informed decision. ("Shift left"). 
+
+=== Our Development Build Pipeline
+
+As you might have noticed while testing the commit verification with our "*Secure* Parasol Store Development" template - some Vulnerability figures started to appear...
+
+image:m6/DevPipeline_Vulnerabilities.png[]
+ 
+That happened, because we already added a vulnerability scan step to the pipeline that our new template rolls out:
+
+image:m6/DevPipeline_ScanImageTask.png[]
+
+This task uses the Quay Registry image scanning feature and populates specific fields in the Tekton `pipelineRun` that the Tekton {product_name_rhdh} plugin automatically parses - making this information easily accessible to developers.
+
+Developers can also access the "Output" action now (since our task populates it) and follow the URL to the detailed Quay scan results page (login via `quayadmin` / `{common_password}`).
+
+image:m6/DevPipeline_viewoutput.png[]
+image:m6/DevPipeline_output.png[]
+image:m6/DevPipeline_quay_details.png[]
+
+Alteratively, Developers can check the task logs for a detailed list of identified vulnerabilities.
+
+image:m6/DevPipeline_scan_logs.png[]
+
+IMPORTANT: Using Tekton, the Tekton plugin for {product_name_rhdh} and Quay is just an implementation detail, not a requirement. While we definitely recommend ACS (Advanced Cluster Security for Kubernetes) for scans and reports - the important message here is that we (the Platform Engineers) should make this vulnerability information _easily_ accessible to developers, regardless of the CI and scanner we're using.
+
+
+=== The Outer Loop 
+
+So far, we have enabled our developers to view vulnerability information and to sign (and verify) their commits.
+
+As Platform Engineers, we should also make sure that nothing possibly harmful or untrustworthy reaches higher stages, or even production. With that said, let's add security guardrails to the pipelines that are triggered when we merge our changes back to the *Parasol Store* *`main`* branch:
+
+These pipeline definitions are located in the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/parasol/parasol-store-build-manifests[Parasol Store Build Manifests^, window="gitlab"] repository.
+
+NOTE: Changing the build manifests for the Parasol Store Build is a Platform Engineering activity. Therefore, make sure you are logged in as `pe1` or `pe2`. If needed, open the section below for help.
+
+.Click to learn how to login as a Platform Engineer
+[%collapsible]
+====
+include::../login-pe.adoc[]
+====
+
+So, before we (our developer-self) create a merge request for our `parasol-store` branch (`new-feature-with-signed-commits`), let's augment the pre- and post-merge pipelines with security guardrails:
+
+NOTE: To avoid massive copy & paste, we have created a security-augmented pipeline that you just need to activate.
+
+As Platform Engineer, open the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/parasol/parasol-store-build-manifests/-/blob/main/helm/parasol-store-build/templates/eventlistener.yaml?ref_type=heads[Pipeline Eventlistener^, window="gitlab"] - the component listening for webhooks and calling various pipelines based on rules. This is Tekton-specific and will look different based on your CI of choice. The important part is - instead of calling a pipeline that simply checks if code can be built, we are calling a pipeline that also verifies commit signatures and scans the created image.
+
+For the pre-merge pipeline: 
+
+image:m6/pr-open-trigger.png[]
+
+For the post-merge pipeline:
+
+image:m6/pr-merged-trigger.png[]
+
+For the "Open Prod-PR" pipeline:
+
+image:m6/pr-prod-open-trigger.png[]
+
+Once you have committed your changes, you can open the https://rhdh-gitops-server-rhdh-gitops.{openshift_cluster_ingress_domain}/applications/rhdh-gitops/parasol-store-build[Parasol Store Build^, window="gitops"] OpenShift GitOps application syncing the build manifests and manually sync it - or wait a couple of minutes until it automatically syncs.
+
+Press (1) Refresh, then (2) Sync
+
+image:m6/build-manifest-sync.png[]
+
+=== DEV: Merge Pre-Check
+
+Now that we have enabled our security guardrails, we can create a merge request for our branch: 
+
+First, login as a developer (`dev1` / `{common_password}`), then go to your branch in the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/parasol/parasol-store[parasol store^, window="gitlab"] and create a merge request (if you don't see the box suggesting that).
+
+From a GitLab perspective, nothing has changed - a pre-merge verification pipeline has started. 
+
+image:m6/pre-merge-gitlab.png[]
+
+If you open the https://backstage-backstage.{openshift_cluster_ingress_domain}/catalog/default/component/parasol-store/ci[parasol component's CI page^, window="rhdh"] in {product_name_rhdh}, you can see that the `pre-merge-check-secure` pipeline has started (or has already finished).
+
+image:m6/pre-merge-tekton.png[]
+
+IMPORTANT: It should be noted that this example is far from perfect: In a "checking" or "verification" pipeline, a simple vulnerability scan doesn't provide any value. You would need a rule or *policy* that can break the pipeline, if a policy is violated. This is where ACS (Advanced Cluster Security) really shines - policies can not only check for various forms of vulnerabilities (break if number of fixable vulnerabilities exceeds x, break if a specific CVE is in the image, ...) but also for other image contents: Break if a package manager, curl or wget is part of the image (we don't want any "hot-loading").
+
+However (as already noted) this would exceed the scope of this workshop. But please keep in mind that verification should include breaking the pipeline if your criteria are not met.

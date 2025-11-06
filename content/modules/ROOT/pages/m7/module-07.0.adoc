@@ -1,0 +1,18 @@
+:imagesdir: ../../assets/images
+
+= Module 7: Continuous Platform improvements
+
+include::../style.adoc[]
+
+== Overview
+
+In modern organizations, platform engineering is not a one-time effort but a continuous process of refinement and improvement. Static platforms struggle to keep up with evolving application architectures, security needs, and developer workflows. This module explores strategies to ensure platforms remain efficient, scalable, and user-friendly over time.
+
+== Objectives
+
+This module addresses the following areas
+
+* *Learn how to enable continuous platform improvements* - Pitfalls of choosing the wrong platform approach, Platform drift and Sprawl, and Streamlined operations
+* *Monitoring & Usage Statistics* - Implementing monitoring tools to track platform usage, ensuring performance optimization and proactive issue resolution.
+* *Self-Service for Developers* - Enabling developers to manage their own needs through automated workflows, reducing dependencies on platform teams.
+* *Feedback Loop with the Developer Community* - Using Dynamic Plugins to incorporate real-time feedback, allowing continuous improvements aligned with developer needs.

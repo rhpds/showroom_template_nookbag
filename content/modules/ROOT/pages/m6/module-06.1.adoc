@@ -1,0 +1,36 @@
+:imagesdir: ../../assets/images
+
+
+== Introduction to Concepts
+
+include::../style.adoc[]
+
+*Software Supply Chain Security* refers to protecting the integrity and security of all the components, tools, and processes involved in developing, building, and deploying software applications. Just as physical supply chains can be vulnerable to tampering or contamination, software supply chains face similar risks that can compromise the final product.
+
+### What Makes Up a Software Supply Chain
+
+image::m6/Software Supply Chain High Level.png[]
+
+The software supply chain includes multiple interconnected elements: source code repositories, third-party libraries and dependencies, development tools, build systems, CI/CD pipelines, container images, deployment infrastructure, and the people and processes that manage these components. Each element represents a potential attack vector where malicious actors could introduce vulnerabilities or backdoors.
+
+### Common Threats and Attack Vectors
+
+Attackers can compromise software supply chains through various methods. They might inject malicious code into open-source libraries that thousands of applications depend on, compromise developer accounts to push malicious updates, tamper with build processes to insert backdoors, or create typosquatting packages that developers accidentally install. High-profile incidents like the SolarWinds attack and the Log4j vulnerability have demonstrated how supply chain compromises can affect thousands of organizations simultaneously.
+
+### Key Security Principles
+
+Effective supply chain security relies on several core principles. Dependency management involves carefully tracking and vetting all third-party components, keeping them updated, and monitoring for known vulnerabilities. Code integrity ensures that source code hasn't been tampered with through techniques like cryptographic signing and hash verification. Build security focuses on securing the build environment, using reproducible builds, and maintaining audit trails and provenance information of all build artifacts.
+
+### Implementation Strategies
+
+image::m6/Software Supply Chain Security.png[]
+
+Organizations typically implement supply chain security through a combination of technical controls and process improvements. This includes using software bills of materials (SBOMs) to catalog all components, implementing dependency scanning tools, establishing secure development practices, using container scanning and signing, and creating incident response plans specifically for supply chain events.
+
+### Emerging Standards and Frameworks
+
+The industry has developed several frameworks to address these challenges, including https://csrc.nist.gov/projects/ssdf[NIST's Secure Software Development Framework (SSDF)], the https://slsa.dev/spec/v1.1/about[Supply Chain Levels for Software Artifacts (SLSA) framework], and various compliance standards that mandate supply chain security practices. These provide structured approaches for organizations to assess and improve their supply chain security posture.
+
+Software supply chain security has become increasingly critical as modern applications rely on hundreds or thousands of external components, making it essential for organizations to understand and secure every link in their software development and deployment chain.
+
+In this chapter, we'd like to introduce you to some exemplary approaches how to increase your supply chain's (and platform's) security posture.

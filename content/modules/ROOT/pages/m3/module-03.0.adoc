@@ -1,0 +1,17 @@
+= Module 3: Software Templates and Developer Experience
+
+include::../style.adoc[]
+
+== Overview
+
+Software Templates in {product_name_rhdh} enable your team(s) to create Entities, such as new Components, and - through the use of "actions" provided by plugins - create resources in other systems such as your GitLab and OpenShift GitOps instances. Templates themselves are Entities, meaning you can import them similar to any other Entity!
+
+Platform Engineers will often be the authors of Templates, and use them to create "golden paths" that follow best-practices and use approved processes and tooling. Development teams will be the consumers of Templates to create new software and automate their tasks. Using Templates reduces cognitive load on the development teams by allowing them to focus on development tasks, while platform concerns are addressed by the template.
+
+Templates are defined using YAML, but are rendered as a rich form in the {product_name_rhdh} UI when used by development teams.
+
+== Module Objectives
+
+* Create a Template (as the Platform Engineer)
+* Register the Template in the Software  (as the Platform  Engineer)
+* Create a new Component, GitLab Repository, and GitOps Application from the Template (as a Developer)

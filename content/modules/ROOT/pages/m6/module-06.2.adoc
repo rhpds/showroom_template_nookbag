@@ -1,0 +1,74 @@
+:imagesdir: ../../assets/images
+
+
+== Supporting Developers: Dependency Analytics
+
+include::../style.adoc[]
+
+As outlined before, building software implies the use of dependencies - today, nobody would develop their own logging framework, as an example. 
+But there are more dependencies to the Software Supply Chain than the obvious code dependencies (more on that later). When building container images, our base image is also a dependency.
+
+With that said (although not a core part of this workshop), we should consider consuming our dependencies from *Trusted Sources* wherever possible.
+
+image::m6/Software Supply Chain Security_trustedcontent.png[]
+
+Examples are: 
+
+* using (base-)images from Red Hat, as they have an "image health" rating, based on identified vulnerabilities and have been vetted by Red Hat experts.
+* using Java Maven dependencies from the https://access.redhat.com/maven-repository[JBoss Enterprise Maven Repository], if available.
+
+As *Platform Engineers*, we can support our developers by providing templates that contain curated containerfiles with references to trusted images sources - similarly, dependencies files (e.g. pom.xml) with references to curated source dependencies to start with.
+Of course, our developers can change any of those - we want to _support_ them, not tie their hands.
+
+Which brings us to the core of this chapter: 
+
+=== Red Hat Dependency Analytics
+
+image::m6/Software Supply Chain Security_dependency_analysis.png[]
+
+*Shifting left security* means to identify risks and vulnerabilities as early in the supply chain as possible - not when we're trying to deploy them, or even worse, _after_ deployment on our production systems. But, to accomplish this, we need to give our developers tools that allow them to identify these problems and make informed decisions. 
+
+One such tool is Red Hat Dependency Analytics, an IDE Plugin available for https://marketplace.visualstudio.com/items?itemName=redhat.fabric8-analytics[VSCode] and https://plugins.jetbrains.com/plugin/12541-red-hat-dependency-analytics[IntelliJ].
+
+NOTE: This workshop primarily focuses on the Platform Engineer (PE) role. This workshop doesn't require you to have an IDE on your laptop or any other local dependency. Therefore, this chapter is more informational. However, if you would like to give it a spin, expand the section below where we explain how to try it out locally. You need to have `git` and either VSCode or IntelliJ installed on your machine to follow this example.
+
+.*Expand to try it out locally*
+[%collapsible]
+====
+include::./module-06.2.1-optional.adoc[]
+====
+
+=== RHDA: Analysis
+
+Opening a dependencies file (in our case, the `pom.xml`) automatically starts the analysis if the Plugin has been installed, as shown in the status bar:
+
+image:m6/vscode_start_rhda.png[]
+
+
+=== RHDA: Results
+
+image:m6/vscode_analysis_done.png[]
+
+(1) Once the analysis has finished, the number of _*direct*_ vulnerabilities (i.e. a dependency and version is listed as vulnerable) are shown in the status bar.
+
+(2) A detailed reports (see below) can be generated, including transitive dependencies.
+
+(3) In the dependencies file, even if there is no direct vulnerability, recommendations are issued. In our case, we are using an outdated version of the Quarkus platform (2.7.4.Final, which is also the Quarkus upstream build.) 
+The plugin recommends to upgrade to a newer version, which also is the Red Hat build: `Recommendation: io.quarkus/quarkus-arc@2.13.8.Final-redhat-00006`
+
+
+=== RHDA: Detailed Report
+
+Opening the report gives us an overview of all vulnerabilities, direct or transitive:
+
+image:m6/rhda_analysis_overview.png[]
+
+Drilling deeper, we can see vulnerabilities in transitive dependencies, grouped by top-level dependency. 
+
+image:m6/rhda_analysis_transitive.png[]
+
+If there are known remediations, these are listed here as well, together with detailed information about the vulnerability in question - because not every vulnerability is equally dangerous. Some might be dependent on system settings or specific configurations. 
+
+Developers need this information to make *informed decisions* wether to upgrade the version, apply a remediation, mitigate the risk in some other way or accept and document it.
+
+This is what *Shifting-Left Security* is all about. 

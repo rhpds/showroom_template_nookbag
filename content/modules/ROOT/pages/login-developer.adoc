@@ -1,0 +1,14 @@
+*Login as Developer*
+
+* You will perform this activity as a Developer. 
+* Logout from https://backstage-backstage.{openshift_cluster_ingress_domain}[{product_name_rhdh}^, window="rhdh"]
+** Click the dropdown in the top-right of {product_name_rhdh}, then click on the **Logout** link.
++
+image::common/rhdh-sign-out.png[Signing out of {product_name_rhdh}]
+
+* Logout from https://gitlab-gitlab.{openshift_cluster_ingress_domain}[GitLab^, window="gitlab"]
+** Click on the Profile icon, and Sign out from the dropdown as shown in the screenshot below.
++
+image::common/gitlab-sign-out.png[Signing out of GitLab]
+
+* Login back as a *Developer* to to *{product_name_rhdh}* and *GitLab* using the credentials `dev1` / `{common_password}`

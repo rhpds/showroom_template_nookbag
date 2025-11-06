@@ -1,0 +1,131 @@
+:imagesdir: ../../assets/images
+
+== Introduction to Concepts
+
+include::../style.adoc[]
+
+As mentioned earlier, Templates are defined using YAML and rendered as a rich form in the {product_name_rhdh} UI when used by development teams.
+
+Let's explore the Template structure using a sample Template in the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/template-quarkus-simple[rhdh/template-quarkus-simple^, window="gitlab"] repository in GitLab. 
+
+=== Template YAML Structure
+
+At a basic level, the Template Entity is similar to the Component Entity you encountered in the _catalog-info.yaml_ in the prior module; resembling a Kubernetes Custom Resource.
+
+```yaml
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: quarkus-web-template
+  title: Quarkus Service
+  description: Create a simple microservice using Quarkus with Argo CD
+  tags:
+    - recommended
+    - java
+    - quarkus
+    - maven
+spec:
+  owner: rhdh
+  type: service
+  # other fields removed for brevity
+```
+
+Where the Template Entity differs is that it contains additional fields. Let's examine each in more detail:
+
+* `spec.parameters` (Parameters)
+* `spec.steps` (Steps)
+* `spec.output` (Output)
+
+=== Parameters
+
+The _spec.parameters_ field is used by platform engineers to enable developers to pass values (parameters) to the Template. Typically this will be parameters such as the name of the Component, a Java package name, repository name, etc.
+
+Here's an example of the parameters:
+
+```yaml
+spec:
+  parameters:
+    # Parameters can be spread across multiple forms/pages, each
+    # with their own titles and set of parameters
+    - title: Provide Information for Application
+      required:
+        - component_id
+        - java_package_name
+      properties:
+        component_id:
+          title: Name
+          type: string
+          description: Unique name of the component
+          default: my-quarkus-app
+          ui:field: EntityNamePicker
+          ui:autofocus: true
+          maxLength: 18
+        group_id:
+          title: Group Id
+          type: string
+          default: com.redhat.rhdh
+          description: Maven Group Id
+```
+
+You might have recognized this as a https://json-schema.org/[JSON Schema] structure. By using JSON Schema you can define the parameters that are supported by the template, and, more importantly, enforce validation on those parameters. The rendering of the form in the {product_name_rhdh} UI is managed by the https://github.com/rjsf-team/react-jsonschema-form[react-jsonschema-form^, window="content"] library.
+
+
+[NOTE]
+====
+`react-jsonschema-form` is a set of React components for building web forms from JSON Schema. It is core to scaffolder plugin's frontend functionality. These React components are responsible for rendering the form in which developers and end users fill out data needed to use the Software Template.
+====
+
+The properties that have a `ui` prefix might have piqued your interest. These are special properties that provide instructions to the form, for example, to enable autocomplete or autofocus certain form fields when it is displayed in the {product_name_rhdh} UI.
+
+
+=== Steps
+
+Once a developer has entered and confirmed their parameters, the Template is executed by the scaffolder - a service within the {product_name_rhdh} backend.
+
+The scaffolder executes the actions defined in _spec.steps_, for example, to publish code to a Git repository and register it in the Software Catalog:
+
+```yaml
+spec:
+  steps:
+  - id: publish
+    name: Publish
+    # Use the publish action provided by the GitLab plugin
+    action: publish:gitlab
+    input:
+      # Construct a URL to the repository using the provided hostname, logged in
+      # username, and provided component_id
+      repoUrl: "${{ parameters.repo.host }}?owner=${{ user.entity.metadata.name }}&repo=${{parameters.component_id}}"
+      repoVisibility: public
+      defaultBranch: main
+      sourcePath: ./${{ user.entity.metadata.name }}-${{parameters.component_id}}
+  - id: register
+    name: Register
+    # Register a new component using the built-in register action
+    action: catalog:register
+    input:
+      repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+      catalogInfoPath: "/catalog-info.yaml"
+```
+
+Notice how the `parameters` are referenced in the `steps`? Another point of note is that a `user` variable is available to access data related to the user that's using the Template, and subsequent `steps` can access `output` from prior steps. 
+
+The `output` values are documented on a per plugin basis. You can find the values for the specific version of your installed plugins by accessing the https://backstage-backstage.{openshift_cluster_ingress_domain}/create/actions[/create/actions^, window="rhdh"] endpoint on your {product_name_rhdh} instance.
+
+=== Output
+
+The _spec.output_ can use of the outputs from the `steps` to do display useful information such as: 
+
+* Links to newly created Components
+* Source Code Repository links
+* Links to Git Merge Requests that are needed etc
+* Markdown text blobs
+
+```yaml
+  output:
+    links:
+      - title: Source Code Repository
+        url: {{ '${{ steps.publish.output.remoteUrl }}' }}
+      - title: Open Component in catalog
+        icon: catalog
+        entityRef: {{ '${{ steps.register.output.entityRef }}' }}
+```

@@ -1,0 +1,118 @@
+:imagesdir: ../../assets/images
+
+
+== Platform Engineer Activity: Setup Software Templates to Import Existing API/Apps
+
+include::../style.adoc[]
+
+As mentioned in the previous section, the Platform Engineering team created two Templates for importing existing applications/services (Components), and APIs into {product_name_rhdh}. While it is possible to use the same template to import both of them, there are some key differences in the data that must be gathered for API and Component Entities. 
+
+IMPORTANT: Please make sure to log in as a *Platform Engineer* with `pe1` / `{common_password}`. Refer to the below guide for assistance.
+
+.Click to learn how to login as a Platform Engineer
+[%collapsible]
+====
+include::../login-pe.adoc[]
+====
+
+
+== Register the Import API and Component Templates
+
+=== Software Template Overview 
+
+You learned how to create and import Software Templates using the {product_name_rhdh} UI in module 3. In this section, you'll import Templates that have been pre-built for you by adding them directly to the `catalog.locations` configuration in your `values.yaml` file instead of using the UI registration wizard.
+
+The two Software Templates you'll be importing are:
+
+* *import-existing-api* - Available in the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/import-existing-api-template/-/blob/main/template.yaml[import-existing-api-template/template.yaml^, window="gitlab"] file in GitLab
+* *import-existing-app* - Available in the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/import-existing-app-template/-/blob/main/template.yaml[import-existing-app-template/template.yaml^, window="gitlab"] file in GitLab
+
+The *import-existing-api* template does the following:
+
+. Gather details of the API (GitLab org name, repo name) as template parameters.
+. Creates a Merge Request to create the new _catalog-info.yaml_ and TechDocs files, which will register the API in the Software Catalog once merged.
+
+The *import-existing-app* template does the following:
+
+. Gather details of the new Component to be created (Git repository for the Component, the catalog info, etc.)
+. Creates a Merge Request to create the new _catalog-info.yaml_ and TechDocs files, which will register the Component in the Software Catalog once merged.
+
+=== Add Templates to Catalog Configuration
+
+. Visit your https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/developer-hub-config/-/edit/main/values.yaml[rhdh/developer-hub-config repository on GitLab^, window="gitlab"]. If prompted, login with `pe1` / `{common_password}`.
+. You should already be in Edit mode of the `values.yaml` file if you clicked the link above.
+. Locate the `catalog:` section and find the `locations:` array. 
+. Add the following two new entries to the `locations:` array to import both Software Templates:
++
+[source,yaml,role=execute,subs="attributes"]
+----
+catalog:
+  locations:
+    - type: url
+      target: https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/import-existing-api-template/-/blob/main/template.yaml
+    - type: url
+      target: https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/import-existing-app-template/-/blob/main/template.yaml
+----
++
+NOTE: Make sure to maintain proper YAML indentation and alignment with the existing `locations:` entries.
+. Don't commit the changes yet - you need to also enable the required dynamic plugins for these templates to function properly.
+
+Your changes in GitLab should resemble the following screenshot.
+
+image::m4/gitlab-locations.png[]
+
+=== View the Imported Templates
+
+After you complete the configuration in the following sections and commit your changes, you can verify the templates are available by navigating to the https://backstage-backstage.{openshift_cluster_ingress_domain}/create[*Create* screen, window="rhdh"]. You should see both templates for importing APIs and applications to {product_name_rhdh}.
+
+image::m4/import-templates-list.png[]
+
+
+== Setup GitLab Entity Auto-Discovery
+
+The new templates require plugins to function, and ensure the newly created Entities are detected by {product_name_rhdh}: 
+
+* *backstage-plugin-catalog-backend-module-gitlab-dynamic* to enable auto-discovery of `catalog-info.yaml` files.
+* *immobiliarelabs-backstage-plugin* to create Merge Requests using the GitLab API.
+
+=== Enable the Plugins 
+
+. Visit your https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/developer-hub-config/-/edit/main/values.yaml[rhdh/developer-hub-config repository on GitLab^, window="gitlab"]. If prompted, login with `pe1` / `{common_password}`.
+. You should already be in Edit mode of the `values.yaml` file.
+. Locate the comment `--- DYNAMIC_PLUGINS_IMPORT_COMPONENTS ---`
+. Highlight the YAML section shown in the below screenshot, and uncomment those lines. Use `CMD + /` or `CTRL + /` to do so.
++
+image::m4/uncomment-dynamic-plugin.png[width=60%]
+. Don't commit the changes yet - you need to also enable auto-discovery.
+
+=== Enable Auto-Discovery
+. Locate the comment `--- AUTO_DISCOVERY_IMPORT_COMPONENTS ---` in the same `values.yaml` file.
+. Highlight the YAML as shown in the below screenshot, and uncomment those lines.
++
+image::m4/uncomment-auto-discovery.png[width=60%]
++
+NOTE: This YAML snippet enables auto-discovery for all files named _all-location.yaml_ (entityFilename) where the repo name starts with the word _all-location_ (projectPattern). 
+. Scroll down and enter a commit message `feat: Enable GitLab plugin and component auto discovery`.
+. Commit the file now using the *Commit Changes* button at the bottom of the page.
+
+. Refresh the https://openshift-gitops-server-openshift-gitops.{openshift_cluster_ingress_domain}[`backstage` Application, window="argo"] to rollout the new {product_name_rhdh} configuration - login as `admin` / `{openshift_gitops_password}`. Wait until the Application turns green and marked as Healthy. 
+
+
+== Onboard Parasol's System and Domain
+
+In a previous chapter you learned how https://backstage.io/docs/features/software-catalog/system-model#system[System,window="content"] and https://backstage.io/docs/features/software-catalog/system-model/#domain[Domain,window="content"] Entities help organize and provide a hierarchy of Components in {product_name_rhdh}. In this section you will setup Parasol's System and Domain.
+
+. From {product_name_rhdh}, navigate to https://backstage-backstage.{openshift_cluster_ingress_domain}/create[*Create* screen, window="rhdh"]; choose *Register Existing Component* button
+. Paste the below URL and click on *Analyze*
++
+[source,bash,role=execute,subs="attributes"]
+----
+https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/rhdh-entities/-/blob/main/locations.yaml
+----
+. Click *Import* in the Review section.
+. The Systems and Domain are setup. 
+
+[NOTE]
+====
+Systems are the basic level of encapsulation for related entities. Domains are useful to group a collection of Systems that share terminology, domain models, business purpose etc.
+====

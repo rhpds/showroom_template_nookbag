@@ -1,0 +1,105 @@
+:imagesdir: ../../assets/images
+
+
+== Introduction to Concepts and Module Overview
+
+include::../style.adoc[]
+
+Let's look at a few concepts relevant to using Software Templates to import existing applications. 
+
+=== Catalog Info: A Refresher
+
+You've already seen the magic of the `catalog-info.yaml` file. {product_name_rhdh} can identify and import components based on the presence of a `catalog-info.yaml` file in the repository. This file contains:
+
+* Helpful links
+* Ownership information
+* Instructions on where to find the TechDocs
+* Relationships between the Component and other Entities
+
+With the right plugins, configuration can be added to the `catalog-info.yaml` to show critical information in the Component view on {product_name_rhdh}:
+
+* CI Pipelines
+* CD Deployments (as you saw with OpenShift GitOps already!)
+* Git Merge/Pull Requests and Issues
+* Cluster Details
+* API Documentation
+
+=== What is Inner-Loop and Outer-Loop
+
+Application development and deployment cycles can be defined to have an Inner-Loop and an Outer-Loop.
+
+image:m4/inner-outer-loops.png[width=60%] 
+
+The *Inner Loop* is the iterative development cycle that developers follow when writing, testing, and debugging code _locally_ before integrating it into a shared environment. Developers primarily live within the inner loop. In many organizations, the inner loop typically takes place on a developer's computer. In this workshop the inner loop extends to an ephemeral (or preview) environment (namespace) on OpenShift that allows a developer to test their changes in a production-like environment.
+
+NOTE: An Ephemeral environment is meant to be a transient environment to be used to build specific features, and can be torn down once the feature development is complete
+
+The *Outer Loop*  begins when a developer pushes code to a version control system. It involves integration, validation, compliance and security checks, and deployment to target environments. Typically this is where Platform and DevOps Engineers operate.
+
+The two cycles operate independently, except when the developer pushes code to Git, which triggers the outer loop.
+
+=== An Opinionated Approach
+
+NOTE: Different organizations have different ways of achieving the inner and outer loops. This module is a highly opinionated approach to the inner and outer loops. The primary intent is to showcase the art of the possible with {product_name_rhdh}.
+
+To make the process of importing a large number of existing applications into {product_name_rhdh} scalable, the Platform Engineering (PE) team creates a *Software Template* that automates both the creation of the `catalog-info.yaml` file and a TechDocs skeleton structure for developers.
+
+The necessary Catalog Info and TechDocs could be stored in one of two locations for these existing applications:
+
+. The new files can be added to the same Git repository as the existing source-code.
+. Alternatively, a repository containing an Entity of `kind: Location`
+ can be created to store a collection of all of the `catalog-info.yaml` and TechDocs files. An Entity of `kind: Location` references other places to look for catalog data.
+
+*Parasol team's approach*
+
+The Parasol team chooses the second approach to avoid adding files to existing source code repositories. 
+
+* They create a dedicated repository called `all-location-parasol` containing a https://backstage.io/docs/features/software-catalog/descriptor-format/#kind-location[*Location*, window="content"] file. 
+* This `Location` entity serves as a central index, referencing all `catalog-info.yaml` files within the same repository. 
++
+``` yaml
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: all-location-parasol
+  description: A collection of Parasol components
+spec:
+  type: url
+  target: ./**/catalog-info.yaml
+```
+* Platform Engineers create Software Templates to import existing APIs, services and apps into {product_name_rhdh}
+* Developers can register their components by using these Software Templates. The template auto creates a `catalog-info.yaml` file and a skeleton TechDocs for each component. 
+ 
+{product_name_rhdh} can _auto-discover_ these *Location* files based on the file and repository names (e.g _all-location.yaml_ file in a folder which begins with the word _all-location_ ) across Git. You can also configure a  _schedule_ that defines how often you want it to run. For this workshop we have a super short frequency of 15 seconds. 
+
+But, it is good practice to limit auto-discovery to specific filenames and be judicious with the scheduling frequency to ensure you don't hit API rate limits with your Git hosting provider. Click https://backstage.io/docs/integrations/github/discovery/[here^, window="content"] to learn more about GitHub rate limits. 
+
+
+``` yaml
+all-location-entity:
+    filters:
+        branch: main
+    entityFilename: all-location.yaml
+    catalogPath: /**/all-location.yaml
+    projectPattern: \b(all-location\w*)
+    schedule:
+        frequency:
+            seconds: 15
+        initialDelay:
+            seconds: 15
+        timeout:
+            minutes: 3
+```
+
+
+
+=== An Overview of Parasol Application
+
+The Developer is asked to build new features into the existing Parasol application which consists of the following Components:
+
+* `parasol-web` online web-app (Node.js & Angular)
+* `parasol-store` core services (Quarkus)
+* `parasol-db` core database (PostgreSQL)
+* `parasol-api` (OpenAPI Spec)
+
+In the next sections of this module, we will shadow both the Platform Engineers and Developers as they navigate through onboarding existing applications and accelerate the inner-loop leading to increased developer productivity.

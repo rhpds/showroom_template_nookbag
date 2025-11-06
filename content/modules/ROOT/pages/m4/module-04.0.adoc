@@ -1,0 +1,20 @@
+:imagesdir: ../../assets/images
+
+= Module 4: Accelerate Developer Inner-Loop
+
+include::../style.adoc[]
+
+== Overview
+
+Organizations need to provide a pathway for teams to import their existing services, APIs and resources to {product_name_rhdh}. This module focuses on an opinionated way to onboard existing projects and applications so that developer teams can discover them through the internal developer portal. 
+
+Platform Engineering teams can create Software Templates that enable teams to import their apps into {product_name_rhdh}. The Software Template can gather details about the component's repository, documentation, dependencies, CI/CD, and various other details which allows development teams to accelerate their inner-loop of developing the assigned features and tasks.
+
+== Module Objectives
+
+* Platform Engineers create Software Templates and integrations that support importing existing software components from Git.
+* Developers use these Software Templates to import their existing software components and APIs. 
+* Developer is assigned the task of enhancing an existing application, and creates a Git feature branch.
+* Developer uses Software Templates to setup an _Ephemeral Development_ environment based on the feature branch.
+* Developer can rapidly develop and view actions performed right from {product_name_rhdh} thereby reducing cognitive load.
+* Once code is ready, the Developer issues a PR from the feature branch to the upstream project repository.

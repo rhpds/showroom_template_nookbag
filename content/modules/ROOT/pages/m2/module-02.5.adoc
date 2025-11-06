@@ -1,0 +1,86 @@
+:imagesdir: ../../assets/images
+
+:sso-link: https://sso.{openshift_cluster_ingress_domain}/admin/master/console/#/backstage
+
+== Activity: Configure OpenID Connect Authentication
+
+include::../style.adoc[]
+
+{product_name_rhdh} supports four authentication providers:
+
+* Guest (suitable for experimentation and demos only)
+* OpenID Connect
+* GitHub
+* Microsoft Azure
+
+In this activity you'll configure an OpenID Connect authentication provider - this will enable developers within your organization to login using their single sign-on (SSO) credentials.
+
+=== High-Level Workflow
+
+A complete set of documentation for configuring OpenID Connect authentication using https://access.redhat.com/products/red-hat-single-sign-on[Red Hat Single Sign-On^, window="content"] is available in the https://docs.redhat.com/en/documentation/red_hat_developer_hub/1.5/html/authentication_in_red_hat_developer_hub/assembly-authenticating-with-rhbk[{product_name_rhdh} documentation^, window="content"].
+
+NOTE: Don't worry if some of the following bullet points are hard to understand upon first reading them. You'll be guided through each piece step-by-step.
+
+The high-level steps involve:
+
+. Creating a Realm and Client in Red Hat Single Sign-On. These have been pre-configured for you. View the `backstage` Realm using the following URL and credentials:
+    * *URL*: {sso-link}[Backstage Realm on Red Hat Single Sign-On^, window=sso]
+    * *Credentials*: https://console-openshift-console.{openshift_cluster_ingress_domain}/k8s/ns/keycloak/secrets/keycloak-initial-admin[View on OpenShift, window="content"]. (If needed, login to OpenShift as `admin`/`{common_password}`)
+. Configuring the {product_name_rhdh} Keycloak plugin to synchronize users from Red Hat Single Sign-On to {product_name_rhdh}.
+. Configuring the `oidc` {product_name_rhdh} authentication provider with the Realm details.
+. Setting `oidc` as `signInPage` page type for {product_name_rhdh}.
+. Enabling session support in {product_name_rhdh}.
+
+=== Configure the OpenID Connect Authentication Provider
+
+. Visit your https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/developer-hub-config/[rhdh/developer-hub-config repository on GitLab, window="gitlab"].
+. Open the *values.yaml* file, then select *Edit > Edit single file*.
+. Locate the `appConfig.auth` object in the YAML. You can search for `--- AUTHENTICATION ---` in this file to locate this section.
+. Delete the existing `auth` configuration that contains the `guest` provider.
+. Uncomment the entire `auth` configuration containing the `oidc` provider, and the `signInPage` setting below it.
++
+image:m2/auth-section-original.png[appConfig.auth object in the YAML, width=80%]
+
+. The end result will look similar to:
++
+[source,yaml,subs=attributes+]
+----
+auth:
+  session:
+    secret: ${BACKEND_SECRET}
+  environment: production
+    providers:
+      oidc:
+        production:
+          prompt: auto
+          metadataUrl: https://sso.{openshift_cluster_ingress_domain}/realms/backstage/.well-known/openid-configuration
+          clientId: ${OAUTH_CLIENT_ID}
+          clientSecret: ${OAUTH_CLIENT_SECRET}
+          signIn:
+            resolvers:
+              - resolver: preferredUsernameMatchingUserEntityName
+signInPage: oidc
+----
+
+. This is an example standard Backstage `auth` configuration. Below is a summary of what this configuration specifies:
+* Enable sessions, and use the `BACKEND_SECRET` environment variable to sign sessions.
+* Set the authentication `environment` to `production`. Environments can have any arbitrary name.
+* Enable the OpenID Connect provider (`providers.oidc`) with the following configuration:
+** Provide a `production` configuration (corresponding to the `environment` defined previously).
+** Use the `backstage` Realm (`metadataUrl`).
+** Load the `clientId` and `clientSecret` from environment variables (loaded from the precreated https://console-openshift-console.{openshift_cluster_ingress_domain}/k8s/ns/backstage/secrets/oauth-client[*oauth-client*] Secret, specified in `extraEnvVarsSecrets` in the _values.yaml_)
+** Map any signing in user identity to a User Entity in {product_name_rhdh} using the specified https://backstage.io/docs/auth/identity-resolver/[resolver^, window="console"]. These Users and Groups have already been synchronised to the catalog due to your work in the prior module.
+* The `signInPage` property is specific to {product_name_rhdh}. It ensures the correct sign-in UI is rendered. In upstream Backstage this requires React code changes.
+
+. Commit the changes with a message similar to `feat: enable openid connect`
+. Click Refresh on the https://openshift-gitops-server-openshift-gitops.{openshift_cluster_ingress_domain}/applications[`backstage` Application in OpenShift GitOps^, window="argo"]. If prompted, login as `admin/{openshift_gitops_password}`.
+. Wait until the Application reports being in a *Healthy* state.
+
+=== Login using OpenID Connect Authentication
+
+. Once the latest version of your `appConfig` has been synchronized and rolled out, visit your https://backstage-backstage.{openshift_cluster_ingress_domain}/[{product_name_rhdh} instance^, window="rhdh"]. You will be prompted to sign-in using OpenID Connect.
++
+image:m2/rhdh-oidc-login.png[OIDC Sign-In Prompt]
+. Login using the username `pe1` and password `{common_password}` in the popup that appears. After logging in, visit the *Settings* page in {product_name_rhdh} to confirm you're logged in as the `pe1` user.
++
+image:m2/rhdh-pe1-user.png[Viewing the user details on the Settings UI in {product_name_rhdh}]

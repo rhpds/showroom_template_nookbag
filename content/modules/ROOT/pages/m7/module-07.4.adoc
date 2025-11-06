@@ -1,0 +1,263 @@
+:imagesdir: ../../assets/images
+
+include::../style.adoc[]
+
+== Platform Engineer Activity: Enable The Orchestrator Plugin and Developer Self-Service
+
+Until now we have discussed Software Templates as a means for developers to accelerate their daily inner-loop activities. But Software Templates can do a lot more, like allowing developers to provision and deploy infrastructural components (like virtual machines and even complete OpenShift clusters) and application middleware components like message brokers and databases. 
+
+Software templates can achieve this through custom plugins that interact with tools like Ansible and OpenShift API servers. 
+
+
+But, in real life, these developer self-service requests might require more than what a Software Template can provide. For example, for certain activities an approval step might be required. This is where the Orchestrator plugin comes in. 
+
+The Orchestrator plugin acts as an interface between {product_name_rhdh} and Serverless Workflow. Serverless Workflow is a cloud-native workflow engine which allows to design, deploy and execute arbitrarily complex workflows which can integrate with external systems through several mechanisms.
+
+The Orchestrator plugin is also integrated with the Notifications plugin, which allows users or groups to be notified of milestones in the workflow execution.
+
+This is a high level architectural overview of the Orchestrator:
+
+image:m7/orchestrator-architecture-container-diagram.jpg[]
+
+As a use case for Developer Self-Service we are going to look at a pretty simple use case: a Developer can request a namespace on an OpenShift cluster. The namespace has limited resources, defined by resource quota and limit ranges. In our case, the namespaces come in two sizes, small and large. Large namespaces however require an approval. 
+
+IMPORTANT: Please make sure to log in as a *Platform Engineer* with `pe1` / `{common_password}`. Refer to the below guide for assistance.
+
+.Click to learn how to login as a Platform Engineer
+[%collapsible]
+====
+include::../login-pe.adoc[]
+====
+
+=== Configure the Orchestrator Plugin
+
+. Visit your https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/developer-hub-config/[rhdh/developer-hub-config repository on GitLab, window="gitlab"].
+. Open the `values.yaml` file, then select *Edit > Edit single file*.
+. Uncomment the `--- ORCHESTRATOR PLUGIN ---` section in the `dynamic.plugins` section of the YAML, to enable the Orchestrator and Notification dynamic plugins.
++
+[NOTE]
+====
+To uncomment multiple lines of code, highlight the lines and press `CMD + /` (on macOS) or `CTRL + /` (on Linux/Windows).
+====
++
+image:m7/orchestrator-plugin.png[Orchestrator and Notification dynamic plugins, width=60%]
++
+Note that the orchestrator plugin is not yet bundled with Red Hat Developer Hub, and needs to be referenced as an external package `@redhat/backstage-plugin-orchestrator-backend-dynamic@1.4.0`, which will be downloaded from the configured npm registry.
+. Look for the YAML between the `--- ORCHESTRATOR PLUGIN ---` block further down in the file and uncomment it.
++
+image:m7/orchestrator-plugin-configuration.png[Orchestrator configuration, width=60%]
++
+This section contains configuration for the orchestrator plugin.
+. Commit your changes with the message `feat: enable orchestrator plugin`.
+. Click the *Refresh* button on the https://openshift-gitops-server-openshift-gitops.{openshift_cluster_ingress_domain}/applications[`backstage` Application in OpenShift GitOps^, window="argo"].
+
+=== Verify that the Orchestrator and Notification plugins are enabled
+
+. After a few moments your new {product_name_rhdh} configuration will finish rolling out. Visit your https://backstage-backstage.{openshift_cluster_ingress_domain}/[instance of {product_name_rhdh}^, window="rhdh"] and view the Home page. Note two new menu items in the left-hand side menu, *Orchestrator* and *Notifications*.
++
+image:m7/orchestrator-notification-menu.png[Orchestrator and Notification in RHDH, width=60%]
+. Select *Orchestrator* from the left-hand side menu.
++
+image:m7/workflow-orchestrator-overview.png[Workflow Orchestrator overview]
++
+This page shows the list of workflows that are available to the {product_name_rhdh} users. As expected, the list is empty because no workflows have been deployed yet. You will do so later in this chapter.
+. Select *Notifications* from the side menu.
++
+image:m7/notifications-overview.png[Notifications overview]
++
+This page shows the notifications for the logged in user. As expected, the list is empty, as no notifications have been emitted yet.
+
+=== Import Software templates for Developer Self Service.
+
+To illustrate the possibilities of the Orchestrator plugin, let's imagine the following use case: a developer requests a namespace in an OpenShift cluster. Namespaces are limited with resource quota and limits. They come in two sizes, small and large, where the large namespace enables more resources. The large namespace requires approval. +
+The workflow instance that will be deployed later in the lab launches a software template, eventually after approval, to create a namespace for the user. +
+So before deploying the workflow itself, we need to import the software templates to create the namespace.
+
+The Software Templates for Developer Self Service are referenced in the _location.yaml_ file in the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/template-developer-self-service[rhdh/template-developer-self-service, window="gitlab"] repository in GitLab.
+
+Register this template using the {product_name_rhdh} UI:
+
+. Login to your https://backstage-backstage.{openshift_cluster_ingress_domain}/[instance of {product_name_rhdh}^, window="rhdh"] as the `pe1` user with password `{common_password}`.
+. Select the image:common/plus-icon.png[width=15px] icon on the top navigation bar to access the *Self-service* menu.
++
+image:m3/create-icon.png[] 
+. Click the *Register Existing Component* button.
+. Enter the following URL in the *Select URL* field and click *Analyze*:
++
+[source,bash,role=execute,subs=attributes+]
+----
+https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/template-developer-self-service/-/blob/main/location.yaml?ref_type=heads
+----
+. You'll be asked to review the entities being imported, as shown:
++
+image:m7/rhdh-register-template.png[Registering Software Templates]
++
+Three Software Templates will be imported: `namespace-small`,`namespace-large` and `postgres-15-template`. The first two create a small or large namespace, the last one deploys a PostgreSQL instance in a namespace created by the namespace templates.
+
+. Click *Import* when prompted.
+
+. Select the image:common/plus-icon.png[width=15px] icon on the top navigation barto see the new templates.
++
+image:m7/rhdh-developer-self-service-templates.png[Developer Self Service Software Templates]
+
+The Software Templates to create namespaces are not meant to be used directly, but rather through an Orchestrator Workflow. So while they are visible (and usable) to members of the Platform Engineering group, they are not accessible for developers.
+
+To demonstrate this:
+
+. Logout from your *pe1* user, and log back in as a developer with `dev1` / `{common_password}`. 
+. Select the image:common/plus-icon.png[width=15px] icon on the top navigation bar.
+. Note that the `OpenShift Namespace Large Size` and the `OpenShift Namespace Small Size` Software Templates do not appear in the Software Template screen.
++
+image:m7/rhdh-developer-self-service-templates-dev.png[Developer Self Service Software Templates]
+
+This is accomplished by applying conditional RBAC rules.
+
+The `OpenShift Namespace Large Size` and the `OpenShift Namespace Small Size` Software Templates are annotated with the `backstage.io/managed-by: orchestrator` annotation, as can be seen in the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/template-developer-self-service/-/blob/main/namespace/template-large.yaml?ref_type=heads[Template file in GitLab, window="gitlab"] file.
+
+image:m7/template-large-namespace-annotation.png[Template Namespace Large Annotation]
+
+The `rbac-conditional-policies.yaml` file in the https://console-openshift-console.{openshift_cluster_ingress_domain}/k8s/ns/backstage/configmaps/rbac-policy[Configmap with RBAC rules^, window="console"] (if needed, login with `admin/{common_password}`) contains the following conditional rule:
+
+----
+conditions:
+  not:
+    params:
+      annotation: backstage.io/managed-by
+      value: orchestrator
+    resourceType: catalog-entity
+    rule: HAS_ANNOTATION
+permissionMapping:
+- read
+pluginId: catalog
+resourceType: catalog-entity
+result: CONDITIONAL
+roleEntityRef: role:default/location_read_developer
+----
+
+This rule states that users with the role `default/location_read_developer` can see all catalog entities, except those with an annotation `backstage.io/managed-by` and value `orchestrator`. The `developers` group (to which the `dev1` user belongs) has the role `default/location_read_developer` as can be seen in the `rbac-policy.csv` file in the Configmap.
+
+=== Deploy the Serverless Workflow
+
+A Serverless Worflow is deployed through a `SonataFlow` Custom Resource. As with the other deployments in this workshop, we use GitOps and ArgoCD to deploy the Serverless Workflow.
+
+. Open the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/orchestrator-workflows/-/blob/main/manifests/create-ocp-namespace-swt/application.yaml?ref_type=heads[ArgoCD Application manifest in GitLab^, window="gitlab"]
+. Click on the *Copy file contents* button on the top right menu.
++
+image:m7/gitlab-copy-file-contents.png[GitLab Copy File Contents]
+. Visit the https://console-openshift-console.{openshift_cluster_ingress_domain}[OpenShift console^, window="console"] in your OpenShift cluster. If needed, login as `admin/{common_password}`
+. Click the *import* button on the top right menu
++
+image:m7/openshift-console-import.png[OpenShift Console Import]
+. Paste the ArgoCD manifest in the editor. Click the *Create* button.
++
+image:m7/openshift-console-import-create.png[OpenShift Console Import Create]
+. Verify in the https://console-openshift-console.{openshift_cluster_ingress_domain}/k8s/ns/orchestrator/core%7Ev1%7EPod[Orchestrator namespace in OpenShift^, window="console"] that a pod is created for the Serverless Workflow instance. The pod name starts with `create-ocp-namespace-swt`.
++
+image:m7/openshift-console-orchestrator-namespace.png[OpenShift Pods in orchestrator namespace]
+. Visit your https://backstage-backstage.{openshift_cluster_ingress_domain}/[instance of {product_name_rhdh}^, window="rhdh"]. Ensure you're logged in as a Platform Engineer.
++
+.Click to see how
+[%collapsible]
+====
+* Navigate to {product_name_rhdh}'s https://backstage-backstage.{openshift_cluster_ingress_domain}/settings[Settings, window="rhdh"] screen and check the logged-in user's name under the Profile section. 
+* If you are not logged in as a Platform Engineer (`pe` user), Click on Sign Out.
+* Log in as `pe1` / `{common_password}`.
++
+image:m3/pe-signout.png[width=70%]
+====
+. Select the *Orchestrator* item in the left-hand menu.
+. Notice that the `Create OpenShift Namespace` Workflow is available.
++
+image:m7/orchestrator-workflow-deployed.png[]
+
+=== Developer Activity: Execute the Serverless Workflow
+
+Log out of {product_name_rhdh} and log in again as a *Developer* with `dev1` / `{common_password}`.
+
+.Click to learn how to login as a Developer
+[%collapsible]
+====
+include::../login-developer.adoc[]
+====
+
+. Select the *Orchestrator* item in the left-hand menu.
+. Click on the *Create OpenShift Namespace* workflow.
++
+image:m7/orchestrator-select-workflow.png[]
+. Expect to see the workflow definition and a graphical representation of the workflow.
++
+image:m7/orchestrator-workflow-overview.png[]
++
+The workflow itself is pretty simple: if the user requests a small namespace to be created, the workflow launches the relevant software template (no approval required). It checks the state of the software template execution and notifies the user of success or failure.
++
+If a large namespace is requested, the request needs to be approved. For simplicity reasons, we use issues in a GitLab repo as a ticketing system (in real life that would probably be ServiceNow or Jira or an equivalent system). If the request is approved, the software template is executed and the user notified. If the request is denied, the user is notified as well, but no namespace is created.
+. Click on the *Run* button at the top right of the screen to start an instance of the workflow.
++
+image:m7/orchestrator-workflow-run.png[]
+. You are presented with a form to enter the details of your request. Let's start with a request for a small namespace. Fill in the form as follows:
+.. *Namespace name*: `dev1-small-1`
+.. *Requester*: `dev1`
+.. *Size*: `small`
+.. *Reason*: you can leave this blank
+.. *Recipients*: `user:default/dev1`
++
+image:m7/orchestrator-workflow-form.png[]
+. Click on *Next*. Expect to see an overview of your request.
+. Click on *Run* to start the workflow execution.
++
+image:m7/orchestrator-workflow-run-2.png[]
+. After a few seconds the status of the workflow moves to *Run completed*.
++
+image:m7/orchestrator-workflow-run-completed.png[]
+. Select the *Notifications* item in the left-hand menu.
+. Notice a notification that the namespace `dev1-small-1` has been created.
++
+image:m7/notification-1.png[]
+. If you click on the notification link, you will see the component that was created as a result of the execution of the software template.
++
+image:m7/component-namespace-1.png[]
+. Visit the https://console-openshift-console.{openshift_cluster_ingress_domain}/k8s/cluster/projects/dev1-small-1[Namespace in the OpenShift console^, window="console"] in your OpenShift cluster. If needed, login as `admin/{common_password}`. Click on *Administration/ResourceQuotas* and *Administration/LimitRanges* on the left-hand side menu to see the resource quota and limit ranges defined as part of the creation of the namespace.
+. Return to the tab of {product_name_rhdh} to run another instance of the workflow, this time for a large namespace request.
+. Select the *Orchestrator* item in the left-hand menu.
+. Click the *Run* icon on the left of the workflow name.
++
+image:m7/orchestrator-workflow-run-3.png[]
+. Fill in the form as follows:
+.. *Namespace name*: `dev1-large-1`
+.. *Requester*: `dev1`
+.. *Size*: `large`
+.. *Reason*: `I need this for my project`
+.. *Recipients*: `user:default/dev1`
+. Click on *Next* and *Run* to start the workflow.
+. Select the *Notifications* item in the left-hand menu. After a couple of seconds you will see a notification that an issue has been created in GitLab.
+. Click on the link of the notification. This opens the issue in GitLab.
++
+image:m7/gitlab-issue-1.png[]
+. GitLab is not a ticketing system. To mimic the behaviour of a ticketing system, we use labels on the issue to mark the request as approved or denied.
++
+.. Make sure you are logged in into GitLab as `pe1` / `{common_password}`.
+.. Click on the *Edit* button next to *Labels* on the right.
++
+image:m7/gitlab-issue-2.png[]
+.. Select the *Approved* label.
++
+image:m7/gitlab-issue-3.png[]
+.. To actually add the label, you need to click on a different area of the page, outside of the *Labels* area.
++
+image:m7/gitlab-issue-4.png[]
+. Return to the tab of {product_name_rhdh}. After a while you should see a notification that the namespace `dev1-large-1` has been created.
++
+image:m7/notification-2.png[]
++
+The workflow instance checks the status of GitLab issue at a regular interval (every 60 sec. in this case). When the workflow detects the *Approved* label on the issue, it proceeds to create the namespace and closes the ticket afterwards.
+. You can check the https://console-openshift-console.{openshift_cluster_ingress_domain}/k8s/cluster/projects/dev1-large-1[Namespace in the OpenShift console^, window="console"] in your OpenShift cluster.
++
+Also notice that the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/rhdh-issues/-/issues/1[Issue in GitLab^, window="gitlab"] has been closed by the workflow.
++
+image:m7/gitlab-issue-5.png[]
+. Feel free to create another request for a large namespace, but this time label the issue as *Denied*. In this case, you should see a notification in 
+{product_name_rhdh} that the request was denied, and there should be no namespace created in OpenShift.
+
+=== Conclusion
+
+In this module you learnt how the {product_name_rhdh} Orchestrator plugin, in combination with Serverless Workflow on OpenShift enables more complex workflows that go beyond what Software Templates can do. The possibilities are endless, and in this module we illustrated these possibilities with a relatively simple example that involves approval and notification as part of a developer self-service experience.
