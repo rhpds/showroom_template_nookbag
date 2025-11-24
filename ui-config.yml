@@ -8,7 +8,7 @@ persist_url_state: true
 
 tabs:
   - name: OCP Console
-    url: 'https://console-openshift-console.apps.{{ openshift_cluster_ingress_domain }}'
+    url: 'https://console-openshift-console.apps.cluster-2l75c.dynamic.redhatworkshops.io'
   - name: Bastion
     path: /wetty
     port: 443
