@@ -21,12 +21,12 @@ tabs:
   #   port: 443
 
   # Vertical split terminals
-  # - name: Bastion
-  #   path: /wetty
-  #   port: 443
-  #   secondary_name: Bastion
-  #   secondary_path: /wetty
-  #   secondary_port: 443
+  - name: Bastion
+    path: /wetty
+    port: 443
+    secondary_name: Worker
+    secondary_path: /terminal2
+    secondary_port: 443
 
   # External page
   - name: Llamastack Docs
