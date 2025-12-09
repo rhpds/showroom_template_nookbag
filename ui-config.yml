@@ -17,7 +17,7 @@ tabs:
   #   port: 443
 
   # Vertical split terminals
-  - name: Terminal
+  - name: Terminal ${USER}
     path: /terminal/
     port: 443
     secondary_name: Terminal
