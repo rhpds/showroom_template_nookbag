@@ -41,3 +41,48 @@ CONTAINER ID  IMAGE                        COMMAND           CREATED      STATUS
 
 The terminal window to your right is *already* logged into the lab environment as the `{ssh_user}` user via `ssh`.
 All steps of this lab are to be completed as the `{ssh_user}` user.
+
+== Extensions
+
+The `mermaid` extension is available in this environment. This allows you to create diagrams and visualizations using text and code.
+
+Include the extension in your `site.yml` or `default-site.yml` file:
+
+[source,yaml]
+----
+antora:
+  extensions:
+    - require: '@sntke/antora-mermaid-extension' # <1>
+      mermaid_library_url: https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs # <2>
+      script_stem: header-scripts # <3>
+      mermaid_initialize_options: # <4>
+        start_on_load: true
+----
+
+Here is an example of Mermaid code:
+
+[source,mermaid]
+----
+sequenceDiagram
+autonumber
+
+participant a as Alice
+participant b as Bob
+
+a ->>+ b : Hello.
+b -->>- a : Hi, there.
+----
+
+And here is the rendered diagram:
+
+[mermaid]
+....
+sequenceDiagram
+autonumber
+
+participant a as Alice
+participant b as Bob
+
+a ->>+ b : Hello.
+b -->>- a : Hi, there.
+....
