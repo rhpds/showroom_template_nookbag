@@ -21,7 +21,24 @@ Guide you through creating a single Red Hat Showroom workshop module from refere
 
 **First, I'll ask**:
 - Is this the first module of a new lab, or continuing an existing lab?
-- If continuing: Provide path to previous module (I'll auto-detect the story)
+
+**If continuing existing lab**:
+- Option 1: Provide path to previous module (I'll read and auto-detect story)
+- Option 2: If previous module not available, I'll ask for story recap:
+  - Company name and scenario
+  - What was completed in previous modules
+  - Current learning state
+  - What comes next in progression
+
+**Fallback behavior**:
+- If user says "continuing" but cannot provide previous module content or workspace access:
+  - Ask user to paste content of last module (or key sections)
+  - OR ask short "Story Recap" questions:
+    1. Company/scenario name?
+    2. What topics were covered in previous modules?
+    3. What skills have learners gained so far?
+    4. What's the current state in the story?
+  - This prevents broken continuity
 
 ### Step 2: Plan Overall Lab Story (if first module)
 
@@ -47,6 +64,16 @@ If this is the first module, I'll gather the big picture:
 5. **Estimated duration**:
    - How long should the complete lab take? (30min, 1hr, 2hr, etc.)
 
+6. **Version and environment scope** (REQUIRED):
+   - OpenShift version? (e.g., 4.14, 4.15, 4.16)
+   - Product versions? (e.g., OpenShift Pipelines 1.12, OpenShift AI 2.8)
+   - Cluster type? (AgnosticV catalog, RHDP, local, etc.)
+   - Access level? (admin, developer/non-admin)
+   - If not provided:
+     - Use attribute placeholders: `{ocp_version}`, `{pipelines_version}`
+     - Avoid version-specific CLI/UI steps
+     - Note in module: "Tested on OpenShift {ocp_version}"
+
 **Then I'll recommend**:
 - Suggested module breakdown (how many modules, what each covers)
 - Progressive learning flow (foundational → intermediate → advanced)
@@ -62,10 +89,12 @@ If this is the first module, I'll gather the big picture:
 
 Now for this specific module:
 
-1. **Module file name**:
-   - Module file name (e.g., "03-module-01.adoc", "04-pipelines-setup.adoc")
-   - Files go directly in `content/modules/ROOT/pages/`
-   - Pattern: `[number]-[topic-name].adoc`
+1. **Module file name and numbering**:
+   - **Naming convention**: `module-0X-<slug>.adoc` (e.g., `module-01-pipelines-intro.adoc`)
+   - **Title convention**: `= Module X: <Title>` (e.g., `= Module 1: Pipeline Fundamentals`)
+   - Files go in `content/modules/ROOT/pages/`
+   - **Conflict detection**: If file exists, suggest next available number
+   - **Warning**: Don't overwrite existing modules without confirmation
 
 2. **AgnosticV catalog item** (optional but recommended):
    - Is this based on an AgnosticV catalog item?
@@ -143,18 +172,64 @@ If you provided an AgnosticV catalog item, I'll:
 
 **Result**: I'll use these as Showroom variables in the generated module.
 
+**Formalize Attribute Extraction**:
+- Create or update: `content/modules/ROOT/partials/_attributes.adoc`
+- Standard attributes to extract/define:
+  ```asciidoc
+  :console_url: {openshift_console_url}
+  :api_url: {openshift_api_url}
+  :user: {user_name}
+  :password: {user_password}
+  :namespace: {project_namespace}
+  :admin_user: {cluster_admin_user}
+  :bastion_host: {bastion_public_hostname}
+  :git_repo: {git_repository_url}
+  :registry_url: {container_registry_url}
+  :ocp_version: {openshift_version}
+  ```
+- If value unknown, keep as `{attribute}` and list in "Attributes Needed"
+- Include attributes file in module:
+  ```asciidoc
+  include::partial$_attributes.adoc[]
+  ```
+
 ### Step 5: Handle Diagrams, Screenshots, and Code Blocks (if provided)
 
 If you provided visual assets or code:
 
-**For images (diagrams, screenshots)**:
-- If you provide file paths: Copy them to `content/modules/ROOT/assets/images/`
-- If you provide image URLs: Note them for download
-- Generate descriptive filenames: `<topic>-<step>.png` (e.g., `pipeline-execution-1.png`)
-- Create AsciiDoc references:
+**For images (diagrams, screenshots)** - STRICT RULES:
+
+**Path convention** (ENFORCED):
+- All images go under: `content/modules/ROOT/images/<module-slug>/`
+- Example: `content/modules/ROOT/images/pipelines-intro/pipeline-execution-1.png`
+- NOT in `assets/images/` - use `images/` directly
+
+**Required for every image**:
+1. **Meaningful alt text** (for accessibility)
+2. **Width guidance** (500-800px typical)
+3. **Descriptive filename** (no generic names like "image1.png")
+
+**AsciiDoc syntax** (REQUIRED):
+```asciidoc
+image::pipelines-intro/pipeline-execution-1.png[Tekton pipeline showing three tasks executing in sequence,width=700,title="Pipeline Execution in Progress"]
+```
+
+**Placeholders**:
+- If real image doesn't exist yet: Insert placeholder and add to "Assets Needed" list
+- Example placeholder:
   ```asciidoc
-  image::pipeline-execution-1.png[align="center",width=700,title="Pipeline Execution in Progress"]
+  // TODO: Add screenshot
+  image::pipelines-intro/create-task-screenshot.png[OpenShift console showing task creation form,width=600,title="Creating a Tekton Task"]
   ```
+
+**Assets Needed list**:
+At end of module, include:
+```asciidoc
+== Assets Needed
+
+. `pipeline-execution-1.png` - Screenshot of pipeline running in OpenShift console
+. `task-definition.png` - YAML editor showing task definition
+```
 
 **For code blocks**:
 - If you provide code snippets: Format them in AsciiDoc
@@ -188,6 +263,25 @@ Based on your references, I'll:
 - Combine with AgnosticV variables (if provided)
 - Integrate provided code blocks and diagrams
 
+**Reference Enforcement**:
+- Every non-trivial claim must be backed by provided references
+- If not backed by reference, mark clearly: `**Reference needed**: <claim>`
+- Track which reference supports which section
+- If references conflict:
+  - Call out the conflict
+  - Choose based on version relevance
+  - Note the decision in module
+
+**References Used Section**:
+- Add at end of each module: "## References"
+- List all references used with purpose:
+  ```asciidoc
+  == References
+
+  * link:https://docs.openshift.com/...[OpenShift Pipelines documentation] - Pipeline syntax and examples
+  * link:https://tekton.dev/...[Tekton documentation] - Task definitions
+  ```
+
 ### Step 7: Read Templates
 
 I'll always read these before generating:
@@ -199,14 +293,73 @@ I'll always read these before generating:
 
 I'll create a complete module with:
 
-**Structure**:
+**Required Structure**:
 - Learning objectives (3-4 items)
 - Business introduction with scenario
 - 2-3 progressive exercises
 - Step-by-step instructions with commands
-- Verification steps
+- **Verification checkpoints** (REQUIRED - see below)
 - Image placeholders
+- **Troubleshooting section** (REQUIRED - see below)
 - Module summary
+- **References section** (REQUIRED)
+
+**Mandatory: Verification Checkpoints**:
+Each major step must include:
+```asciidoc
+=== Verify
+
+Run the following to confirm success:
+
+[source,bash]
+----
+oc get pods
+----
+
+Expected output:
+----
+NAME                     READY   STATUS    RESTARTS   AGE
+my-app-xxxxx-xxxxx      1/1     Running   0          2m
+----
+
+✓ Pod status is "Running"
+✓ READY shows 1/1
+```
+
+**Mandatory: Troubleshooting Section**:
+Every module must include:
+```asciidoc
+== Troubleshooting
+
+**Issue**: Pod stuck in "ImagePullBackOff"
+**Solution**:
+. Check image name: `oc describe pod <pod-name>`
+. Verify registry credentials
+. Common fix: `oc set image-lookup <deployment>`
+
+**Issue**: Permission denied errors
+**Solution**:
+. Verify you're in correct project: `oc project`
+. Check RBAC: `oc whoami` and `oc auth can-i create pods`
+
+**Issue**: Command not found
+**Solution**:
+. Verify OpenShift CLI installed: `oc version`
+. Expected version: {ocp_version}
+```
+
+**Optional but Recommended: Cleanup**:
+If module changes shared state:
+```asciidoc
+== Cleanup (Optional)
+
+To reset your environment:
+
+[source,bash]
+----
+oc delete project my-project
+----
+```
 
 **Quality**:
 - Valid AsciiDoc syntax
@@ -215,22 +368,71 @@ I'll create a complete module with:
 - Second-person narrative
 - Code blocks with syntax highlighting
 
-### Step 9: Validate
+### Step 9: Validate and Quality Gates
 
-I'll automatically run:
+**Agent Validation**:
 - **workshop-reviewer** agent: Validates structure and pedagogy
 - **style-enforcer** agent: Applies Red Hat style standards
 
+**Quality Gates** (run even if agents unavailable):
+
+1. **AsciiDoc Sanity Checks**:
+   - ✓ All code blocks have proper syntax: `[source,bash]`
+   - ✓ No broken includes
+   - ✓ All attributes are defined or listed in "Attributes Needed"
+   - ✓ Image paths follow convention
+   - ✓ No unclosed blocks
+
+2. **Navigation Check**:
+   - ✓ nav.adoc contains the new module
+   - ✓ Module numbering is sequential
+   - ✓ All xrefs are valid
+
+3. **Instruction Clarity Checks**:
+   - ✓ Each step has a clear reason ("why this matters")
+   - ✓ Commands are copy/pasteable (no placeholders in commands without explanation)
+   - ✓ Expected output shown for verification steps
+   - ✓ Verification checkpoints present for each major step
+   - ✓ Troubleshooting section covers top 3 failure modes
+
+4. **Module Sizing Check**:
+   - ✓ Module targets 20-40 minutes (based on exercise count and complexity)
+   - ✓ Module has 1-2 major outcomes, not 5
+   - ✓ If module is too large (>50 min estimated), flag for split
+   - ✓ Each module builds one clear capability
+
+**If quality gates fail**:
+- List specific issues
+- Suggest fixes
+- Allow user to proceed anyway or regenerate
+
 ### Step 10: Update Navigation (REQUIRED)
 
-I'll automatically add the module to `content/modules/ROOT/nav.adoc` - this is REQUIRED for the module to appear in the Showroom sidebar.
+I'll automatically update `content/modules/ROOT/nav.adoc` - this is REQUIRED for the module to appear in the Showroom sidebar.
+
+**Navigation Rules**:
+1. **Read existing nav.adoc first** - don't overwrite existing entries
+2. **Keep index.adoc at top** if it exists
+3. **Maintain sequential ordering** of modules
+4. **Add new module in correct position** based on module number
 
 **What I'll add**:
 ```asciidoc
-* xref:<module-file>[<Module Number>. <Module Title>]
-** xref:<module-file>#exercise-1[Exercise 1: <Title>]
-** xref:<module-file>#exercise-2[Exercise 2: <Title>]
+* xref:index.adoc[Home]
+
+* xref:module-01-intro.adoc[Module 1: Introduction]
+** xref:module-01-intro.adoc#exercise-1[Exercise 1: Setup]
+** xref:module-01-intro.adoc#exercise-2[Exercise 2: First Pipeline]
+
+* xref:module-02-advanced.adoc[Module 2: Advanced Topics]  ← NEW MODULE
+** xref:module-02-advanced.adoc#exercise-1[Exercise 1: Git Integration]
+** xref:module-02-advanced.adoc#exercise-2[Exercise 2: Triggers]
 ```
+
+**Conflict handling**:
+- If module number conflicts with existing file, warn user
+- Suggest next available number
+- Do NOT overwrite without confirmation
 
 **Note**: Without this nav.adoc entry, your module won't be accessible in Showroom!
 

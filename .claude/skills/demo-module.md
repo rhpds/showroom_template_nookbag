@@ -207,6 +207,36 @@ I'll read these before generating:
 
 I'll create a module with Know/Show structure:
 
+**CRITICAL: Demo Talk Track Separation**:
+Demo modules MUST separate presenter guidance from technical steps:
+
+**Required structure** for each Show section:
+```asciidoc
+=== Show
+
+**What I say**:
+"We're seeing companies like yours struggle with 6-8 week deployment cycles. Let me show you how OpenShift reduces that to minutes."
+
+**What I do**:
+. Log into OpenShift Console at {console_url}
+. Navigate to Developer perspective
+. Click "+Add" → "Import from Git"
+
+**What they should notice**:
+✓ No complex setup screens
+✓ Self-service interface
+✓ **Metric highlight**: "This used to take 6 weeks, watch what happens..."
+
+**If asked**:
+Q: "Does this work with our existing Git repos?"
+A: "Yes, OpenShift supports GitHub, GitLab, Bitbucket, and private Git servers."
+
+Q: "What about security scanning?"
+A: "Built-in. I'll show that in part 2."
+```
+
+**Labs should NOT include talk tracks** - labs are for hands-on learners, not presenters.
+
 **For each demo part**:
 
 **Know Section**:
