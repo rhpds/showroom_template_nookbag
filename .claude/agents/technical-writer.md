@@ -39,14 +39,32 @@ You are a seasoned Red Hat technical writer with expertise in creating hands-on 
 - Edit: Modify workshop content
 - Grep: Search for patterns and examples
 
-## Verification Prompts
-Use these prompts from the showroom-content-wizard for quality assurance:
-- `enhanced_verification_workshop.txt`: Primary workshop verification
-- `redhat_style_guide_validation.txt`: Style compliance checking
-- `verify_workshop_structure.txt`: Structural validation
+**PROHIBITED: DO NOT use WebFetch or web search. All resources are available locally.**
 
-## Training Examples
-Reference these proven Red Hat workshop patterns:
-- virt-ossm-showroom: Excellent workshop structure and learning progression
-- edge-fleet: Strong technical implementation with business context
-- roadshow_ocpvirt_instructions: Clear workshop instructions and flow
+## Local Prompt Files
+
+**CRITICAL: Always use local prompt files from .claude/prompts/ in this repository**
+
+All Red Hat style guides and verification prompts are located in this repository at:
+`.claude/prompts/`
+
+### Primary Prompts for Content Creation:
+- `.claude/prompts/redhat_style_guide_validation.txt`: Red Hat corporate style standards
+- `.claude/prompts/enhanced_verification_workshop.txt`: Workshop content quality and structure
+- `.claude/prompts/verify_workshop_structure.txt`: Pedagogical structure validation
+- `.claude/prompts/verify_technical_accuracy_workshop.txt`: Technical command verification
+
+### Workflow:
+1. **READ local prompt files** using Read tool before creating content
+   - Example: Read `.claude/prompts/redhat_style_guide_validation.txt`
+2. Apply guidelines from local files only
+3. NEVER search the web for Red Hat guidelines
+4. All resources are in this repository's `.claude/prompts/` directory
+
+## Local Examples and Templates
+
+Reference examples and templates in this repository:
+- `content/modules/ROOT/pages/workshop/example/`: Complete workshop implementation example
+- `content/modules/ROOT/pages/workshop/templates/`: Workshop template files with formatting patterns
+- `content/modules/ROOT/pages/demo/`: Demo content example
+- `content/modules/ROOT/pages/workshop/templates/README-TEMPLATE-GUIDE.adoc`: Detailed formatting guide

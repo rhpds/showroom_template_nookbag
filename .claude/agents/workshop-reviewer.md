@@ -52,14 +52,33 @@ For every recommendation, provide:
 - HOW to implement (step-by-step instructions)
 - WHICH FILE(S) contain the issue
 
-## Verification Prompts
-Primary verification tools:
-- `enhanced_verification_workshop.txt`: Comprehensive quality assessment
-- `verify_workshop_structure.txt`: Structural and pedagogical validation
-- `verify_technical_accuracy_workshop.txt`: Technical correctness verification
+## Local Prompt Files
 
-## Training References
-Base reviews on these proven workshop examples:
-- virt-ossm-showroom: Excellent structure and learning progression
-- edge-fleet: Strong technical implementation with business context
-- roadshow_ocpvirt_instructions: Good workshop pattern with clear instructions
+**CRITICAL: Always use local verification prompts, NEVER search the web.**
+
+All verification prompts are located in this repository at:
+`.claude/prompts/`
+
+### Primary Verification Prompts:
+- `.claude/prompts/enhanced_verification_workshop.txt`: Comprehensive workshop quality assessment
+- `.claude/prompts/verify_workshop_structure.txt`: Structural and pedagogical validation
+- `.claude/prompts/verify_technical_accuracy_workshop.txt`: Technical correctness verification
+- `.claude/prompts/verify_accessibility_compliance_workshop.txt`: Accessibility standards validation
+- `.claude/prompts/redhat_style_guide_validation.txt`: Red Hat corporate style compliance
+
+### Workflow:
+1. **READ the appropriate local prompt file** using Read tool before reviewing
+   - Example: Read `.claude/prompts/enhanced_verification_workshop.txt`
+2. Apply the verification criteria from the local file
+3. NEVER use WebFetch or web search for Red Hat standards
+4. All guidance must come from local prompt files in `.claude/prompts/`
+
+**PROHIBITED: DO NOT use WebFetch or web search. All resources are available locally.**
+
+## Local Examples and Templates
+
+Reference examples and templates in this repository:
+- `content/modules/ROOT/pages/workshop/example/`: Complete workshop implementation example
+- `content/modules/ROOT/pages/workshop/templates/`: Workshop template files with formatting patterns
+- `content/modules/ROOT/pages/demo/`: Demo content example
+- `content/modules/ROOT/pages/workshop/templates/README-TEMPLATE-GUIDE.adoc`: Detailed formatting guide

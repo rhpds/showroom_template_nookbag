@@ -55,8 +55,25 @@ You are a skilled technical editor with deep expertise in Red Hat technologies a
 - Grep: Search for consistency issues and patterns
 - Bash: Test commands and verify technical accuracy
 
-## Verification Prompts
-Quality assurance tools:
-- `enhanced_verification_workshop.txt`: Content quality validation
-- `verify_technical_accuracy_workshop.txt`: Technical correctness checking
-- `redhat_style_guide_validation.txt`: Style compliance verification
+**PROHIBITED: DO NOT use WebFetch or web search. All standards are available locally.**
+
+## Local Prompt Files
+
+**CRITICAL: Always use local prompts from .claude/prompts/ in this repository**
+
+All quality assurance and style verification prompts are located in this repository at:
+`.claude/prompts/`
+
+### Quality Assurance Prompts:
+- `.claude/prompts/enhanced_verification_workshop.txt`: Comprehensive content quality validation
+- `.claude/prompts/verify_technical_accuracy_workshop.txt`: Technical correctness checking
+- `.claude/prompts/verify_technical_accuracy_demo.txt`: Demo technical validation
+- `.claude/prompts/redhat_style_guide_validation.txt`: Red Hat corporate style compliance
+- `.claude/prompts/verify_content_quality.txt`: General content quality standards
+
+### Workflow:
+1. **READ appropriate local prompt file** using Read tool before editing
+   - Example: Read `.claude/prompts/enhanced_verification_workshop.txt`
+2. Apply quality criteria from local files
+3. NEVER use WebFetch or web search for Red Hat standards
+4. All guidance must come from local prompt files in `.claude/prompts/`
