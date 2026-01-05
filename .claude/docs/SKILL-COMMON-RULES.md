@@ -287,7 +287,7 @@ These will be replaced with actual values when deployed via your AgV catalog.
 ```
 
 **If user chooses 3 or 4 (Yes, help needed):**
-- Continue to Access Check Protocol ↓
+- **IMMEDIATELY ask for AgnosticV path** (see Access Check Protocol below) ↓
 
 **If user chooses 5 (Explain):**
 ```
@@ -315,12 +315,12 @@ Do you need help with AgV configuration? [Yes/No]
 
 ### Access Check Protocol
 
-**Only asked if user chose "Yes" to AgV help:**
+**CRITICAL: This MUST be asked IMMEDIATELY when user selects option 3 or 4**
 
-**Ask for AgnosticV path:**
+**Before any file operations, ask for AgnosticV path:**
 
 ```
-Q: Do you have access to the AgnosticV repository? If yes, provide the directory path:
+Q: Do you have the AgnosticV repository cloned? If yes, please provide the directory path:
 
 Example paths:
 - ~/work/code/agnosticv/
@@ -369,10 +369,13 @@ For now, I'll continue with placeholder attributes in your workshop/demo content
 → Proceeding to Step 3: Module-Specific Details
 ```
 
-**If ACCESS confirmed (default or provided path):**
-- Continue to catalog search workflow ↓
+**If user provides valid path:**
+- Use that path for all AgV operations
+- Continue to catalog search workflow (if option 3) or catalog creation workflow (if option 4) ↓
 
 ### User-Suggested Catalog Search (Q3)
+
+**Prerequisites**: User has provided valid AgV path in Access Check Protocol above.
 
 **Before automatic keyword search**, ask user:
 
@@ -794,12 +797,16 @@ ocp4_workload_my_app_api_key: ""
 
 ### Git Workflow Requirements (CRITICAL)
 
+**Prerequisites**: User has provided valid AgV path in Access Check Protocol above.
+
 **Pre-creation steps** (REQUIRED before creating catalog files):
 
 1. **Navigate to AgnosticV repo:**
    ```bash
-   cd ~/work/code/agnosticv
+   cd {{ user_provided_agv_path }}
    ```
+
+   Replace `{{ user_provided_agv_path }}` with the path user provided in Access Check.
 
 2. **Switch to main branch:**
    ```bash
@@ -922,16 +929,19 @@ ocp4_workload_my_app_api_key: ""
 
 ### UserInfo Variable Extraction
 
+**Prerequisites**: User has provided valid AgV path in Access Check Protocol.
+
 **When user selects existing catalog:**
 
 1. **Read catalog configuration:**
-   - Location: `~/work/code/agnosticv/agd_v2/{{ catalog_slug }}/common.yaml`
+   - Location: `{{ user_provided_agv_path }}/agd_v2/{{ catalog_slug }}/common.yaml`
    - Parse workload list
 
 2. **Identify workload roles:**
-   - AgnosticD v2: `~/work/code/agnosticd-v2/`
-   - AgnosticD v1: `~/work/code/agnosticd/` (legacy)
+   - AgnosticD v2: `{{ agnosticd_v2_path }}` (user should provide if needed)
+   - AgnosticD v1: `{{ agnosticd_v1_path }}` (legacy, user should provide if needed)
    - Read workload roles referenced in common.yaml
+   - **Note**: If AgnosticD paths not available, workload extraction may be limited
 
 3. **Extract `agnosticd_user_info` variables:**
    - Search for `agnosticd_user_info` tasks in workload roles
