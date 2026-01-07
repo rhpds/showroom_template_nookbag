@@ -113,3 +113,15 @@ extensions:
 . Produces
 +
 image::dev-mode.png[]
+
+== Using Claude Skills for Content Generation
+
+This repository includes Claude Code skills to help you create professional Red Hat workshop and demo content.
+
+To use Claude skills:
+
+. Clone this repository and start a Claude Code session within the directory
+. Run `/skills` to list available skills
+. Run a skill by name (without `/`): `lab-module`, `demo-module`, or `verify-content`
+
+For detailed documentation on using Claude skills, see `CLAUDE-SKILLS-GUIDE.md`.
