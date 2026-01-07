@@ -43,6 +43,43 @@ This separates what presenters need to **understand** (business value) from what
 
 ## Workflow
 
+**CRITICAL: Ask Questions SEQUENTIALLY**
+
+- Ask ONE question or ONE group of related questions at a time
+- WAIT for user's answer before proceeding
+- If user chooses "Yes, help me create new catalog" in Step 2.5, you MUST complete the ENTIRE AgV workflow before proceeding to Step 3
+- Do NOT ask questions from multiple steps together
+- Do NOT skip workflows based on incomplete answers
+
+**Example of WRONG approach**:
+```
+❌ Asking all at once:
+1. Module file name?
+2. Do you need AgV help? [1/2/3/4]
+3. UserInfo variables?
+4. Presentation objective?
+5. Number of demos?
+```
+
+**Example of CORRECT approach**:
+```
+✅ Ask sequentially:
+Step 2.5: Do you need AgV help? [1/2/3/4]
+[WAIT for answer]
+[If answer is 3, complete ENTIRE AgV workflow]
+[If answer is 1 or 2, proceed to Step 3]
+
+Step 3.1: Module file name?
+[WAIT for answer]
+
+Step 3.2: Reference materials?
+[WAIT for answer]
+
+etc.
+```
+
+---
+
 ### Step 1: Determine Context (First Module vs Continuation)
 
 **CRITICAL: DO NOT read any files or make assumptions before asking this question!**
