@@ -124,4 +124,4 @@ To use Claude skills:
 . Run `/skills` to list available skills
 . Run a skill by name (without `/`): `lab-module`, `demo-module`, or `verify-content`
 
-For detailed documentation on using Claude skills, see `CLAUDE-SKILLS-GUIDE.md`.
+For detailed documentation on using Claude skills, see `CLAUDE-SKILLS-GUIDE.adoc`.
