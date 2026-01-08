@@ -31,12 +31,12 @@ Press `Cmd+L` (Mac) or `Ctrl+L` (Windows/Linux)
 
 **Create a workshop module:**
 ```
-create lab module
+create lab
 ```
 
 **Create a demo module:**
 ```
-create demo module
+create demo
 ```
 
 **Verify content:**
@@ -53,7 +53,7 @@ Claude will guide you through the workflow, asking questions one at a time.
 ### Example Workflow
 
 ```
-You: create lab module
+You: create lab
 
 Claude: Are you creating a new lab or adding to an existing lab?
 
@@ -108,7 +108,7 @@ Claude: ✅ Workshop Generation Complete
 
 **A**: Be explicit in Cursor chat:
 ```
-Read .claude/skills/lab-module/SKILL.md and follow all instructions
+Read .claude/skills/create-lab/SKILL.md and follow all instructions
 to create a workshop module. Ask questions one at a time.
 ```
 
@@ -131,7 +131,7 @@ You won't see the full file content in chat. Claude writes files and shows brief
 ### 3. Use Explicit Commands
 
 If auto-detection doesn't work, be explicit:
-- "create lab module" (clear)
+- "create lab" (clear)
 - "make a module" (might not trigger)
 
 ### 4. Have Reference Materials Ready
@@ -150,7 +150,7 @@ Share this with your team:
 - [ ] Clone repository: `git clone https://github.com/rhpds/showroom_template_nookbag.git`
 - [ ] Open in Cursor: `cursor .`
 - [ ] Open Cursor chat: `Cmd+L` or `Ctrl+L`
-- [ ] Say: `create lab module` or `create demo module`
+- [ ] Say: `create lab` or `create demo`
 - [ ] Answer questions one at a time
 - [ ] Review generated files in your editor
 
@@ -179,7 +179,7 @@ We now have automated workshop/demo content generation in Cursor!
 Setup (1 minute):
 1. Clone: git clone https://github.com/rhpds/showroom_template_nookbag.git
 2. Open in Cursor: cursor .
-3. Open chat (Cmd+L) and say: "create lab module"
+3. Open chat (Cmd+L) and say: "create lab"
 
 That's it! Claude will guide you through creating professional Red Hat workshop content.
 

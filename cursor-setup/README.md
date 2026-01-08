@@ -14,12 +14,12 @@ In Cursor chat (Cmd+L or Ctrl+L), just say:
 
 **Create a workshop module:**
 ```
-create lab module
+create lab
 ```
 
 **Create a demo module:**
 ```
-create demo module
+create demo
 ```
 
 **Verify content quality:**
@@ -43,8 +43,8 @@ That's it! Claude will read the skill files and guide you through the workflow.
 - Converting documentation into hands-on lab format
 
 **Commands to trigger**:
-- "create lab module"
-- "lab-module"
+- "create lab"
+- "create-lab"
 - "generate workshop module"
 - "create workshop"
 - "new lab"
@@ -65,8 +65,8 @@ That's it! Claude will read the skill files and guide you through the workflow.
 - Presenter-led technical showcases
 
 **Commands to trigger**:
-- "create demo module"
-- "demo-module"
+- "create demo"
+- "create-demo"
 - "generate demo"
 - "create demo"
 - "presenter-led demo"
@@ -104,8 +104,8 @@ That's it! Claude will read the skill files and guide you through the workflow.
    - Tells Claude which skill to use based on your command
 
 2. **Skill files** (in `.claude/skills/`)
-   - `lab-module/SKILL.md` - Workshop module generator workflow
-   - `demo-module/SKILL.md` - Demo content generator workflow
+   - `create-lab/SKILL.md` - Workshop module generator workflow
+   - `create-demo/SKILL.md` - Demo content generator workflow
    - `verify-content/SKILL.md` - Content verification workflow
 
 3. **Shared rules** (in `.claude/docs/`)
@@ -117,11 +117,11 @@ That's it! Claude will read the skill files and guide you through the workflow.
 ### What Happens When You Use a Skill
 
 ```
-You: "create lab module"
+You: "create lab"
     ↓
-Cursor reads .cursor/rules/lab-module/RULE.md
+Cursor reads .cursor/rules/create-lab/RULE.md
     ↓
-Claude loads .claude/skills/lab-module/SKILL.md
+Claude loads .claude/skills/create-lab/SKILL.md
     ↓
 Claude asks questions ONE AT A TIME
     ↓
@@ -169,7 +169,7 @@ When using reference catalog, creates EXACT copy - only modifies UUID, name, slu
 
 1. Open this repository in Cursor
 2. Open Cursor chat (Cmd+L / Ctrl+L)
-3. Say: `create lab module`
+3. Say: `create lab`
 4. Claude asks: "Are you creating a new lab or adding to an existing lab?"
 5. Answer: `new lab`
 6. Claude asks next question (one at a time)
@@ -178,7 +178,7 @@ When using reference catalog, creates EXACT copy - only modifies UUID, name, slu
 
 ### Adding a Module to Existing Lab
 
-1. In Cursor chat: `create lab module`
+1. In Cursor chat: `create lab`
 2. Answer: `existing lab`
 3. Provide path to previous module (or story recap)
 4. Answer questions sequentially
@@ -186,7 +186,7 @@ When using reference catalog, creates EXACT copy - only modifies UUID, name, slu
 
 ### Creating a Demo
 
-1. In Cursor chat: `create demo module`
+1. In Cursor chat: `create demo`
 2. Answer questions about business scenario, audience, technology
 3. Claude generates Know/Show structured demo content
 
@@ -198,7 +198,7 @@ This Cursor setup provides the same workflow as Claude Code CLI skills, with the
 
 | Feature | Claude Code CLI | Cursor |
 |---------|----------------|--------|
-| Skill invocation | `/skills`, `lab-module` | "create lab module" in chat |
+| Skill invocation | `/skills`, `create-lab` | "create lab" in chat |
 | Skills menu | ✅ `/skills` command | ❌ Use specific commands |
 | Workflow | Identical | Identical |
 | File generation | Identical | Identical |
@@ -213,12 +213,12 @@ This Cursor setup provides the same workflow as Claude Code CLI skills, with the
 ### "Claude isn't following the skill"
 
 **Solution**: Make sure you're saying one of the trigger commands:
-- "create lab module" (not just "create module")
-- "create demo module" (not just "demo")
+- "create lab" (not just "create module")
+- "create demo" (not just "demo")
 
 Or be more explicit:
 ```
-Read .claude/skills/lab-module/SKILL.md and follow ALL instructions
+Read .claude/skills/create-lab/SKILL.md and follow ALL instructions
 to create a workshop module. Ask questions one at a time.
 ```
 
@@ -290,22 +290,22 @@ Copy-paste these into Cursor chat:
 
 ```bash
 # Create new lab (generates index + overview + details + module-01)
-create lab module
+create lab
 
 # Add module to existing lab
-create lab module
+create lab
 
 # Create demo content
-create demo module
+create demo
 
 # Verify content quality
 verify content
 
 # Force skill to load (if auto-detection fails)
-Read .claude/skills/lab-module/SKILL.md and follow all instructions
+Read .claude/skills/create-lab/SKILL.md and follow all instructions
 to create a workshop module. Ask questions one at a time.
 ```
 
 ---
 
-**Ready to create content!** Just say "create lab module" or "create demo module" in Cursor chat.
+**Ready to create content!** Just say "create lab" or "create demo" in Cursor chat.
