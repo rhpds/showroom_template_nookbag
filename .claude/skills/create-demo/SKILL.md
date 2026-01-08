@@ -49,6 +49,32 @@ Demos use a different format than workshops:
 
 This separates what presenters need to **understand** (business value) from what they need to **do** (technical demonstration).
 
+## Arguments (Optional)
+
+This skill supports optional command-line arguments for faster workflows.
+
+**Usage Examples**:
+```bash
+/create-demo                                   # Interactive mode (asks all questions)
+/create-demo <directory>                       # Specify target directory
+/create-demo <directory> --new                 # Create new demo in directory
+/create-demo <directory> --continue <module>   # Continue from specific module
+```
+
+**Parameters**:
+- `<directory>` - Target directory for demo files
+  - Example: `/create-demo content/modules/ROOT/pages/`
+  - If not provided, defaults to `content/modules/ROOT/pages/`
+- `--new` - Flag to create new demo (generates index + overview + details + module-01)
+- `--continue <module-path>` - Continue from specified previous demo module
+  - Example: `/create-demo content/modules/ROOT/pages/ --continue content/modules/ROOT/pages/03-module-01-intro.adoc`
+  - Reads previous module to detect story continuity
+
+**How Arguments Work**:
+- Arguments skip certain questions (faster workflow)
+- You can still use interactive mode by calling `/create-demo` with no arguments
+- Arguments are validated before use
+
 ## Workflow
 
 **CRITICAL RULES**
@@ -98,7 +124,79 @@ etc.
 
 ---
 
+### Step 0: Parse Arguments (If Provided)
+
+**Check if user invoked skill with arguments**.
+
+**Pattern 1: `/create-demo <directory> --new`**
+```
+Parsing arguments: "<directory> --new"
+
+✓ Target directory: <directory>
+✓ Mode: Create new demo
+✓ Will generate: index.adoc → 01-overview → 02-details → 03-module-01
+
+Validating directory...
+[Check if directory exists, create if needed]
+
+Skipping: Step 1 (mode already known: NEW demo)
+Proceeding to: Step 2 (Plan Overall Demo Story)
+```
+
+**Pattern 2: `/create-demo <directory> --continue <module-path>`**
+```
+Parsing arguments: "<directory> --continue <module-path>"
+
+✓ Target directory: <directory>
+✓ Mode: Continue existing demo
+✓ Previous module: <module-path>
+
+Validating directory...
+[Check if directory exists]
+
+Reading previous module: <module-path>
+[Extract story, business context, progression]
+
+Skipping: Step 1 (mode already known: CONTINUE)
+Skipping: Step 2 (story detected from previous module)
+Proceeding to: Step 3 (Module-Specific Details)
+```
+
+**Pattern 3: `/create-demo <directory>`**
+```
+Parsing arguments: "<directory>"
+
+✓ Target directory: <directory>
+
+Validating directory...
+[Check if directory exists]
+
+Skipping: Target directory question
+Proceeding to: Step 1 (still need to ask: new vs continue)
+```
+
+**Pattern 4: `/create-demo` (no arguments)**
+```
+No arguments provided.
+
+Using interactive mode.
+Target directory: Will use default (content/modules/ROOT/pages/)
+
+Proceeding to: Step 1 (Determine Context)
+```
+
+**Argument Validation**:
+- If directory doesn't exist, ask user: "Directory not found. Create it? [Yes/No]"
+- If `--continue` but module path invalid, fall back to asking for story recap
+- All arguments are optional - skill always works in interactive mode
+
+---
+
 ### Step 1: Determine Context (First Module vs Continuation)
+
+**SKIP THIS STEP IF**:
+- User provided `--new` flag in arguments (already know: NEW demo)
+- User provided `--continue <module>` in arguments (already know: EXISTING demo)
 
 **CRITICAL: DO NOT read any files or make assumptions before asking this question!**
 
@@ -170,9 +268,21 @@ If this is the first module, I'll gather the big picture:
 
 **IMPORTANT**: This is **optional** assistance. First ask if user needs help.
 
+**⚠️ ADVANCED USERS / RHDP DEVELOPERS ONLY**
+
+AgnosticV catalog configuration is for:
+- Red Hat Demo Platform (RHDP) developers
+- Advanced users who need to provision RHDP environments
+- Teams deploying to demo.redhat.com or integration.demo.redhat.com
+
+**Most content creators can skip this** - AgV is only needed if you're provisioning infrastructure for your demo.
+
 **Initial question:**
 ```
 Q: Do you need help with AgnosticV catalog configuration?
+
+⚠️  Note: This is for RHDP developers/advanced users only.
+    Most content creators can skip this (choose option 1 or 2).
 
 Options:
 1. No, already set up → Skip to Step 3
