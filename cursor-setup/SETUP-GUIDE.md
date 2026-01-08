@@ -161,6 +161,7 @@ Share this with your team:
 ## Need Help?
 
 - **Documentation**: See `cursor-setup/README.md` for detailed guide
+- **Quick Guide**: See `CLAUDE-SKILLS-CURSOR.adoc` in repository root
 - **User Guide**: See `CLAUDE-SKILLS-GUIDE.adoc` in repository root
 - **Issues**: Contact Prakhar Srivastava or RHDP team
 

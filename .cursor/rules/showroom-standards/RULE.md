@@ -1,31 +1,13 @@
-# Red Hat Showroom Content Generation - Cursor Rules
-
-## Skill Invocation Commands
-
-When user says any of these phrases, follow the corresponding skill workflow:
-
-### Lab Module Generation
-- "create lab module" / "lab-module" / "generate workshop module"
-- "create workshop" / "new lab" / "add module to lab"
-
-**Action**: Read and follow `.claude/skills/lab-module/SKILL.md` completely.
-
-### Demo Module Generation
-- "create demo module" / "demo-module" / "generate demo"
-- "create demo" / "new demo" / "presenter-led demo"
-
-**Action**: Read and follow `.claude/skills/demo-module/SKILL.md` completely.
-
-### Content Verification
-- "verify content" / "check quality" / "review module"
-
-**Action**: Read and follow `.claude/skills/verify-content/SKILL.md` completely.
-
+---
+description: "Critical rules for Red Hat Showroom content generation - sequential questioning, token management, file generation order"
+alwaysApply: true
 ---
 
-## CRITICAL Rules (Apply to ALL Content Generation)
+# Red Hat Showroom Content Generation - Critical Rules
 
-These rules override default behavior. ALWAYS follow them when generating workshop/demo content:
+These rules apply to ALL content generation (workshop modules, demo modules, blog posts).
+
+## CRITICAL Rules (Apply to ALL Content Generation)
 
 ### 1. Sequential Questioning (MANDATORY)
 - Ask ONE question or ONE group of related questions at a time
@@ -97,33 +79,6 @@ When using reference AgV catalog as template:
 - DO NOT "intelligently" modify workloads or settings
 - ONLY modify if user explicitly says "remove X" or "change Y"
 
----
-
-## Workflow Execution
-
-When skill is invoked:
-
-1. **Read the full skill file** from `.claude/skills/{skill-name}/SKILL.md`
-2. **Follow the workflow step-by-step** as written in the skill
-3. **Apply all CRITICAL rules above** during execution
-4. **Read verification prompts** from `.claude/prompts/` before generating content
-5. **Read templates** from `content/modules/ROOT/pages/workshop/templates/` or `demo/` as needed
-6. **Generate content that already passes quality checks** (don't generate then validate)
-
----
-
-## Shared Contracts
-
-All skills follow shared rules defined in `.claude/docs/SKILL-COMMON-RULES.md`:
-- Version pinning or attribute placeholders (REQUIRED)
-- Reference enforcement (REQUIRED)
-- Image path conventions (REQUIRED)
-- Navigation update expectations (REQUIRED)
-
-Read SKILL-COMMON-RULES.md for complete details when generating content.
-
----
-
 ## Quality Standards
 
 Every generated module must have:
@@ -137,35 +92,3 @@ Every generated module must have:
 - External links that open in new tab
 - Dynamic variables as placeholders (not replaced)
 - Red Hat style compliance
-
----
-
-## Example Usage in Cursor
-
-User: "create lab module"
-
-You:
-1. Read `.claude/skills/lab-module/SKILL.md`
-2. Ask: "Are you creating a new lab or adding to an existing lab?"
-3. Follow sequential questioning (one question at a time)
-4. Generate files using Write tool
-5. Show brief summary only
-
-User: "create demo module"
-
-You:
-1. Read `.claude/skills/demo-module/SKILL.md`
-2. Follow Know/Show structure workflow
-3. Ask questions sequentially
-4. Generate demo content
-5. Show brief summary only
-
----
-
-## Important Notes for Cursor Usage
-
-- These skills were designed for Claude Code CLI but adapted for Cursor
-- The workflow is the same - follow the SKILL.md files exactly
-- All file paths are relative to repository root
-- Use Write tool to create files (don't show full content in chat)
-- If user asks for help, point them to `README-CURSOR.md`

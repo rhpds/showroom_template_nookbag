@@ -129,7 +129,7 @@ If you have Cursor with Claude access:
 .. `create demo module` - Create demo content
 .. `verify content` - Verify content quality
 
-For detailed Cursor setup, see `README-CURSOR.adoc`.
+For detailed Cursor setup, see `CLAUDE-SKILLS-CURSOR.adoc`.
 
 === Option 2: Using Claude Code CLI
 
