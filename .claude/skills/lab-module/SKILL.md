@@ -416,11 +416,15 @@ Now for this specific module:
    4. Expand "Advanced settings" section
    5. Copy and paste the output here
 
-   This provides exact variables like:
+   This provides exact variable NAMES like:
    - openshift_cluster_console_url
    - openshift_cluster_admin_username
    - gitea_console_url
    - [custom workload variables]
+
+   CRITICAL: I will use these to know WHICH variables exist, NOT to replace them with actual values!
+   Variables will stay as placeholders: {openshift_cluster_console_url}
+   Showroom replaces these at runtime with actual deployment values.
 
    If NO:
    Q: Would you like to use placeholder attributes for now?
@@ -507,14 +511,23 @@ I'll use common placeholder variables:
 {{ custom_variable }}
 ```
 
-**Formalize Attribute Extraction**:
-- Create or update: `content/modules/ROOT/partials/_attributes.adoc`
-- Define attributes based on provided variables
-- If value unknown, keep as `{attribute}` and list in "Attributes Needed"
-- Include attributes file in module:
+**CRITICAL: DO NOT Replace Variables with Actual Values**:
+- ALWAYS keep variables as placeholders: `{openshift_console_url}`
+- NEVER replace with actual values like `https://console-openshift-console.apps.cluster-abc123.abc123.example.opentlc.com`
+- Showroom will replace these at runtime with actual deployment values
+- Each deployment gets different URLs - variables MUST stay dynamic
+- Example in module content:
   ```asciidoc
-  include::partial$_attributes.adoc[]
+  . Navigate to the OpenShift Console at {openshift_cluster_console_url}
+  . Login with username: {openshift_cluster_admin_username}
+  . Password: {openshift_cluster_admin_password}
   ```
+
+**What UserInfo variables are for**:
+- Understanding WHICH variables are available
+- Learning the correct variable names
+- Seeing what endpoints/tools exist in the environment
+- NOT for hardcoding actual values in content
 
 ### Step 5: Handle Diagrams, Screenshots, and Code Blocks (if provided)
 
@@ -594,9 +607,18 @@ Based on your references, I'll:
   ```asciidoc
   == References
 
-  * link:https://docs.openshift.com/...[OpenShift Pipelines documentation] - Pipeline syntax and examples
-  * link:https://tekton.dev/...[Tekton documentation] - Task definitions
+  * link:https://docs.openshift.com/...[OpenShift Pipelines documentation^] - Pipeline syntax and examples
+  * link:https://tekton.dev/...[Tekton documentation^] - Task definitions
   ```
+
+**IMPORTANT: External Link Format**:
+- ALL external links MUST use `^` caret to open in new tab
+- Format: `link:https://example.com[Link Text^]`
+- The `^` ensures users don't lose their place in the workshop
+- Internal xrefs (module navigation) should NOT use `^`
+- Examples:
+  - External: `link:https://docs.redhat.com/...[Red Hat Documentation^]`
+  - Internal: `xref:03-module-02-next.adoc[Next Module]` (no caret)
 
 ### Step 7: Read Templates and Verification Criteria (BEFORE Generating)
 
@@ -811,6 +833,7 @@ oc delete project my-project
    - ✓ All code blocks have proper syntax: `[source,bash]`
    - ✓ No broken includes
    - ✓ All attributes defined
+   - ✓ External links use `^` caret to open in new tab
 
 2. **Completeness**:
    - ✓ All required sections present (see Step 8)
@@ -1178,4 +1201,5 @@ Every module will have:
 - ✓ Verification steps
 - ✓ Module summary
 - ✓ Image placeholders
+- ✓ External links with `^` to open in new tab
 - ✓ Red Hat style compliance

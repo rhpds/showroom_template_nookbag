@@ -364,11 +364,15 @@ Now for this specific module:
    4. Expand "Advanced settings" section
    5. Copy and paste the output here
 
-   This provides exact variables like:
+   This provides exact variable NAMES like:
    - openshift_cluster_console_url
    - openshift_cluster_admin_username
    - gitea_console_url
    - [custom workload variables]
+
+   CRITICAL: I will use these to know WHICH variables exist, NOT to replace them with actual values!
+   Variables will stay as placeholders: {openshift_cluster_console_url}
+   Showroom replaces these at runtime with actual deployment values.
 
    If NO:
    Q: Would you like to use placeholder attributes for now?
@@ -968,6 +972,8 @@ Every demo module will have:
 - ✓ Clear presenter instructions
 - ✓ Image placeholders with descriptions
 - ✓ Business value callouts during Show
+- ✓ External links with `^` to open in new tab
+- ✓ Dynamic variables as placeholders (not replaced with actual values)
 - ✓ Target audience appropriate language
 - ✓ Red Hat style compliance
 
