@@ -116,9 +116,24 @@ image::dev-mode.png[]
 
 == Using Claude Skills for Content Generation
 
-This repository includes Claude Code skills to help you create professional Red Hat workshop and demo content.
+This repository includes Claude skills to help you create professional Red Hat workshop and demo content.
 
-To use Claude skills:
+=== Option 1: Using Cursor IDE (Recommended for Teams)
+
+If you have Cursor with Claude access:
+
+. Clone this repository and open in Cursor
+. Open Cursor chat (Cmd+L or Ctrl+L)
+. Say simple commands:
+.. `create lab module` - Create workshop modules
+.. `create demo module` - Create demo content
+.. `verify content` - Verify content quality
+
+For detailed Cursor setup, see `README-CURSOR.adoc`.
+
+=== Option 2: Using Claude Code CLI
+
+If you have Claude Code CLI installed:
 
 . Clone this repository and start a Claude Code session within the directory
 . Run `/skills` to list available skills
