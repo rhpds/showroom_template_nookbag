@@ -3,6 +3,14 @@ name: lab-module
 description: Guide you through creating a single Red Hat Showroom workshop module from reference materials (URLs, files, docs, or text) with business storytelling and proper AsciiDoc formatting.
 ---
 
+---
+context: main
+model: sonnet
+hooks:
+  PreToolUse:
+    - .claude/hooks/validate-paths.sh
+---
+
 # Lab Module Generator
 
 Guide you through creating a single Red Hat Showroom workshop module from reference materials (URLs, files, docs, or text) with business storytelling and proper AsciiDoc formatting.
@@ -16,9 +24,9 @@ Guide you through creating a single Red Hat Showroom workshop module from refere
 - Transform technical content into engaging learning experience
 
 **Don't use this for**:
-- Creating demo content → use `/demo-module`
+- Creating demo content → use `/create-demo`
 - Converting to blog posts → use `/blog-generate`
-- Reviewing existing content → use workshop-reviewer agent
+- Reviewing existing content → use `/verify-content`
 
 ## Shared Rules
 

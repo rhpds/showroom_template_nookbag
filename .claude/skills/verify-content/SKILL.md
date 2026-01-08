@@ -3,6 +3,14 @@ name: verify-content
 description: Run comprehensive quality verification on workshop or demo content using Red Hat standards and validation agents.
 ---
 
+---
+context: fork
+model: sonnet
+hooks:
+  PreToolUse:
+    - .claude/hooks/validate-paths.sh
+---
+
 # Content Verification Skill
 
 Verify workshop or demo content against Red Hat quality standards, style guidelines, technical accuracy, and accessibility requirements.
@@ -17,7 +25,7 @@ Verify workshop or demo content against Red Hat quality standards, style guideli
 - Get actionable feedback on content improvements
 
 **Don't use this for**:
-- Creating new content → use `/lab-module` or `/demo-module`
+- Creating new content → use `/create-lab` or `/create-demo`
 - Converting between formats → use `/blog-generate`
 
 ## Workflow

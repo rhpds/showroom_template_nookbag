@@ -3,6 +3,14 @@ name: demo-module
 description: Guide you through creating a Red Hat Showroom demo module using the Know/Show structure for presenter-led demonstrations.
 ---
 
+---
+context: main
+model: sonnet
+hooks:
+  PreToolUse:
+    - .claude/hooks/validate-paths.sh
+---
+
 # Demo Module Generator
 
 Guide you through creating a Red Hat Showroom demo module using the Know/Show structure for presenter-led demonstrations.
@@ -16,9 +24,9 @@ Guide you through creating a Red Hat Showroom demo module using the Know/Show st
 - Create content for sales engineers or field demonstrations
 
 **Don't use this for**:
-- Hands-on workshop content → use `/lab-module`
+- Hands-on workshop content → use `/create-lab`
 - Converting to blog posts → use `/blog-generate`
-- Reviewing existing content → use workshop-reviewer agent
+- Reviewing existing content → use `/verify-content`
 
 ## Shared Rules
 

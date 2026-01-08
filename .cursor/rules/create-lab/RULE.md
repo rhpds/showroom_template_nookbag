@@ -8,8 +8,8 @@ alwaysApply: false
 ## Trigger Commands
 
 When user says ANY of these phrases, invoke this skill:
+- "create lab"
 - "create lab module"
-- "lab-module"
 - "generate workshop module"
 - "create workshop"
 - "new lab"
@@ -17,7 +17,7 @@ When user says ANY of these phrases, invoke this skill:
 
 ## Skill Execution
 
-**Action**: Read and follow `.claude/skills/lab-module/SKILL.md` completely.
+**Action**: Read and follow `.claude/skills/create-lab/SKILL.md` completely.
 
 The skill file contains the complete workflow for:
 1. Determining context (first module vs continuation)
