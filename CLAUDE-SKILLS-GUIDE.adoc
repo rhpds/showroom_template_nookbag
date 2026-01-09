@@ -1,84 +1,466 @@
-= Claude Skills for Showroom Content
+# Claude Skills Quick Start Guide
 
-Quick guide to using Claude Code skills for creating Red Hat Showroom workshops and demos.
+**For**: Content Creators, Workshop Developers, Demo Builders
+**Using**: Claude Code CLI or Cursor IDE
+**Last Updated**: January 9, 2026
 
-== Getting Started
+---
 
-. Clone this repository and navigate to the directory
-. Start a Claude Code session
-. Run `/skills` to list available skills
-. Run a skill by name (without `/`): `create-lab`, `create-demo`, or `verify-content`
+## 🚀 Quick Start
 
-== Available Skills
+### Using Claude Code CLI
 
-=== create-lab - Create Workshop Modules
+```bash
+# Navigate to your showroom repo
+cd /path/to/showroom-repo
 
-Creates hands-on workshop modules with:
+# Start Claude Code
+claude
 
-* Step-by-step instructions
-* Verification commands
-* Troubleshooting guidance
-* Red Hat style compliance
+# Use slash commands
+/create-lab          # Create a workshop module
+/create-demo         # Create a demo module
+/verify-content      # Verify content quality
+/blog-generate       # Convert module to blog post
+```
 
-*When to use*: Creating workshops for developers, architects, SREs
+### Using Cursor IDE
 
-=== create-demo - Create Demo Content
+Open your showroom repository in Cursor and use the same commands in the chat:
 
-Creates presenter-led demo modules with:
+```
+create lab
+create demo
+verify content
+blog generate
+```
 
-* Business value messaging (Know sections)
-* Technical demonstration steps (Show sections)
-* Presenter guidance and tips
-* ROI quantification
+Cursor automatically executes the full skills from `.claude/skills/` - no extra setup needed!
 
-*When to use*: Creating sales demos, executive presentations
+---
 
-=== verify-content - Quality Verification
+## 📚 Available Skills
 
-Checks content for:
+### 1. `/create-lab` - Workshop Module Generator
 
-* Red Hat Corporate Style Guide compliance
-* Technical accuracy
-* Accessibility standards (WCAG 2.1 AA)
-* Workshop structure and pedagogy
+**What it does**: Creates hands-on workshop modules with step-by-step exercises.
 
-*When to use*: Before submitting PRs, during content reviews
+**Usage**:
+```bash
+# Interactive mode (asks all questions)
+/create-lab
 
-== Quick Workflow
+# Fast mode with directory
+/create-lab content/modules/ROOT/pages/
 
-=== Create a New Workshop
+# Create new lab
+/create-lab content/modules/ROOT/pages/ --new
 
-----
-1. Run: create-lab
-2. Answer: First module of NEW lab
-3. Provide lab overview and module details
-4. Review and refine generated content
-5. Run: verify-content
-----
+# Continue existing lab
+/create-lab content/modules/ROOT/pages/ --continue content/modules/ROOT/pages/03-module-01.adoc
+```
 
-=== Continue Existing Workshop
+**Interactive Questions**:
 
-----
-1. Run: create-lab
-2. Answer: Continuing EXISTING lab
-3. Provide path to previous module
-4. Content continues the story automatically
-----
+1. **🆕 NEW or ➕ EXISTING lab?**
+   - Choose 1 for new (creates index → overview → details → first module)
+   - Choose 2 to add to existing lab (continues your story)
 
-=== Create a Demo
+2. **📂 Where to create files?**
+   - Default: `content/modules/ROOT/pages/`
+   - Or specify your own path
 
-----
-1. Run: create-demo
-2. Follow the workflow prompts
-3. Skills guide you through Know/Show structure
-4. Run: verify-content to check quality
-----
+3. **📝 Lab Details** (if new lab):
+   - Lab name → generates slug for `site.yml` and `antora.yml`
+   - Learning goal
+   - Target audience (Developers, Architects, etc.)
+   - Learning outcomes
+   - Business scenario (ACME Corp, etc.)
+   - Duration (30min, 1hr, 2hr)
+   - Technical environment (OpenShift version, etc.)
 
-== Documentation
+4. **🏗️ AgnosticV Setup** (optional):
+   - Most users: Choose "Skip this"
+   - RHDP developers: Choose "Yes, help me create catalog"
 
-* *Detailed Guide*: `.claude/INTERNAL-DEVELOPER-GUIDE.adoc` - Comprehensive documentation for RHDP content developers
-* *Skill Definitions*: `.claude/skills/*/SKILL.md` - Individual skill documentation
+5. **📋 Module Details**:
+   - Module file name
+   - Reference materials (URLs, docs)
+   - Learning objective
+   - Number of exercises (2-3 recommended)
 
-== Support
+**What you get**:
+- ✅ Valid AsciiDoc files
+- ✅ Step-by-step instructions
+- ✅ Verification checkpoints
+- ✅ Troubleshooting section
+- ✅ Learning outcomes
+- ✅ Auto-updated navigation
+- ✅ Red Hat style compliance
 
-Red Hat Technical Marketing Team | January 2026
+---
+
+### 2. `/create-demo` - Demo Module Generator
+
+**What it does**: Creates presenter-led demo content with Know/Show structure.
+
+**Usage**:
+```bash
+# Interactive mode
+/create-demo
+
+# Fast mode with directory
+/create-demo content/modules/ROOT/pages/
+
+# Create new demo
+/create-demo content/modules/ROOT/pages/ --new
+
+# Continue existing demo
+/create-demo content/modules/ROOT/pages/ --continue content/modules/ROOT/pages/03-demo.adoc
+```
+
+**Interactive Questions**:
+
+1. **🆕 NEW or ➡️ EXISTING demo?**
+
+2. **📂 Where to create files?**
+
+3. **📊 Demo Planning** (if new demo):
+   - Main message (what should audience remember?)
+   - Target audience (C-level, Sales Engineers, etc.)
+   - Business priorities (cost reduction, speed, etc.)
+   - Transformation story (before/after)
+   - Customer scenario (RetailCo, FinanceCorp, etc.)
+   - Key metrics (6 weeks → 5 minutes, etc.)
+   - Demo duration (15min, 30min, 45min)
+
+4. **🏗️ AgnosticV Setup** (optional)
+
+5. **🎭 Demo Details**:
+   - Module file name
+   - Reference materials
+   - Target audience details
+   - Number of demo parts (2-4 recommended)
+
+**What you get**:
+- ✅ Know sections (business context, ROI)
+- ✅ Show sections (technical steps)
+- ✅ Presenter guidance and tips
+- ✅ Business metrics
+- ✅ Sales Engineer action items
+- ✅ Auto-updated navigation
+
+---
+
+### 3. `/verify-content` - Content Quality Checker
+
+**What it does**: Runs comprehensive quality checks on your content.
+
+**Usage**:
+```bash
+# Verify all modules
+/verify-content
+
+# Verify specific file
+/verify-content content/modules/ROOT/pages/03-module-01.adoc
+
+# Verify by pattern
+/verify-content content/modules/ROOT/pages/module-*.adoc
+```
+
+**What it checks**:
+- ✅ Red Hat Corporate Style Guide compliance
+- ✅ Technical accuracy
+- ✅ Workshop/demo structure
+- ✅ Accessibility (WCAG 2.1 AA)
+- ✅ AsciiDoc syntax
+- ✅ Content quality
+
+**Report format**:
+- 🔴 **Critical**: Must fix
+- 🟡 **Warnings**: Should fix
+- 🟢 **Recommendations**: Nice to have
+
+---
+
+### 4. `/blog-generate` - Workshop to Blog Converter
+
+**What it does**: Transforms completed workshop modules into blog posts.
+
+**Usage**:
+```bash
+/blog-generate
+```
+
+**Interactive Questions**:
+- Source module(s) to convert
+- Blog platform (Red Hat Developer, Medium, etc.)
+- Target audience
+- Call-to-action
+
+**What you get**:
+- ✅ Blog-formatted content
+- ✅ Extracted learning outcomes
+- ✅ Code examples
+- ✅ Related resources section
+
+---
+
+## 🎯 Common Workflows
+
+### Starting a New Workshop
+
+```bash
+# 1. Navigate to repo
+cd /path/to/showroom-repo
+
+# 2. Start skill
+/create-lab
+
+# 3. Follow prompts
+> 1  # NEW lab
+> [Enter]  # Use default directory
+> "Building AI Workloads on OpenShift AI"  # Lab name
+> [Answer planning questions...]
+> 1  # Skip AgV (unless you're RHDP developer)
+> [Answer module questions...]
+
+# 4. Review generated files
+# Files created:
+# - content/modules/ROOT/pages/index.adoc
+# - content/modules/ROOT/pages/01-overview.adoc
+# - content/modules/ROOT/pages/02-details.adoc
+# - content/modules/ROOT/pages/03-module-01-intro.adoc
+# - content/modules/ROOT/nav.adoc (updated)
+
+# 5. Verify quality
+/verify-content
+```
+
+### Adding a Module to Existing Workshop
+
+```bash
+# 1. Start skill
+/create-lab
+
+# 2. Choose existing
+> 2  # EXISTING lab
+> [Enter]  # Default directory
+> content/modules/ROOT/pages/03-module-01-intro.adoc  # Previous module
+
+# Skill auto-detects:
+# - Story continuity (company name, scenario)
+# - Next module number (04-module-02-*.adoc)
+# - Learning progression
+
+# 3. Answer module-specific questions
+# [No need to re-answer lab planning questions!]
+```
+
+### Creating a Demo
+
+```bash
+# 1. Start skill
+/create-demo
+
+# 2. Follow prompts
+> 1  # NEW demo
+> [Enter]  # Default directory
+> "Show how OpenShift reduces time-to-market"  # Message
+> "C-level executives"  # Audience
+> [Answer demo planning...]
+
+# 3. Review Know/Show structure
+# Files created with business context + technical steps
+```
+
+---
+
+## 💡 Pro Tips
+
+### For Workshop Creators
+
+1. **Use real reference materials**: Better docs = better content
+   - Red Hat product docs
+   - Technical blog posts
+   - Architecture guides
+
+2. **Start with story**: Good scenario makes content relatable
+   - ACME Corp is fine, but custom is better
+   - Real business challenge = better engagement
+
+3. **Provide UserInfo variables**: If you have a deployed RHDP environment
+   - Login to demo.redhat.com or integration.demo.redhat.com
+   - Go to "My services" → Details → Advanced settings
+   - Copy/paste the output when asked
+   - Gets you exact variable names for your environment
+
+4. **Test commands**: Always verify in real environment before publishing
+
+### For Demo Creators
+
+1. **Quantify everything**: "6 weeks → 5 minutes" beats "faster"
+
+2. **Know your audience**:
+   - Executives: Business value, ROI
+   - Technical: Architecture, features
+   - Sales Engineers: Competitive differentiators
+
+3. **Practice the demo**: Use generated "Show" sections as your script
+
+### For Both
+
+1. **Use arguments for speed**:
+   ```bash
+   # Instead of answering directory every time
+   /create-lab content/modules/ROOT/pages/ --continue 03-module-01.adoc
+   ```
+
+2. **Verify before committing**:
+   ```bash
+   /verify-content
+   ```
+
+3. **Fix issues incrementally**: Don't wait until all modules are done
+
+---
+
+## 🔧 AgnosticV Integration (Advanced)
+
+**Skip this if**: You're creating content only (most users)
+
+**Use this if**: You're a RHDP developer provisioning infrastructure
+
+### When Skill Asks About AgnosticV
+
+```
+Quick question about infrastructure setup! 🏗️
+
+Do you need help configuring AgnosticV (the RHDP provisioning system)?
+
+⚠️  Heads up: This is for RHDP developers/advanced users only.
+   Most content creators should skip this.
+
+1. ⏭️  Skip this (I'll handle it or it's already set up)
+2. 🆘 Yes, help me create a new catalog
+3. ❓ What's AgnosticV? (explain it to me)
+
+What's your situation? [1/2/3]
+```
+
+**Most users**: Choose **1** (Skip)
+
+**RHDP developers creating new catalogs**: Choose **2**
+
+The skill will then:
+1. Ask for your AgnosticV repo path
+2. Search for similar existing catalogs
+3. Help you create a new catalog based on a template
+4. Generate UUID (you run `uuidgen`)
+5. Auto-detect your Showroom repo
+6. Create all catalog files
+7. Ask you to test in RHDP Integration
+
+### Testing in RHDP Integration
+
+1. Create PR from AgV branch
+2. Login to https://integration.demo.redhat.com
+3. Search for your catalog
+4. Order it
+5. Wait 1-2 hours for provisioning
+6. Verify workloads deployed correctly
+7. Get UserInfo variables from Advanced settings
+8. Use those variables when creating modules
+
+---
+
+## 🎨 Quality Standards
+
+All generated content meets:
+
+- ✅ **Red Hat Style Guide**
+  - Sentence case headlines
+  - Official product names (no "OCP", use "OpenShift")
+  - Numbers as numerals
+  - Inclusive language
+
+- ✅ **Technical Accuracy**
+  - Valid commands for current versions
+  - Working code examples
+  - Accurate file paths
+
+- ✅ **Accessibility**
+  - Alt text for all images
+  - Proper heading hierarchy
+  - Clear language
+
+- ✅ **Structure**
+  - Progressive learning (workshops)
+  - Know/Show separation (demos)
+  - Verification checkpoints
+  - Troubleshooting sections
+
+---
+
+## 🆘 Troubleshooting
+
+### Skill doesn't start
+
+**Claude Code**:
+```bash
+# Make sure you're in a directory with .claude/ folder
+ls .claude/skills/
+
+# If missing, you need to set up the skills first
+```
+
+**Cursor**:
+- Make sure `.cursor/rules/` exists with skill rules
+- Restart Cursor if needed
+
+### "Directory not found"
+
+```
+> Where should I create the lab files?
+> content/modules/ROOT/pages/
+Directory not found. Create it? [Yes/No]
+> Yes
+```
+
+The skill will create it for you.
+
+### AgV catalog not showing in RHDP Integration
+
+Wait 5-10 minutes after PR is created. Integration environment syncs periodically.
+
+### Generated content has issues
+
+```bash
+/verify-content content/modules/ROOT/pages/03-module-01.adoc
+```
+
+Review the report and fix critical issues.
+
+---
+
+## 📞 Support
+
+**Issues or Questions?**
+- Contact: Prakhar Srivastava (RHDP Technical Marketing)
+- Team: Red Hat Demo Platform (RHDP)
+
+**Found a bug?**
+- Submit issue to repository
+- Or contact RHDP team
+
+---
+
+## 🎓 Learn More
+
+- **Internal Developer Guide**: `.claude/INTERNAL-DEVELOPER-GUIDE.adoc` (for skill maintainers)
+- **Skill Common Rules**: `.claude/docs/SKILL-COMMON-RULES.md` (technical details)
+- **Templates**: `.claude/templates/workshop/` and `.claude/templates/demo/`
+
+---
+
+**Happy Creating! 🚀**

@@ -61,7 +61,7 @@ content/modules/ROOT/pages/
 └── demo/                               # Demo examples
     └── example/
 
-CLAUDE-SKILLS-GUIDE.md                  # User-facing quick guide (root)
+CLAUDE-SKILLS-GUIDE.adoc                # User-facing quick guide (root)
 ```
 
 ---
@@ -84,14 +84,21 @@ CLAUDE-SKILLS-GUIDE.md                  # User-facing quick guide (root)
 - Auto-updates `nav.adoc`
 
 **Workflow Steps**:
-1. Determine context (first vs continuation)
-2. Plan overall story (if first)
-3. Optional: AgV catalog assistance
-4. Gather module details
-5. Get UserInfo variables
-6. Read templates and verification prompts
-7. Generate module content
-8. Update navigation
+1. Determine context (NEW vs EXISTING lab)
+1.5. Ask for target directory (if not provided as argument)
+2. Plan overall story (if NEW lab)
+2.1. Update lab configuration files (site.yml, antora.yml)
+2.5. Optional: AgV catalog assistance
+3. Gather module details
+4. Get UserInfo variables
+5. Handle diagrams, screenshots, code blocks
+6. Fetch and analyze references
+7. Read templates and verification criteria
+8. Generate module content (using verification criteria)
+9. Final quality check
+10. Update navigation
+11. Deliver (with token management)
+12. Offer conclusion module (optional)
 
 **Files Read**:
 - `.claude/skills/create-lab/SKILL.md`
@@ -126,14 +133,20 @@ CLAUDE-SKILLS-GUIDE.md                  # User-facing quick guide (root)
 - Business metrics quantification
 
 **Workflow Steps**:
-1. Determine context (new vs continuation)
-2. Plan demo narrative and business story
-3. Optional: AgV catalog assistance
-4. Gather module details
-5. Get UserInfo variables
-6. Read templates and verification prompts
-7. Generate Know/Show structured content
-8. Update navigation
+1. Determine context (NEW vs EXISTING demo)
+1.5. Ask for target directory (if not provided as argument)
+2. Plan demo narrative and business story (if NEW demo)
+2.5. Optional: AgV catalog assistance
+3. Gather module details
+4. Get UserInfo variables
+5. Handle diagrams, screenshots, demo scripts
+6. Fetch and analyze references
+7. Read templates and verification criteria
+8. Generate Know/Show structured content (using verification criteria)
+9. Validate with agents
+10. Update navigation
+11. Deliver (with token management)
+12. Offer conclusion module (optional)
 
 **Files Read**:
 - `.claude/skills/create-demo/SKILL.md`
@@ -611,8 +624,21 @@ All content must follow:
 
 ### Version History
 
+**January 9, 2026** - Interactive Questions Update
+- Made all questions conversational and friendly
+- Added Step 1.5: Target directory prompt in interactive mode
+- Simplified AgV question from 4 to 3 options
+- Fixed "first module" redundancy (changed to "NEW demo/lab")
+- Added welcome messages and emojis for better UX
+- Created CLAUDE-SKILLS-GUIDE.adoc (user-facing quick guide)
+- Updated lab name configuration (Step 2.1) to update site.yml and antora.yml
+- Moved templates from content/modules/ROOT/pages/ to .claude/templates/
+- Embedded conclusion templates in skills (removed external file dependency)
+- Added SA action items to demo conclusions
+- Removed certification sections (not applicable for internal RHDP)
+
 **January 2026** - Initial release
-- Created create-lab, create-demo, verify-content skills
+- Created create-lab, create-demo, verify-content, blog-generate skills
 - Implemented 4 critical workflow fixes:
   - UUID generation before file creation
   - Showroom repo auto-detection
