@@ -266,30 +266,43 @@ If this is the first module, I'll gather the big picture:
 
 **IMPORTANT**: Ask these as **open-ended questions** where users type their answers. Do NOT provide multiple choice options.
 
-1. **Lab overview**:
+1. **Lab name and title**:
+   - What should we call this workshop/lab?
+   - Example: "Building AI/ML Workloads on OpenShift AI"
+   - I'll use this to:
+     - Update `site.yml` title
+     - Update `content/antora.yml` title
+     - Generate a slug recommendation for `lab_name` variable
+
+   **After user provides title, recommend a slug**:
+   - Generate from title: lowercase, hyphens, no special chars
+   - Example: "Building AI/ML Workloads on OpenShift AI" → `building-ai-ml-workloads-openshift-ai`
+   - Ask: "I recommend using `{slug}` as the lab_name. Use this or provide your own?"
+
+2. **Lab overview**:
    - What's the overall goal of this lab?
    - Example: "Learn to build and deploy AI/ML workloads on OpenShift AI"
 
-2. **Target audience**:
+3. **Target audience**:
    - Who is this lab for?
    - Example: "Developers, Architects, SREs, Data Scientists"
    - What's their experience level?
    - Example: "Beginner, Intermediate, Advanced"
 
-3. **Learning journey**:
+4. **Learning journey**:
    - What should learners know by the end?
    - What skills will they gain?
 
-4. **Story/scenario**:
+5. **Story/scenario**:
    - What company/business scenario should we use?
    - Example: "ACME Corp" or custom company
    - What's the business challenge driving this?
 
-5. **Estimated duration**:
+6. **Estimated duration**:
    - How long should the complete lab take?
    - Example: "30min, 1hr, 2hr"
 
-6. **Version and environment scope** (REQUIRED):
+7. **Version and environment scope** (REQUIRED):
    - OpenShift version?
    - Example: "4.18, 4.20" or use placeholder `{ocp_version}`
    - Product versions?
@@ -313,6 +326,40 @@ If this is the first module, I'll gather the big picture:
 - Accept the recommended flow
 - Adjust module count and topics
 - Change the progression
+
+### Step 2.1: Update Lab Configuration Files (REQUIRED for new labs)
+
+**CRITICAL: Update these files with the lab name BEFORE generating any content files.**
+
+Using the lab title and slug from Step 2, update:
+
+1. **site.yml** (line 3):
+   ```yaml
+   site:
+     title: {{ lab_title }}  # e.g., "Building AI/ML Workloads on OpenShift AI"
+   ```
+
+2. **content/antora.yml** (line 2):
+   ```yaml
+   name: modules
+   title: {{ lab_title }}  # Same as site.yml
+   ```
+
+3. **content/antora.yml** (line 9):
+   ```yaml
+   asciidoc:
+     attributes:
+       lab_name: "{{ lab_slug }}"  # e.g., "building-ai-ml-workloads-openshift-ai"
+   ```
+
+**Example transformation**:
+- User says: "Building AI/ML Workloads on OpenShift AI"
+- Generated slug: `building-ai-ml-workloads-openshift-ai`
+- site.yml title: "Building AI/ML Workloads on OpenShift AI"
+- antora.yml title: "Building AI/ML Workloads on OpenShift AI"
+- antora.yml lab_name: "building-ai-ml-workloads-openshift-ai"
+
+**Note**: These files must be updated BEFORE Step 8 (Generate Files).
 
 ### Step 2.5: AgnosticV Configuration Assistance (OPTIONAL)
 
