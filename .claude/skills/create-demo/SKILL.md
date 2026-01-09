@@ -984,7 +984,6 @@ Help your audience get started:
 
 * link:{{ workshop_url }}[Hands-on Workshop^] - Based on this demo
 * link:{{ training_url }}[{{ product_name }} Training^]
-* link:{{ certification_url }}[Certification Program^]
 
 **Support and Community**:
 
@@ -1027,6 +1026,33 @@ A: {{ integration_summary }}. We support {{ integration_list }}.
 
 **Q: Support and SLAs?**::
 A: {{ support_summary }}. Enterprise support includes {{ sla_details }}.
+
+== Presenter Action Items
+
+*For Sales Engineers / Solution Architects*: Follow these steps after the demo:
+
+=== Immediate Follow-up (Within 24 hours)
+
+. **Send Demo Recording**: Email recording link with key timestamps
+. **Share Resources**: Send links to documentation, workshop, and trial access
+. **Schedule Next Meeting**: Book follow-up for deeper technical discussion or POC planning
+. **Internal Notes**: Log demo feedback, questions asked, and objections in CRM
+
+=== Within One Week
+
+. **Proposal or ROI Analysis**: Send customized proposal based on their requirements
+. **Technical Deep Dive**: Offer architecture review session with specialist
+. **POC Proposal**: Outline proof-of-concept scope, timeline, and success criteria
+. **Connect with Product Team**: Loop in product specialists if needed
+
+=== Qualification Checkpoints
+
+Based on this demo, assess:
+
+* **Budget**: Do they have budget allocated or need justification?
+* **Timeline**: When do they need to make a decision?
+* **Authority**: Who else needs to be involved in the decision?
+* **Need**: Is this a critical priority or nice-to-have?
 
 == Thank You
 
