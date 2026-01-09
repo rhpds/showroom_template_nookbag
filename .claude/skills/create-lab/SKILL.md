@@ -220,14 +220,15 @@ Proceeding to: Step 1 (Determine Context)
 **First, ask the user**:
 
 ```
-Q: Are you creating a new lab or adding to an existing lab?
+Welcome! Let's create your workshop together.
 
-Options:
-1. Creating a NEW lab (I'll generate: index.adoc → 01-overview → 02-details → 03-module-01)
-2. Adding to an EXISTING lab (I'll detect next number and generate: 0X-module-YY only)
-3. Something else (please describe)
+Are you starting a brand new lab or adding to an existing one?
 
-Your choice? [1/2/3]
+1. 🆕 NEW lab (I'll create the whole thing: index → overview → details → first module)
+2. ➕ EXISTING lab (I'll add the next module and continue your story)
+3. 🤔 Something else (tell me what you need)
+
+What's your situation? [1/2/3]
 ```
 
 **ONLY AFTER user answers, proceed based on their response.**
@@ -262,59 +263,98 @@ Your choice? [1/2/3]
 
 ### Step 2: Plan Overall Lab Story (if first module)
 
-If this is the first module, I'll gather the big picture:
+Awesome! Let's design your workshop together. I'll ask you some questions to build the perfect learning experience.
 
-**IMPORTANT**: Ask these as **open-ended questions** where users type their answers. Do NOT provide multiple choice options.
+**IMPORTANT**: Ask these as **conversational, open-ended questions**. Do NOT provide multiple choice options.
 
-1. **Lab name and title**:
-   - What should we call this workshop/lab?
-   - Example: "Building AI/ML Workloads on OpenShift AI"
-   - I'll use this to:
-     - Update `site.yml` title
-     - Update `content/antora.yml` title
-     - Generate a slug recommendation for `lab_name` variable
+**Question 1 - What Should We Call This?**:
+```
+What's the name of your workshop?
 
-   **After user provides title, recommend a slug**:
-   - Generate from title: lowercase, hyphens, no special chars
-   - Example: "Building AI/ML Workloads on OpenShift AI" → `building-ai-ml-workloads-openshift-ai`
-   - Ask: "I recommend using `{slug}` as the lab_name. Use this or provide your own?"
+Example: "Building AI/ML Workloads on OpenShift AI"
 
-2. **Lab overview**:
-   - What's the overall goal of this lab?
-   - Example: "Learn to build and deploy AI/ML workloads on OpenShift AI"
+I'll use this to set up your lab title and generate a clean URL-friendly slug.
 
-3. **Target audience**:
-   - Who is this lab for?
-   - Example: "Developers, Architects, SREs, Data Scientists"
-   - What's their experience level?
-   - Example: "Beginner, Intermediate, Advanced"
+Your lab name:
 
-4. **Learning journey**:
-   - What should learners know by the end?
-   - What skills will they gain?
+[After user provides title, I'll suggest a slug like "building-ai-ml-workloads-openshift-ai"]
+```
 
-5. **Story/scenario**:
-   - What company/business scenario should we use?
-   - Example: "ACME Corp" or custom company
-   - What's the business challenge driving this?
+**Question 2 - The Learning Goal**:
+```
+What's the main goal of this lab?
 
-6. **Estimated duration**:
-   - How long should the complete lab take?
-   - Example: "30min, 1hr, 2hr"
+What should learners be able to do when they finish?
 
-7. **Version and environment scope** (REQUIRED):
-   - OpenShift version?
-   - Example: "4.18, 4.20" or use placeholder `{ocp_version}`
-   - Product versions?
-   - Example: "OpenShift Pipelines 1.12, OpenShift AI 2.8" or use placeholders
-   - Cluster type?
-   - Example: "SNO or multinode"
-   - Access level?
-   - Example: "admin only, or multi-user with keycloak/htpasswd"
-   - If not provided:
-     - Use attribute placeholders: `{ocp_version}`, `{pipelines_version}`
-     - Avoid version-specific CLI/UI steps
-     - Note in module: "Tested on OpenShift {ocp_version}"
+Example: "Learn to build and deploy AI/ML workloads on OpenShift AI"
+
+Your lab goal:
+```
+
+**Question 3 - Who's Learning?**:
+```
+Who is this lab designed for?
+
+Examples: Developers, Architects, SREs, Data Scientists, Platform Engineers
+
+Your target audience:
+
+What's their experience level?
+- Beginner (new to the technology)
+- Intermediate (some hands-on experience)
+- Advanced (production experience)
+
+Their level:
+```
+
+**Question 4 - The Learning Journey**:
+```
+By the end of this lab, what should learners understand and be able to do?
+
+List the key skills they'll gain:
+
+Your learning outcomes:
+```
+
+**Question 5 - Make It Real**:
+```
+What company or business scenario should we use to make this relatable?
+
+Examples: "ACME Corp", "RetailCo", "FinTech Solutions"
+Or create your own!
+
+Company name:
+
+What business challenge are they facing that drives this learning?
+
+Their challenge:
+```
+
+**Question 6 - How Long?**:
+```
+How much time should learners budget for the complete lab?
+
+Typical options: 30min, 1hr, 2hr
+
+Your target duration:
+```
+
+**Question 7 - Technical Environment**:
+```
+Let's nail down the technical details:
+
+OpenShift version? (e.g., "4.18", "4.20", or I can use {ocp_version} placeholder)
+
+Product versions? (e.g., "OpenShift Pipelines 1.12, OpenShift AI 2.8")
+
+Cluster type? (SNO or multinode)
+
+Access level? (admin only, or multi-user with keycloak/htpasswd)
+
+Your environment details:
+
+Note: If you're not sure, I'll use placeholders that work across versions.
+```
 
 **Then I'll recommend**:
 - Suggested module breakdown (how many modules, what each covers)
@@ -376,18 +416,19 @@ AgnosticV catalog configuration is for:
 
 **Initial question:**
 ```
-Q: Do you need help with AgnosticV catalog configuration?
+Quick question about infrastructure setup! 🏗️
 
-⚠️  Note: This is for RHDP developers/advanced users only.
-    Most content creators can skip this (choose option 1 or 2).
+Do you need help configuring AgnosticV (the RHDP provisioning system)?
 
-Options:
-1. No, already set up → Skip to Step 3
-2. No, I'll handle it myself → Skip to Step 3
-3. Yes, help me create new catalog → Continue ↓
-4. What's AgnosticV? → Explain
+⚠️  Heads up: This is for RHDP developers/advanced users only.
+   Most content creators can skip this - choose option 1 or 2.
 
-Your choice? [1/2/3/4]
+1. ✅ Already set up (skip to content creation)
+2. 👍 I'll handle it myself (skip to content creation)
+3. 🆘 Yes, help me create a new catalog
+4. ❓ What's AgnosticV? (explain it to me)
+
+What's your situation? [1/2/3/4]
 ```
 
 **If user chooses option 3 (YES to AgV help):**

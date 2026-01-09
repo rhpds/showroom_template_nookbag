@@ -203,14 +203,15 @@ Proceeding to: Step 1 (Determine Context)
 **First, ask the user**:
 
 ```
-Q: Are you creating a new demo or continuing an existing demo?
+Let's get started! I'll help you create amazing demo content.
 
-Options:
-1. Creating a NEW demo
-2. Continuing an EXISTING demo
-3. Something else (please describe)
+Are you creating a new demo or continuing an existing one?
 
-Your choice? [1/2/3]
+1. 🆕 Creating a NEW demo (I'll help you plan the whole story)
+2. ➡️  Continuing an EXISTING demo (I'll pick up where you left off)
+3. 🤔 Something else (tell me what you need)
+
+What's your situation? [1/2/3]
 ```
 
 **ONLY AFTER user answers, proceed based on their response.**
@@ -220,37 +221,83 @@ Your choice? [1/2/3]
 
 ### Step 2: Plan Overall Demo Story (if new demo)
 
-If this is a new demo, I'll gather the big picture:
+Great! Let's plan your demo together. I'll ask you a few questions to understand what you're trying to achieve.
 
-**IMPORTANT**: Ask these as **open-ended questions** where users type their answers. Do NOT provide multiple choice options.
+**IMPORTANT**: Ask these as **conversational, open-ended questions**. Do NOT provide multiple choice options.
 
-1. **Demo overview**:
-   - What's the overall message of this demo?
-   - Example: "Show how OpenShift accelerates application deployment for enterprises"
+**Question 1 - The Big Picture**:
+```
+What's the main message you want to deliver in this demo?
 
-2. **Target audience**:
-   - Who will see this demo?
-   - Example: "C-level, Sales engineers, Technical managers, Partners"
-   - What are their business priorities?
-   - Example: "Cost reduction, faster time-to-market, competitive advantage"
+Think about: What should your audience remember after seeing this?
 
-3. **Business transformation story**:
-   - What's the customer challenge you're solving?
-   - What's the current state pain?
-   - What's the desired future state?
+Example: "Show how OpenShift accelerates application deployment for enterprises"
 
-4. **Customer scenario**:
-   - What company/industry should we use?
-   - Example: "RetailCo", "FinanceCorp", "TechSolutions" or custom
-   - Specific business challenge driving urgency?
+Your answer:
+```
 
-5. **Key metrics to showcase**:
-   - What quantifiable improvements to highlight?
-   - Example: "6 weeks → 5 minutes deployment time"
+**Question 2 - Know Your Audience**:
+```
+Who will be watching this demo?
 
-6. **Estimated demo duration**:
-   - How long should complete demo take?
-   - Example: "15min, 30min, 45min"
+Examples: C-level executives, Sales engineers, Technical managers, Partners
+
+Your audience:
+
+And what matters most to them right now? (their business priorities)
+
+Examples: Cost reduction, faster time-to-market, competitive advantage
+
+Their priorities:
+```
+
+**Question 3 - The Transformation Story**:
+```
+Let's create the before-and-after narrative.
+
+What's the customer challenge you're solving?
+
+What's painful about their current state?
+
+What does the ideal future state look like?
+
+Your story:
+```
+
+**Question 4 - Customer Scenario**:
+```
+What company or industry should we feature in this demo?
+
+Examples: "RetailCo" (retail), "FinanceCorp" (banking), "HealthTech" (healthcare)
+Or create your own!
+
+Company/industry:
+
+What specific business challenge is driving urgency for them?
+
+Their urgent challenge:
+```
+
+**Question 5 - Show the Impact**:
+```
+What quantifiable improvements will you highlight?
+
+Examples:
+- "6 weeks → 5 minutes deployment time"
+- "80% reduction in infrastructure costs"
+- "10x faster developer productivity"
+
+Your key metrics:
+```
+
+**Question 6 - Timing**:
+```
+How long should the complete demo take?
+
+Typical options: 15min, 30min, 45min
+
+Your target duration:
+```
 
 **Then I'll recommend**:
 - Suggested module/section breakdown
@@ -279,18 +326,19 @@ AgnosticV catalog configuration is for:
 
 **Initial question:**
 ```
-Q: Do you need help with AgnosticV catalog configuration?
+Quick question about infrastructure setup! 🏗️
 
-⚠️  Note: This is for RHDP developers/advanced users only.
-    Most content creators can skip this (choose option 1 or 2).
+Do you need help configuring AgnosticV (the RHDP provisioning system)?
 
-Options:
-1. No, already set up → Skip to Step 3
-2. No, I'll handle it myself → Skip to Step 3
-3. Yes, help me create new catalog → Continue ↓
-4. What's AgnosticV? → Explain
+⚠️  Heads up: This is for RHDP developers/advanced users only.
+   Most content creators can skip this - choose option 1 or 2.
 
-Your choice? [1/2/3/4]
+1. ✅ Already set up (skip to content creation)
+2. 👍 I'll handle it myself (skip to content creation)
+3. 🆘 Yes, help me create a new catalog
+4. ❓ What's AgnosticV? (explain it to me)
+
+What's your situation? [1/2/3/4]
 ```
 
 **If user chooses option 3 (YES to AgV help):**
