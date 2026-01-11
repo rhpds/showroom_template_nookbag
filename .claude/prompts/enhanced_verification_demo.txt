@@ -436,9 +436,18 @@ Reference the comprehensive style guidelines: `prompts/redhat_style_guide_valida
 - ✅ **Purpose**: Prevents audience from losing context during presentation
 - ❌ **INVALID**: `link:https://example.com[Link Text]` (missing caret)
 - 📝 **Exception**: Internal xref links (demo navigation) should NOT use `^` - keep flow within demo
-- 📝 **Examples**:
+- 📝 **Text Link Examples**:
   - External: `link:https://www.redhat.com/...[Red Hat Solution Brief^]` ✅
   - Internal: `xref:03-demo-platform.adoc[Next Section]` ✅ (no caret)
+
+**CRITICAL: Clickable Image Link Format Requirements:**
+- ✅ **ALL clickable images linking externally MUST use `^` caret** to open in new tab
+- ✅ **Format Option 1**: `image::case-study.png[Alt Text,600,link=https://example.com^]` (caret after URL)
+- ✅ **Format Option 2**: `link:https://example.com^[image:case-study.png[Alt Text,600]]` (caret before closing bracket)
+- ❌ **INVALID**: `image::case-study.png[Alt Text,link=https://example.com]` (missing caret)
+- 📝 **Image Link Examples**:
+  - Clickable external: `image::roi.png[ROI Analysis,link=https://www.redhat.com/study^]` ✅
+  - Regular image: `image::dashboard.png[Dashboard]` ✅ (no link, no caret needed)
 
 **Troubleshooting Section Guidance for Demos:**
 - ⚠️ **Optional for most demos**: Presenter-led demos typically handle issues live without documented troubleshooting

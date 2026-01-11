@@ -300,9 +300,18 @@ Reference the comprehensive style guidelines: `prompts/redhat_style_guide_valida
 - ✅ **Purpose**: Prevents learners from losing their place in the workshop
 - ❌ **INVALID**: `link:https://example.com[Link Text]` (missing caret)
 - 📝 **Exception**: Internal xref links (module navigation) should NOT use `^` - keep learners in workshop flow
-- 📝 **Examples**:
+- 📝 **Text Link Examples**:
   - External: `link:https://docs.redhat.com/...[Red Hat Documentation^]` ✅
   - Internal: `xref:03-module-02.adoc[Next Module]` ✅ (no caret)
+
+**CRITICAL: Clickable Image Link Format Requirements:**
+- ✅ **ALL clickable images linking externally MUST use `^` caret** to open in new tab
+- ✅ **Format Option 1**: `image::diagram.png[Alt Text,600,link=https://example.com^]` (caret after URL)
+- ✅ **Format Option 2**: `link:https://example.com^[image:diagram.png[Alt Text,600]]` (caret before closing bracket)
+- ❌ **INVALID**: `image::diagram.png[Alt Text,link=https://example.com]` (missing caret)
+- 📝 **Image Link Examples**:
+  - Clickable external: `image::arch.png[Architecture,link=https://docs.redhat.com^]` ✅
+  - Regular image: `image::screenshot.png[Screenshot]` ✅ (no link, no caret needed)
 
 **Troubleshooting Section Guidance:**
 - ⚠️ **Optional for simple workshops**: Introductory modules and basic tutorials may skip troubleshooting

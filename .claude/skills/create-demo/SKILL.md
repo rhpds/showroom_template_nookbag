@@ -681,6 +681,19 @@ If you provided visual assets or scripts:
 - Results: `deployment-success.png`, `metrics-dashboard.png`
 - Comparisons: `before-state.png`, `after-state.png`
 
+**Clickable Images (Links)**:
+If an image should be clickable and link to external content, use `^` caret to open in new tab:
+
+```asciidoc
+// Using image macro with link attribute
+image::customer-success-story.png[Case Study,600,link=https://www.redhat.com/case-study^]
+
+// Using link macro around image
+link:https://www.redhat.com/case-study^[image:customer-success-story.png[Case Study,600]]
+```
+
+**Critical**: Clickable images linking to external URLs MUST use `^` caret to open in new tab, preventing audience from losing demo context.
+
 ### Step 6: Fetch and Analyze References
 
 Based on your references, I'll:

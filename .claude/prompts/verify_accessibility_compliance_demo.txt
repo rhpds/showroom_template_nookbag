@@ -46,8 +46,41 @@ ACCESSIBILITY VALIDATION FOR DEMOS:
    - **External Link Accessibility**: Links must open in new tabs (^) to maintain demo context
    - **Descriptive Link Text**: Link text should describe destination, not just "click here"
    - **AsciiDoc Link Format**: Proper format `https://example.com[Descriptive Text^]`
+   - **Internal Navigation**: xref links should NOT use ^ (keep flow within demo)
+   - **Clickable Images**: Images linking externally must also use ^ caret
    - **Bullet Point Accessibility**: Consistent AsciiDoc bullet formatting for screen readers
    - **Heading Hierarchy**: Proper AsciiDoc heading structure for navigation
+
+   **Critical Rule**: ALL external links (text and image links) MUST use `^` caret to open in new tab. This prevents audience from losing demo context.
+
+   **Text Link Examples**:
+
+   **WRONG**:
+   ```asciidoc
+   link:https://www.redhat.com/case-study[Customer Success Story]
+   ```
+
+   **CORRECT**:
+   ```asciidoc
+   link:https://www.redhat.com/case-study[Customer Success Story^]
+   ```
+
+   **Clickable Image Link Examples**:
+
+   **WRONG**:
+   ```asciidoc
+   image::roi-analysis.png[ROI,link=https://www.redhat.com/study]
+   ```
+
+   **CORRECT**:
+   ```asciidoc
+   image::roi-analysis.png[ROI,link=https://www.redhat.com/study^]
+   ```
+
+   Or using link macro:
+   ```asciidoc
+   link:https://www.redhat.com/study^[image:roi-analysis.png[ROI]]
+   ```
 
 ## CRITICAL FILE TYPE DETECTION - MUST FOLLOW:
 

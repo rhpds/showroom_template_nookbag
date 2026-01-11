@@ -47,19 +47,39 @@ ACCESSIBILITY VALIDATION FOR WORKSHOPS:
    - **Descriptive Link Text**: Link text should describe destination, not just "click here"
    - **AsciiDoc Link Format**: Proper format `https://example.com[Descriptive Text^]`
    - **Internal Navigation**: xref links should NOT use ^ (keep learners in workshop flow)
+   - **Clickable Images**: Images linking externally must also use ^ caret
    - **Bullet Point Accessibility**: Consistent AsciiDoc bullet formatting for screen readers
    - **Heading Hierarchy**: Proper AsciiDoc heading structure for navigation
 
-   **Critical Rule**: ALL external links (documentation, resources, etc.) MUST use `^` caret to open in new tab. This prevents learners from losing their place in the workshop.
+   **Critical Rule**: ALL external links (text and image links) MUST use `^` caret to open in new tab. This prevents learners from losing their place in the workshop.
 
-   **Example - WRONG**:
+   **Text Link Examples**:
+
+   **WRONG**:
    ```asciidoc
    See the link:https://docs.redhat.com/...[OpenShift documentation] for more details.
    ```
 
-   **Example - CORRECT**:
+   **CORRECT**:
    ```asciidoc
    See the link:https://docs.redhat.com/...[OpenShift documentation^] for more details.
+   ```
+
+   **Clickable Image Link Examples**:
+
+   **WRONG**:
+   ```asciidoc
+   image::architecture-diagram.png[Architecture,link=https://docs.redhat.com/architecture]
+   ```
+
+   **CORRECT**:
+   ```asciidoc
+   image::architecture-diagram.png[Architecture,link=https://docs.redhat.com/architecture^]
+   ```
+
+   Or using link macro:
+   ```asciidoc
+   link:https://docs.redhat.com/architecture^[image:architecture-diagram.png[Architecture]]
    ```
 
 ## CRITICAL FILE TYPE DETECTION - MUST FOLLOW:

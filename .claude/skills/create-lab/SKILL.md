@@ -828,6 +828,19 @@ At end of module, include:
 - Command outputs: `oc-get-pods-output.png`, `build-logs.png`
 - Step-by-step: `step-1-create-task.png`, `step-2-run-pipeline.png`
 
+**Clickable Images (Links)**:
+If an image should be clickable and link to external content, use `^` caret to open in new tab:
+
+```asciidoc
+// Using image macro with link attribute
+image::architecture-diagram.png[Architecture,600,link=https://docs.redhat.com/architecture^]
+
+// Using link macro around image
+link:https://docs.redhat.com/architecture^[image:architecture-diagram.png[Architecture,600]]
+```
+
+**Critical**: Clickable images linking to external URLs MUST use `^` caret to open in new tab, just like text links.
+
 ### Step 6: Fetch and Analyze References
 
 Based on your references, I'll:

@@ -2,7 +2,7 @@
 
 **For**: Content Creators, Workshop Developers, Demo Builders
 **Using**: Claude Code CLI or Cursor IDE
-**Last Updated**: January 9, 2026
+**Last Updated**: January 11, 2026
 
 ---
 
@@ -88,15 +88,23 @@ Cursor automatically executes the full skills from `.claude/skills/` - no extra 
    - Reference materials (URLs, docs)
    - Learning objective
    - Number of exercises (2-3 recommended)
+   - **NEW**: Troubleshooting section? (optional - recommended for production workshops)
+
+6. **🎯 Conclusion Module** (after last module):
+   - **NEW**: Asks "Is this the last module?"
+   - If YES: Generates mandatory conclusion with consolidated references
+   - You can curate references: use as-is, add more, or remove unwanted ones
 
 **What you get**:
 - ✅ Valid AsciiDoc files
 - ✅ Step-by-step instructions
 - ✅ Verification checkpoints
-- ✅ Troubleshooting section
+- ✅ Troubleshooting section (optional, based on your choice)
 - ✅ Learning outcomes
+- ✅ **Mandatory conclusion module** with consolidated references
 - ✅ Auto-updated navigation
 - ✅ Red Hat style compliance
+- ✅ External links open in new tabs (`^` caret)
 
 ---
 
@@ -142,13 +150,20 @@ Cursor automatically executes the full skills from `.claude/skills/` - no extra 
    - Target audience details
    - Number of demo parts (2-4 recommended)
 
+6. **🎯 Conclusion Module** (after last module):
+   - **NEW**: Asks "Is this the last module?"
+   - If YES: Generates mandatory conclusion with consolidated references
+   - You can curate references: use as-is, add more, or remove unwanted ones
+
 **What you get**:
 - ✅ Know sections (business context, ROI)
 - ✅ Show sections (technical steps)
 - ✅ Presenter guidance and tips
 - ✅ Business metrics
+- ✅ **Mandatory conclusion module** with consolidated references
 - ✅ Sales Engineer action items
 - ✅ Auto-updated navigation
+- ✅ External links open in new tabs (`^` caret)
 
 ---
 
@@ -172,6 +187,10 @@ Cursor automatically executes the full skills from `.claude/skills/` - no extra 
 - ✅ Red Hat Corporate Style Guide compliance
 - ✅ Technical accuracy
 - ✅ Workshop/demo structure
+- ✅ **NEW**: Conclusion module presence (mandatory)
+- ✅ **NEW**: References only in conclusion (not in individual modules)
+- ✅ **NEW**: External links use `^` caret (open in new tabs)
+- ✅ **NEW**: Troubleshooting sections (context-dependent, optional)
 - ✅ Accessibility (WCAG 2.1 AA)
 - ✅ AsciiDoc syntax
 - ✅ Content quality
