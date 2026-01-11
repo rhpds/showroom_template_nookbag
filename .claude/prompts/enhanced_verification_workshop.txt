@@ -228,7 +228,7 @@ Provide analysis in this structure:
         "Add verification section after each major configuration step",
         "Include specific commands with expected outputs",
         "Provide clear success/failure indicators",
-        "Add troubleshooting for common issues"
+        "Optionally add troubleshooting for common issues (recommended for complex workshops)"
       ],
       "learning_context": "Use after completing hands-on configuration tasks",
       "instructor_guidance": "Walk through verification steps with students to catch issues early",
@@ -283,9 +283,31 @@ Reference the comprehensive style guidelines: `prompts/redhat_style_guide_valida
 - ✅ **Technical procedures**: Reference official Red Hat documentation or product guides
 - ✅ **Command examples**: Verify against current Red Hat product documentation
 - ✅ **Configuration samples**: Use Red Hat-recommended configurations and best practices
-- ✅ **Troubleshooting steps**: Reference Red Hat Knowledge Base articles or support documentation
+- ✅ **Troubleshooting steps**: Reference Red Hat Knowledge Base articles or support documentation (OPTIONAL - only for complex production workshops)
 - ✅ **Learning resources**: Link to official Red Hat training materials and certification paths
 - ✅ **Customer examples**: Use anonymized but realistic enterprise scenarios
+
+**CRITICAL: References Consolidation and Conclusion Module Requirements:**
+- ❌ **INVALID**: Individual modules containing "== References" sections
+- ✅ **REQUIRED**: All references MUST be consolidated in the conclusion module only
+- ✅ **REQUIRED**: Every workshop MUST have a conclusion module (typically named conclusion.adoc or XX-conclusion.adoc)
+- ✅ **Conclusion content**: What learners accomplished, key takeaways, next steps, consolidated references, feedback prompts
+- 📝 **Note**: Individual modules may cite sources inline (e.g., "According to the Red Hat documentation...") but should NOT have formal References sections
+
+**CRITICAL: External Link Format Requirements:**
+- ✅ **ALL external links MUST use `^` caret** to open in new tab
+- ✅ **Format**: `link:https://example.com[Link Text^]` (note the caret before closing bracket)
+- ✅ **Purpose**: Prevents learners from losing their place in the workshop
+- ❌ **INVALID**: `link:https://example.com[Link Text]` (missing caret)
+- 📝 **Exception**: Internal xref links (module navigation) should NOT use `^` - keep learners in workshop flow
+- 📝 **Examples**:
+  - External: `link:https://docs.redhat.com/...[Red Hat Documentation^]` ✅
+  - Internal: `xref:03-module-02.adoc[Next Module]` ✅ (no caret)
+
+**Troubleshooting Section Guidance:**
+- ⚠️ **Optional for simple workshops**: Introductory modules and basic tutorials may skip troubleshooting
+- ✅ **Recommended for production workshops**: Complex workshops with external dependencies should include troubleshooting
+- 📝 **Evaluation Rule**: Only flag missing troubleshooting as an issue for production-ready, complex workshops
 
 **Red Hat Voice and Tone for Educational Content:**
 - ✅ Clear, instructional tone without condescension

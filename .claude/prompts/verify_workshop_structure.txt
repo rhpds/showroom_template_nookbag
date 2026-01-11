@@ -36,11 +36,13 @@ WORKSHOP STRUCTURE REQUIREMENTS:
    - Expected results clearly documented (visual or textual)
    - Self-assessment opportunities
 
-5. GUIDANCE AND SUPPORT
-   - Troubleshooting guidance for common issues
-   - Error handling and recovery procedures
+5. GUIDANCE AND SUPPORT (OPTIONAL - based on workshop complexity)
+   - Troubleshooting guidance for common issues (recommended for production workshops)
+   - Error handling and recovery procedures (optional for simple tutorials)
    - Hints and tips for complex steps
    - Alternative approaches when needed
+
+   NOTE: Troubleshooting sections are optional. Simple workshops and introductory modules may not need extensive troubleshooting. Only flag as missing for complex, production-ready workshops.
 
 6. KNOWLEDGE REINFORCEMENT
    - Summary of key concepts covered
@@ -48,7 +50,17 @@ WORKSHOP STRUCTURE REQUIREMENTS:
    - Next steps and additional learning resources
    - Real-world application scenarios
 
-7. FACILITATOR READINESS
+7. CONCLUSION MODULE (REQUIRED for all workshops)
+   - What learners accomplished across all modules
+   - Key takeaways (3-5 most important concepts)
+   - Next steps (related workshops, practice projects)
+   - **References section** - ALL references from ALL modules consolidated here
+   - Feedback prompts
+   - Closing message
+
+   CRITICAL: Individual modules should NOT have References sections. All references must be consolidated in the conclusion module only.
+
+8. FACILITATOR READINESS
    - Clear timing and pacing guidance
    - Preparation requirements
    - Common participant questions anticipated
@@ -163,9 +175,16 @@ Provide analysis as JSON:
       "issues": ["No verification commands in sections 2-4"]
     },
     "guidance": {
-      "score": 5,
+      "score": 7,
+      "present": true,
+      "issues": ["Troubleshooting section optional - recommend for complex production workshops"],
+      "note": "Troubleshooting is optional based on workshop complexity"
+    },
+    "conclusion_module": {
+      "score": 0,
       "present": false,
-      "issues": ["Missing troubleshooting section", "No error recovery procedures"]
+      "issues": ["Missing mandatory conclusion module", "No consolidated references section"],
+      "critical": "All workshops MUST have a conclusion module with consolidated references"
     },
     "reinforcement": {
       "score": 7,
@@ -180,7 +199,7 @@ Provide analysis as JSON:
   },
   "missing_elements": [
     "Workshop duration estimates",
-    "Troubleshooting section",
+    "Conclusion module with consolidated references (REQUIRED)",
     "Verification commands for hands-on activities"
   ],
   "structural_issues": [

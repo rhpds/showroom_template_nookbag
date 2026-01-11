@@ -423,6 +423,28 @@ Reference the comprehensive style guidelines: `prompts/redhat_style_guide_valida
 - ✅ **ROI data**: Use verified Red Hat Total Economic Impact studies or customer case studies
 - ✅ **Product capabilities**: Align with official Red Hat product documentation
 
+**CRITICAL: References Consolidation and Conclusion Module Requirements:**
+- ❌ **INVALID**: Individual demo modules containing "== References" sections
+- ✅ **REQUIRED**: All references MUST be consolidated in the conclusion module only
+- ✅ **REQUIRED**: Every demo MUST have a conclusion module (typically named conclusion.adoc or XX-conclusion.adoc)
+- ✅ **Conclusion content**: Business impact recap, ROI summary, competitive advantages, consolidated references, next steps, call-to-action
+- 📝 **Note**: Individual demo modules may cite sources inline but should NOT have formal References sections
+
+**CRITICAL: External Link Format Requirements:**
+- ✅ **ALL external links MUST use `^` caret** to open in new tab
+- ✅ **Format**: `link:https://example.com[Link Text^]` (note the caret before closing bracket)
+- ✅ **Purpose**: Prevents audience from losing context during presentation
+- ❌ **INVALID**: `link:https://example.com[Link Text]` (missing caret)
+- 📝 **Exception**: Internal xref links (demo navigation) should NOT use `^` - keep flow within demo
+- 📝 **Examples**:
+  - External: `link:https://www.redhat.com/...[Red Hat Solution Brief^]` ✅
+  - Internal: `xref:03-demo-platform.adoc[Next Section]` ✅ (no caret)
+
+**Troubleshooting Section Guidance for Demos:**
+- ⚠️ **Optional for most demos**: Presenter-led demos typically handle issues live without documented troubleshooting
+- ✅ **Recommended for self-service demos**: Demos meant for prospect self-exploration benefit from troubleshooting guidance
+- 📝 **Evaluation Rule**: Only flag missing troubleshooting for self-service demo content, not presenter-led demos
+
 **Red Hat Voice and Tone Standards:**
 - ✅ Clear, direct, and honest communication
 - ✅ Humble yet confident positioning

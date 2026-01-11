@@ -42,6 +42,26 @@ ACCESSIBILITY VALIDATION FOR WORKSHOPS:
    - Check that content works with browser accessibility features
    - Validate accessibility across different devices and platforms
 
+6. LINK ACCESSIBILITY AND ASCIIDOC FORMATTING
+   - **External Link Accessibility**: Links must open in new tabs (^) to maintain workshop context
+   - **Descriptive Link Text**: Link text should describe destination, not just "click here"
+   - **AsciiDoc Link Format**: Proper format `https://example.com[Descriptive Text^]`
+   - **Internal Navigation**: xref links should NOT use ^ (keep learners in workshop flow)
+   - **Bullet Point Accessibility**: Consistent AsciiDoc bullet formatting for screen readers
+   - **Heading Hierarchy**: Proper AsciiDoc heading structure for navigation
+
+   **Critical Rule**: ALL external links (documentation, resources, etc.) MUST use `^` caret to open in new tab. This prevents learners from losing their place in the workshop.
+
+   **Example - WRONG**:
+   ```asciidoc
+   See the link:https://docs.redhat.com/...[OpenShift documentation] for more details.
+   ```
+
+   **Example - CORRECT**:
+   ```asciidoc
+   See the link:https://docs.redhat.com/...[OpenShift documentation^] for more details.
+   ```
+
 ## CRITICAL FILE TYPE DETECTION - MUST FOLLOW:
 
 ### INFRASTRUCTURE FILES (BASIC ACCESSIBILITY ONLY):

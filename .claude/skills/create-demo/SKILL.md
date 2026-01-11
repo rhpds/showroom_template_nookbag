@@ -692,6 +692,12 @@ Based on your references, I'll:
 - Combine with AgnosticV variables (if provided)
 - Integrate provided diagrams and screenshots strategically
 
+**Reference Tracking** (for conclusion generation):
+- Track all references used across all modules
+- Store reference URLs, titles, and which modules used them
+- References will be consolidated in the conclusion module, NOT in individual modules
+- Each module can cite sources inline (e.g., "According to Red Hat's Total Economic Impact study...") but the formal References section will only appear in the conclusion
+
 ### Step 7: Read Templates and Verification Criteria (BEFORE Generating)
 
 **CRITICAL: I MUST read all these files BEFORE generating content to ensure output meets all standards.**
@@ -922,40 +928,113 @@ I'll automatically add the module to `content/modules/ROOT/nav.adoc` - this is R
 - ✅ Give clear next steps for presenters
 - ✅ Keep output concise (under 5000 tokens)
 
-### Step 12: Offer to Generate Conclusion Module (Optional)
+### Step 12: Generate Conclusion Module (MANDATORY)
 
-**After delivering all demo modules, ask if user wants a conclusion module:**
+**After delivering the final module, ask if this is the last module:**
 
 ```
-Q: Would you like me to generate a conclusion module to wrap up the demo?
+Q: Is this the last module of your demo?
 
-This adds a final module that:
-- Summarizes key business value demonstrated
-- Recaps ROI and competitive advantages
-- Provides clear call-to-action for audience
-- Lists next steps (workshops, POC, technical sessions)
+If YES, I will now generate the mandatory conclusion module that includes:
+- Business impact recap and ROI summary
+- Competitive advantages demonstrated
+- ALL REFERENCES used across the entire demo
+- Next steps for evaluation, pilot, and production
+- Call-to-action for technical teams and decision makers
+- Q&A guidance
 
-Options:
-1. Yes, generate conclusion module
-2. No, I'll create it later
-3. No, demo is complete without it
+If NO, you can continue creating more modules, and I'll generate the conclusion when you're done.
 
-Your choice? [1/2/3]
+Is this your last module? [Yes/No]
 ```
 
-**If user chooses option 1 (Yes)**:
+**If user answers YES (this is the last module)**:
 
-1. Detect highest module number (e.g., if last module is 05-module-03, conclusion will be 06-conclusion.adoc)
-2. Generate conclusion module using the embedded template below
-3. Customize the template with Know/Show structure:
+1. Read ALL previous modules to extract:
+   - All business value points and ROI metrics
+   - All references cited in each module
+   - Key technical capabilities demonstrated
+   - Competitive differentiation points
+
+2. Ask about references:
+
+   **First, extract all references from previous modules:**
+   - Read all module files (index.adoc, 01-overview.adoc, 02-details.adoc, 03-module-01-*.adoc, etc.)
+   - Extract all external links found in the content
+   - Identify reference materials provided during module creation (Step 3 question 2)
+   - Compile a comprehensive list with:
+     - URL
+     - Link text/title
+     - Which module(s) referenced it
+
+   **Then ask the user:**
+   ```
+   Q: How would you like to handle references in the conclusion?
+
+   I found these references used across your demo modules:
+   1. https://www.redhat.com/... [Red Hat OpenShift Platform] - Used in: Modules 1, 3
+   2. https://docs.redhat.com/... [Product Documentation] - Used in: Module 2
+   3. https://customers.redhat.com/... [Customer Success Story] - Used in: Module 1
+   {{ additional_references_if_found }}
+
+   Options:
+   1. Use these references as-is (I'll organize them by category)
+   2. Let me provide additional references to include
+   3. Let me curate the reference list (add/remove specific items)
+
+   Your choice? [1/2/3]
+   ```
+
+   **If option 1**: Use extracted references, organize by category
+
+   **If option 2**: Ask user to provide additional references:
+   ```
+   Q: Please provide additional references to include in the conclusion.
+
+   Format: URL and description, one per line
+   Example:
+   https://www.redhat.com/... - Red Hat solution brief
+   https://customers.redhat.com/... - Customer case study
+
+   Your additional references:
+   ```
+
+   **If option 3**: Ask user which references to keep/remove/add:
+   ```
+   Q: Let's curate the reference list.
+
+   Current references:
+   {{ numbered_list_of_references }}
+
+   Options:
+   - Type numbers to REMOVE (e.g., "3, 5, 7")
+   - Type "add" to add new references
+   - Type "done" when finished
+
+   Your action:
+   ```
+
+3. Detect highest module number (e.g., if last module is 05-module-03, conclusion will be 06-conclusion.adoc)
+
+4. Generate conclusion module using the embedded template below
+
+5. Customize the template with Know/Show structure:
    - File: `0X-conclusion.adoc` (where X = next sequential number)
    - **Know**: Business impact recap, ROI summary, competitive advantages
    - **Show**: Demo capabilities recap, technical highlights
    - Next steps: Workshops, POC, deep dives
+   - **References**: Consolidated references from all modules (REQUIRED)
    - Call to action for decision makers and technical teams
    - Q&A guidance with common questions
-4. Update nav.adoc with conclusion entry at the end
-5. Provide brief confirmation
+
+6. Update nav.adoc with conclusion entry at the end
+
+7. Provide brief confirmation
+
+**If user answers NO (more modules to come)**:
+- Note that conclusion will be generated after the last module
+- User can invoke /create-demo again to add more modules
+- When adding the final module, this question will be asked again
 
 **Embedded Demo Conclusion Template**:
 ```asciidoc
@@ -1119,6 +1198,39 @@ Based on this demo, assess:
 * **Authority**: Who else needs to be involved in the decision?
 * **Need**: Is this a critical priority or nice-to-have?
 
+== References
+
+**CRITICAL**: This section consolidates ALL references used across the entire demo.
+
+Read all previous modules and extract every reference cited, then organize them by category:
+
+=== Product Documentation
+
+* link:{{ product_docs_url }}[{{ product_name }} Documentation^] - Used in: Modules {{ modules_list }}
+* link:{{ feature_docs_url }}[{{ feature_name }} Guide^] - Used in: Modules {{ modules_list }}
+
+=== Red Hat Resources
+
+* link:{{ redhat_resource_1 }}[{{ resource_title_1 }}^] - Used in: Module {{ module_number }}
+* link:{{ solution_brief_url }}[{{ solution_brief_title }}^] - Used in: Module {{ module_number }}
+
+=== Customer Success Stories
+
+* link:{{ customer_story_1 }}[{{ customer_name_1 }} Case Study^] - Used in: Module {{ module_number }}
+* link:{{ customer_story_2 }}[{{ customer_name_2 }} Success Story^] - Used in: Module {{ module_number }}
+
+=== Industry Research and Analysis
+
+* link:{{ analyst_report_url }}[{{ analyst_report_title }}^] - Market research
+* link:{{ industry_study_url }}[{{ study_title }}^] - Industry benchmarks
+
+**Guidelines for References section**:
+- Group references by category (Product Docs, Red Hat Resources, Customer Stories, Research)
+- Include which module(s) used each reference
+- ALL external links must use `^` caret to open in new tab
+- Provide brief context for each reference (what it covers)
+- Ensure ALL references from ALL modules are included
+
 == Thank You
 
 Thank you for your time and attention. We're excited to help you {{ primary_value_proposition }}.
@@ -1141,18 +1253,18 @@ Thank you for your time and attention. We're excited to help you {{ primary_valu
 - Title: `= Demo Conclusion and Next Steps`
 - Nav entry: `* xref:0X-conclusion.adoc[Conclusion and Next Steps]`
 
-**Content to Include**:
+**Content to Include** (ALL REQUIRED):
 - ✅ **Know**: Business impact recap, ROI metrics, competitive advantages
 - ✅ **Show**: Demo capabilities summary, technical highlights
 - ✅ "Next Steps for Your Organization" - Evaluation path, pilot, production
 - ✅ "Resources" - Documentation, workshops, community
 - ✅ "Call to Action" - Tailored for technical teams vs decision makers
 - ✅ "Q&A Guidance" - Common questions with suggested answers
+- ✅ **"References"** - Consolidate ALL references from ALL modules (MANDATORY)
+- ✅ "Presenter Action Items" - Follow-up guidance for sales engineers
 - ✅ "Thank You" - Contact information and closing
 
-**If user chooses option 2 or 3**:
-- Skip conclusion generation
-- Note in summary that user can add conclusion later using the template
+**CRITICAL**: The References section MUST include every reference used across all demo modules, organized by category (Product Docs, Red Hat Resources, Customer Stories, Research).
 
 ## Example Usage
 
