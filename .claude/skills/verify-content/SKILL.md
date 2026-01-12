@@ -71,22 +71,21 @@ I'll run comprehensive verification using these validation frameworks:
 
 I'll provide:
 
-**Summary Report**:
-- Overall quality score
-- Critical issues (must fix)
-- Warnings (should fix)
-- Recommendations (nice to have)
+**Summary Table**:
+- Clean table with Issue, Priority, and Files columns
+- No time estimates or fix duration
+- Clear priority levels (Critical, High, Medium, Low)
 
-**Detailed Findings**:
-- Specific file locations
+**Strengths Section**:
+- What your content does exceptionally well
+- Positive highlights to reinforce good practices
+- Recognition of quality work
+
+**Detailed Breakdown** (optional, on request):
+- Specific file locations and line numbers
 - Before/after examples
 - Implementation steps
-- Priority levels
-
-**Actionable Items**:
-- Numbered list of fixes
-- Links to relevant documentation
-- Estimated effort level
+- How to fix each issue
 
 ### Step 5: Offer Fixes (Optional)
 
@@ -111,25 +110,34 @@ User: content/modules/ROOT/pages/module-01-install-aap.adoc
 [Runs all workshop verification agents]
 
 Skill:
-📊 Verification Results for module-01-install-aap.adoc
+📊 Summary Table of All Issues
+┌──────────────────────────────────┬──────────┬───────────┐
+│              Issue               │ Priority │   Files   │
+├──────────────────────────────────┼──────────┼───────────┤
+│ Missing verification commands    │ Critical │ 1 file    │
+├──────────────────────────────────┼──────────┼───────────┤
+│ Incorrect product name "OCP"     │ Critical │ 1 file    │
+├──────────────────────────────────┼──────────┼───────────┤
+│ Missing alt text for images      │ Critical │ 1 file    │
+├──────────────────────────────────┼──────────┼───────────┤
+│ Incomplete troubleshooting       │ High     │ 1 file    │
+├──────────────────────────────────┼──────────┼───────────┤
+│ Missing learning outcomes        │ High     │ 1 file    │
+├──────────────────────────────────┼──────────┼───────────┤
+│ Commands lack expected output    │ Medium   │ 1 file    │
+└──────────────────────────────────┴──────────┴───────────┘
 
-**Overall Score**: 82/100
+---
 
-**Critical Issues** (3):
-1. Missing verification commands in Exercise 2 (line 145)
-2. Incorrect Red Hat product name: "OCP" should be "Red Hat OpenShift" (line 67)
-3. Missing alt text for screenshot placeholder (line 203)
+✅ Strengths Worth Highlighting
 
-**Warnings** (5):
-1. Troubleshooting section could be more comprehensive
-2. Learning outcomes section recommended but missing
-3. Some commands lack expected output examples
+Your module excels in these areas:
 
-**Recommendations** (2):
-1. Add time estimates for each exercise
-2. Include references section with documentation links
+1. Clear Step-by-Step Instructions - Installation steps are well-structured and easy to follow
+2. Proper AsciiDoc Formatting - Code blocks and syntax highlighting are correctly implemented
+3. Strong Technical Content - Accurate AAP installation procedures for OpenShift
 
-Would you like me to apply fixes automatically? [Yes/Show details/Manual fixes]
+Would you like detailed breakdown of specific issues? [Yes/No]
 ```
 
 ### Example 2: Verify All Modules in Workshop
@@ -156,28 +164,33 @@ User: Yes
 [Runs verification on all files]
 
 Skill:
-📊 Batch Verification Results
+📊 Summary Table of All Issues
+┌──────────────────────────────────┬──────────┬───────────┐
+│              Issue               │ Priority │   Files   │
+├──────────────────────────────────┼──────────┼───────────┤
+│ Inconsistent heading styles      │ Critical │ All files │
+├──────────────────────────────────┼──────────┼───────────┤
+│ Missing alt text for images      │ Critical │ 3 files   │
+├──────────────────────────────────┼──────────┼───────────┤
+│ Title case headings              │ High     │ All files │
+├──────────────────────────────────┼──────────┼───────────┤
+│ Missing Red Hat product names    │ High     │ 3 files   │
+├──────────────────────────────────┼──────────┼───────────┤
+│ Incomplete verification commands │ Medium   │ 2 files   │
+└──────────────────────────────────┴──────────┴───────────┘
 
-**Summary**:
-- 5 files verified
-- Average score: 78/100
-- 12 critical issues across all files
-- 23 warnings
-- 15 recommendations
+---
 
-**Top Issues**:
-1. Inconsistent heading styles across modules (affects: all modules)
-2. Missing Red Hat style compliance in 3 files
-3. No accessibility alt text in 8 image references
+✅ Strengths Worth Highlighting
 
-**Per-File Scores**:
-- index.adoc: 85/100 ✓
-- 01-overview.adoc: 90/100 ✓
-- 02-details.adoc: 88/100 ✓
-- module-01-install-aap.adoc: 72/100 ⚠️
-- module-02-configure-aap.adoc: 65/100 ⚠️
+Your workshop excels in these areas:
 
-Would you like detailed report for specific files? [Enter file numbers or 'all']
+1. Excellent Business Context - Outstanding scenario in overview addressing real organizational challenges
+2. Progressive Learning Flow - Well-structured progression from basic to advanced concepts
+3. Strong Technical Depth - Comprehensive AAP configuration coverage across modules
+4. Good Documentation Structure - Clear separation of overview, details, and hands-on modules
+
+Would you like detailed breakdown for specific files? [Yes/No]
 ```
 
 ## Verification Standards
@@ -229,11 +242,41 @@ Every verification includes:
 Results are presented in clear, actionable format:
 
 ```markdown
-## Critical Issues (Must Fix)
+📊 Summary Table of All Issues
+┌──────────────────────────────────┬──────────┬───────────┐
+│              Issue               │ Priority │   Files   │
+├──────────────────────────────────┼──────────┼───────────┤
+│ Duplicate References sections    │ Critical │ 3 files   │
+├──────────────────────────────────┼──────────┼───────────┤
+│ Missing descriptive alt text     │ Critical │ 3 files   │
+├──────────────────────────────────┼──────────┼───────────┤
+│ Title case headings              │ High     │ All files │
+├──────────────────────────────────┼──────────┼───────────┤
+│ Missing blank lines before lists │ High     │ 2 files   │
+├──────────────────────────────────┼──────────┼───────────┤
+│ "Powerful" usage                 │ High     │ 4 files   │
+└──────────────────────────────────┴──────────┴───────────┘
+
+---
+
+✅ Strengths Worth Highlighting
+
+Your workshop excels in these areas:
+
+1. Exceptional RBAC Implementation Guidance - Module 01 provides comprehensive step-by-step RBAC configuration that's production-ready
+2. Strong Business Context - Outstanding business scenario addressing real organizational challenges
+3. Excellent Verification Sections - Checkpoints with ✅ expected results and troubleshooting are exemplary
+4. Perfect External Link Formatting - ALL external links correctly use ^ caret (opens in new tab)
+5. Clear Persona-Based Learning - User persona approach effectively demonstrates RBAC in action
+
+---
+
+## Detailed Issue Breakdown (on request)
 
 ### 1. Missing Verification Commands
 **File**: module-01-install-aap.adoc:145
 **Impact**: Learners can't verify success, leading to confusion
+**Priority**: Critical
 
 **Current**:
 ```asciidoc
@@ -260,27 +303,16 @@ platform-controller   Running  5m
 1. Add verification command after deployment step
 2. Include expected output
 3. Add success indicator
-
----
-
-## Warnings (Should Fix)
-
-### 1. Incomplete Troubleshooting Section
-**File**: module-01-install-aap.adoc:250
-**Impact**: Reduces learner independence
-
-**Recommendation**: Add 3-5 common issues with solutions
-...
 ```
 
-## Quality Gates
+## Priority Levels
 
-Content passes verification when:
-- ✓ Overall score ≥ 80/100
-- ✓ Zero critical issues
-- ✓ All Red Hat style violations fixed
-- ✓ Technical accuracy confirmed
-- ✓ Accessibility standards met
+Issues are categorized by priority:
+
+- **Critical**: Must fix before publishing - impacts functionality, accessibility, or brand compliance
+- **High**: Should fix soon - affects quality and user experience significantly
+- **Medium**: Recommended fixes - improves overall quality
+- **Low**: Nice to have - polish and optimization
 
 ## Integration with Other Skills
 
