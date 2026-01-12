@@ -601,6 +601,53 @@ All content must follow:
 - ✅ Keyboard-accessible instructions
 - ✅ Clear, inclusive language
 
+### AsciiDoc Formatting (CRITICAL - Added Jan 12, 2026)
+
+**List Formatting Requirements:**
+- ✅ Blank line BEFORE every list
+- ✅ Blank line AFTER every list (before next content)
+- ✅ Blank line after bold headings (`**Text:**`) before lists
+- ✅ Blank line after colons (`:`) before lists
+
+**Image Requirements:**
+- ✅ All images must include `link=self,window=blank`
+- ✅ Makes images clickable to open full-size in new tab
+- ✅ Prevents users from losing their place
+
+**Why This Matters:**
+- Lists without blank lines cause text to run together when rendered
+- Makes content unreadable and unprofessional
+- Damages Red Hat brand credibility
+- Images without clickable links frustrate users trying to see details
+
+**Example:**
+```asciidoc
+❌ WRONG - Text runs together:
+**Prerequisites:**
+* OpenShift installed
+* Admin access
+Next section...
+
+✅ CORRECT - Proper spacing:
+**Prerequisites:**
+
+* OpenShift installed
+* Admin access
+
+Next section...
+
+❌ WRONG - Image not clickable:
+image::diagram.png[Diagram,width=700]
+
+✅ CORRECT - Clickable image:
+image::diagram.png[Diagram,link=self,window=blank,width=700]
+```
+
+**Verification:**
+- `/verify-content` actively scans for these violations
+- Provides specific before/after examples
+- Shows exact file locations and fix instructions
+
 ---
 
 ## Maintenance and Updates
@@ -623,6 +670,18 @@ All content must follow:
 6. Document changes in this guide
 
 ### Version History
+
+**January 12, 2026** - AsciiDoc Formatting Enforcement
+- Added mandatory blank line requirements for all lists
+- All images must now include `link=self,window=blank` for clickability
+- Updated verification prompts to actively scan for formatting violations
+- Fixed demo template (02-details.adoc) with proper spacing
+- Added AsciiDoc Formatting section to Quality Standards
+- Updated SKILL-COMMON-RULES.md with section 4 (List Formatting)
+- Updated both create-lab and create-demo skills with clickable image requirements
+- Created CHANGELOG-2026-01-12.md with complete documentation
+- Updated CLAUDE-SKILLS-GUIDE.adoc with Common Formatting Issues section
+- Files changed: 8 files, 322 insertions(+), 14 deletions(-)
 
 **January 9, 2026** - Interactive Questions Update
 - Made all questions conversational and friendly

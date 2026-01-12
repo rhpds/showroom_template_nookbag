@@ -99,7 +99,98 @@ include::partial$_attributes.adoc[]
 
 ---
 
-### 4. Image Path Conventions (REQUIRED)
+### 4. AsciiDoc List Formatting (REQUIRED)
+
+**Rule**: All lists must have proper blank lines to render correctly.
+
+**CRITICAL**: Improper list formatting causes text to run together when rendered, making content unreadable.
+
+**Required blank lines**:
+1. **Blank line BEFORE the list**
+2. **Blank line AFTER the list** (before next content)
+3. **Blank line after headings/bold text before lists**
+
+**CORRECT formatting**:
+```asciidoc
+Some introductory text.
+
+* First list item
+* Second list item
+* Third list item
+
+Next paragraph or section.
+```
+
+**CORRECT with bold heading**:
+```asciidoc
+**Heading before list:**
+
+* First item
+* Second item
+* Third item
+
+Next content.
+```
+
+**CORRECT with numbered list**:
+```asciidoc
+Follow these steps:
+
+. Step 1
+. Step 2
+. Step 3
+
+After the steps, continue with...
+```
+
+**INCORRECT formatting** (causes rendering issues):
+```asciidoc
+❌ BAD:
+Some text:* Item 1
+* Item 2
+Next paragraph
+
+❌ BAD:
+**Heading:*** Item 1
+* Item 2
+
+❌ BAD:
+* Item 1
+* Item 2
+Next paragraph (no blank line)
+```
+
+**Common scenarios that need blank lines**:
+- After colons (`:`) before lists
+- After bold text (`**Text:**`) before lists
+- Between list and next heading
+- Between list and next paragraph
+- Between different list types (unordered to ordered)
+
+**Nested lists**:
+```asciidoc
+* Parent item
+** Nested item 1
+** Nested item 2
+* Second parent item
+```
+
+**Definition lists** (also need blank lines):
+```asciidoc
+Term 1::
+Description for term 1
+
+Term 2::
+Description for term 2
+
+Next content.
+```
+
+**Why**: AsciiDoc requires blank lines for proper rendering. Without them, content runs together and becomes unreadable.
+
+---
+
+### 5. Image Path Conventions (REQUIRED)
 
 **Rule**: All images go in the assets/images directory.
 
@@ -145,7 +236,7 @@ image::create-task-screenshot.png[OpenShift console showing task creation form,l
 
 ---
 
-### 5. Navigation Update Expectations (REQUIRED for /create-lab and /create-demo)
+### 6. Navigation Update Expectations (REQUIRED for /create-lab and /create-demo)
 
 **Rule**: nav.adoc update is REQUIRED. Modules won't appear in Showroom without it.
 

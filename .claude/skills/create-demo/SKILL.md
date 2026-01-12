@@ -646,14 +646,16 @@ If you provided visual assets or scripts:
 - Use descriptive names showing what presenters will see
 - Reference in Show sections with proper context:
   ```asciidoc
-  image::console-developer-view.png[align="center",width=700,title="Developer Perspective - What Presenters Will See"]
+  image::console-developer-view.png[Developer Perspective - What Presenters Will See,link=self,window=blank,align="center",width=700,title="Developer Perspective - What Presenters Will See"]
   ```
+- **CRITICAL**: **ALWAYS** include `link=self,window=blank` to make images clickable
 
 **For architecture diagrams**:
 - Save to `content/modules/ROOT/assets/images/`
 - Use business-context names: `retail-transformation-architecture.png`
 - Reference in Know sections to show business value
 - Use larger width (700-800px) for visibility during presentations
+- **ALWAYS include `link=self,window=blank`** for clickable images
 
 **For demo scripts or commands**:
 - Format in code blocks with syntax highlighting
@@ -735,6 +737,242 @@ Based on your references, I'll:
 ### Step 8: Generate Demo Module (Using Verification Criteria)
 
 I'll create a module with Know/Show structure:
+
+**CRITICAL: Image Syntax Enforcement**:
+When generating ANY image reference in the demo content, you MUST include `link=self,window=blank`:
+
+✅ **CORRECT - Always use this format**:
+```asciidoc
+image::filename.png[Description,link=self,window=blank,width=700]
+image::diagram.png[Architecture,link=self,window=blank,align="center",width=800,title="System Architecture"]
+```
+
+❌ **WRONG - Never generate images without link parameter**:
+```asciidoc
+image::filename.png[Description,width=700]
+image::diagram.png[Architecture,align="center",width=800]
+```
+
+**Why**: This makes images clickable to open full-size in new tab, preventing presenters from losing their place.
+
+**CRITICAL: AsciiDoc List Formatting Enforcement**:
+When generating ANY list in the demo content, you MUST include blank lines before and after the list:
+
+✅ **CORRECT - Always use proper spacing**:
+```asciidoc
+**Prerequisites:**
+
+* OpenShift 4.18 or later
+* Admin access to cluster
+* Terminal with oc CLI
+
+In this module, you will...
+```
+
+❌ **WRONG - Text runs together when rendered**:
+```asciidoc
+**Prerequisites:**
+* OpenShift 4.18 or later
+* Admin access to cluster
+* Terminal with oc CLI
+In this module, you will...
+```
+
+**Required blank lines**:
+1. Blank line after bold heading (`**Text:**`) or colon (`:`)
+2. Blank line before first list item
+3. Blank line after last list item (before next content)
+
+**Why**: Without blank lines, Showroom renders lists as plain text, causing content to run together and become unreadable.
+
+**CRITICAL: Content Originality - No Plagiarism**:
+All generated content MUST be original. Never copy from external sources without proper attribution.
+
+✅ **CORRECT - Original with attribution**:
+```asciidoc
+According to link:https://kubernetes.io/docs/...[Kubernetes documentation^],
+Kubernetes is "an open-source system for automating deployment." Red Hat OpenShift
+extends Kubernetes with enterprise features including integrated CI/CD and security.
+```
+
+❌ **WRONG - Copied without attribution**:
+```asciidoc
+Kubernetes is an open-source system for automating deployment, scaling,
+and management of containerized applications.
+```
+
+**Prohibited**:
+- Copying documentation verbatim from external sources
+- Slightly rewording existing tutorials
+- Presenting others' examples as original work
+
+**Required**:
+- Write original explanations
+- Add Red Hat-specific context
+- Use proper attribution with quotes and links
+
+**CRITICAL: No Em Dashes**:
+Never use em dashes (—). Use commas, periods, or en dashes (–) instead.
+
+✅ **CORRECT**:
+```asciidoc
+OpenShift, Red Hat's platform, simplifies deployments.
+The process is simple. Just follow these steps.
+2020–2025 (en dash for ranges)
+```
+
+❌ **WRONG - Em dash used**:
+```asciidoc
+OpenShift—Red Hat's platform—simplifies deployments.
+The process is simple—just follow these steps.
+```
+
+**Why**: Follows Red Hat Corporate Style Guide and improves readability.
+
+**CRITICAL: External Links Must Open in New Tab**:
+All external links MUST use `^` caret to open in new tab, preventing loss of place.
+
+✅ **CORRECT - External links with caret**:
+```asciidoc
+According to link:https://docs.redhat.com/...[Red Hat Documentation^], OpenShift provides...
+See the link:https://www.redhat.com/case-study[RetailCo case study^] for details.
+```
+
+❌ **WRONG - Missing caret**:
+```asciidoc
+According to link:https://docs.redhat.com/...[Red Hat Documentation], OpenShift provides...
+See the link:https://www.redhat.com/case-study[RetailCo case study] for details.
+```
+
+**Internal links (NO caret)**:
+```asciidoc
+✅ CORRECT - Internal navigation without caret:
+Navigate to xref:03-next-module.adoc[Next Module] to continue.
+See xref:02-overview.adoc#problem[Problem Statement] section.
+```
+
+**Why**: External links without caret replace current tab, causing presenters/learners to lose their place. Internal xrefs should NOT use caret to keep flow within the demo/workshop.
+
+**CRITICAL: Bullets vs Numbers - Know vs Show**:
+Knowledge sections use bullets (*). Task/step sections use numbers (.).
+
+✅ **CORRECT - Bullets for knowledge, numbers for tasks**:
+```asciidoc
+=== Know
+
+**Business Challenge:**
+
+* Manual deployments take 8-10 weeks
+* Security vulnerabilities discovered too late
+* Infrastructure costs are too high
+
+=== Show
+
+**What I do:**
+
+. Log into OpenShift Console at {openshift_console_url}
+. Navigate to Developer perspective
+. Click "+Add" → "Import from Git"
+. Enter repository URL and click Create
+```
+
+❌ **WRONG - Mixed up bullets and numbers**:
+```asciidoc
+=== Know
+
+**Business Challenge:**
+
+. Manual deployments take 8-10 weeks  ← WRONG (should be bullets)
+. Security vulnerabilities discovered too late
+. Infrastructure costs are too high
+
+=== Show
+
+**What I do:**
+
+* Log into OpenShift Console  ← WRONG (should be numbers)
+* Navigate to Developer perspective
+* Click "+Add" → "Import from Git"
+```
+
+**Rule**:
+- Know sections → Use bullets (*) for business points, benefits, challenges
+- Show sections → Use numbers (.) for sequential steps and tasks
+- Verification → Use bullets (*) for success indicators
+
+**Why**: Bullets indicate information to absorb; numbers indicate sequential actions to perform.
+
+**CRITICAL: Demo Language - NO Learner Language**:
+Demos are presenter-led, NOT learner-focused. Use the correct terminology.
+
+**For index.adoc (Navigation Hub - if generating first demo)**:
+
+✅ **CORRECT - Presenter-focused**:
+```asciidoc
+= OpenShift Platform Demo
+
+**What This Demo Covers**
+
+This demonstration shows how Red Hat OpenShift accelerates deployment cycles:
+
+* Self-service developer platform capabilities
+* Automated CI/CD pipeline integration
+* Built-in security and compliance features
+* Business ROI and cost reduction metrics
+```
+
+❌ **WRONG - Learner language**:
+```asciidoc
+= OpenShift Platform Demo
+
+**What You'll Learn**
+
+In this workshop, you will learn how to:
+* Deploy applications to OpenShift
+* Create CI/CD pipelines
+* Configure security policies
+```
+
+**For 01-overview.adoc (Presenter Prep - if generating first demo)**:
+
+✅ **CORRECT - Full business context for presenters**:
+```asciidoc
+= Demo Overview and Presenter Preparation
+
+== Background
+
+ACME inc is a retail company facing Black Friday deadlines with 10-week deployment cycles.
+They need to accelerate feature delivery to remain competitive.
+
+== Problem Breakdown
+
+**Challenge 1: Slow deployment cycles** - Manual processes take 8-10 weeks
+**Challenge 2: Security vulnerabilities** - 200+ CVEs discovered monthly
+**Challenge 3: Infrastructure costs** - $2M annually on underutilized servers
+
+== Solution Overview
+
+Red Hat OpenShift provides self-service platform with automated security.
+
+== Business Benefits
+
+* 95% faster deployments (10 weeks → 30 minutes)
+* 80% reduction in security vulnerabilities
+* 60% lower infrastructure costs
+
+== Common Customer Questions
+
+**"How does this work with our existing tools?"**
+→ Emphasize Jenkins integration path and existing tool enhancement
+```
+
+**Key Rules**:
+1. index.adoc → Use "What This Demo Covers" (NOT "What You'll Learn")
+2. index.adoc → Keep it brief (navigation hub)
+3. index.adoc → No detailed problem statements
+4. 01-overview.adoc → Complete business context for presenter preparation
+5. 01-overview.adoc → Include all business benefits and customer Q&A
+6. Never use "you will learn", "hands-on", "exercises" in demos
 
 **CRITICAL: Demo Talk Track Separation**:
 Demo modules MUST separate presenter guidance from technical steps:
@@ -820,7 +1058,7 @@ OpenShift reduces deployment time from weeks to minutes through self-service dev
   * Container image is built
   * Application deploys in ~2 minutes
 
-image::deployment-progress.png[align="center",width=700,title="Deployment in Progress"]
+image::deployment-progress.png[Deployment in Progress,link=self,window=blank,align="center",width=700,title="Deployment in Progress"]
 
 * **Business Value Callout**: "What used to take your team 6-8 weeks just happened in 2 minutes. Developers can now deploy independently without waiting for infrastructure teams."
 
@@ -1423,7 +1661,7 @@ Example output:
 === Know
 _TechCorp's data scientists wait weeks for infrastructure, delaying critical AI initiatives._
 
-image::ai-platform-architecture.png[align="center",width=800,title="Red Hat OpenShift AI Platform Architecture"]
+image::ai-platform-architecture.png[Red Hat OpenShift AI Platform Architecture,link=self,window=blank,align="center",width=800,title="Red Hat OpenShift AI Platform Architecture"]
 
 **Current Challenge:**
 * 2-3 weeks to provision ML infrastructure

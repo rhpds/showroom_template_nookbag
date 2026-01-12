@@ -419,6 +419,63 @@ All generated content meets:
   - Verification checkpoints
   - Troubleshooting sections
 
+- ✅ **AsciiDoc Formatting** (CRITICAL)
+  - **Blank lines around all lists** - prevents text running together
+  - **Blank line before first list item**
+  - **Blank line after last list item**
+  - **Blank line after bold headings before lists**
+  - **All images clickable** - `link=self,window=blank` required
+
+---
+
+## ⚠️ Common Formatting Issues
+
+### List Formatting (CRITICAL)
+
+Lists without proper blank lines cause text to run together when rendered in Showroom.
+
+**❌ WRONG - Text runs together**:
+```asciidoc
+**Prerequisites:**
+* OpenShift installed
+* Admin access
+Next section starts...
+```
+
+**✅ CORRECT - Proper spacing**:
+```asciidoc
+**Prerequisites:**
+
+* OpenShift installed
+* Admin access
+
+Next section starts...
+```
+
+**Required blank lines**:
+1. Blank line after bold heading (`**Text:**`)
+2. Blank line before first list item
+3. Blank line after last list item
+
+### Image Links (REQUIRED)
+
+All images must be clickable to open full-size in new tab.
+
+**❌ WRONG - Not clickable**:
+```asciidoc
+image::diagram.png[My Diagram,width=700,title="Architecture"]
+```
+
+**✅ CORRECT - Clickable image**:
+```asciidoc
+image::diagram.png[My Diagram,link=self,window=blank,width=700,title="Architecture"]
+```
+
+**With center alignment**:
+```asciidoc
+image::architecture.png[Architecture,link=self,window=blank,align="center",width=800,title="System Architecture"]
+```
+
 ---
 
 ## 🆘 Troubleshooting

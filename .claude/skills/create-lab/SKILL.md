@@ -786,12 +786,20 @@ If you provided visual assets or code:
 
 **Required for every image**:
 1. **Meaningful alt text** (for accessibility)
-2. **Width guidance** (500-800px typical)
-3. **Descriptive filename** (no generic names like "image1.png")
+2. **Clickable link** (`link=self,window=blank` - ALWAYS required)
+3. **Width guidance** (500-800px typical)
+4. **Descriptive filename** (no generic names like "image1.png")
 
 **AsciiDoc syntax** (REQUIRED):
 ```asciidoc
-image::pipeline-execution-1.png[Tekton pipeline showing three tasks executing in sequence,width=700,title="Pipeline Execution in Progress"]
+image::pipeline-execution-1.png[Tekton pipeline showing three tasks executing in sequence,link=self,window=blank,width=700,title="Pipeline Execution in Progress"]
+```
+
+**CRITICAL**: **ALWAYS** include `link=self,window=blank` to make images clickable. This allows learners to see full resolution without losing their place in the workshop.
+
+**Optional - Center alignment**:
+```asciidoc
+image::architecture-diagram.png[Architecture overview,link=self,window=blank,align="center",width=800,title="System Architecture"]
 ```
 
 **Placeholders**:
@@ -799,7 +807,7 @@ image::pipeline-execution-1.png[Tekton pipeline showing three tasks executing in
 - Example placeholder:
   ```asciidoc
   // TODO: Add screenshot
-  image::create-task-screenshot.png[OpenShift console showing task creation form,width=600,title="Creating a Tekton Task"]
+  image::create-task-screenshot.png[OpenShift console showing task creation form,link=self,window=blank,width=600,title="Creating a Tekton Task"]
   ```
 
 **Assets Needed list**:
@@ -982,6 +990,178 @@ Click on the next section to begin the workshop.
 #### Step 8.4: Generate 03-module-01-*.adoc (Always)
 
 I'll create a complete module with:
+
+**CRITICAL: Image Syntax Enforcement**:
+When generating ANY image reference in the module content, you MUST include `link=self,window=blank`:
+
+✅ **CORRECT - Always use this format**:
+```asciidoc
+image::filename.png[Description,link=self,window=blank,width=700]
+image::pipeline-view.png[Pipeline Execution,link=self,window=blank,width=700,title="Pipeline Running"]
+```
+
+❌ **WRONG - Never generate images without link parameter**:
+```asciidoc
+image::filename.png[Description,width=700]
+image::pipeline-view.png[Pipeline Execution,width=700]
+```
+
+**Why**: This makes images clickable to open full-size in new tab, preventing learners from losing their place in the workshop.
+
+**CRITICAL: AsciiDoc List Formatting Enforcement**:
+When generating ANY list in the module content, you MUST include blank lines before and after the list:
+
+✅ **CORRECT - Always use proper spacing**:
+```asciidoc
+**Learning objectives:**
+
+* Understand how Tekton tasks work
+* Create and execute pipelines
+* Troubleshoot failed runs
+
+By the end of this module...
+```
+
+❌ **WRONG - Text runs together when rendered**:
+```asciidoc
+**Learning objectives:**
+* Understand how Tekton tasks work
+* Create and execute pipelines
+* Troubleshoot failed runs
+By the end of this module...
+```
+
+**Required blank lines**:
+1. Blank line after bold heading (`**Text:**`) or colon (`:`)
+2. Blank line before first list item
+3. Blank line after last list item (before next content)
+
+**Why**: Without blank lines, Showroom renders lists as plain text, causing content to run together and become unreadable.
+
+**CRITICAL: Content Originality - No Plagiarism**:
+All generated content MUST be original. Never copy from external sources without proper attribution.
+
+✅ **CORRECT - Original with attribution**:
+```asciidoc
+According to link:https://kubernetes.io/docs/...[Kubernetes documentation^],
+Kubernetes is "an open-source system for automating deployment." Red Hat OpenShift
+extends Kubernetes with enterprise features including integrated CI/CD and security.
+```
+
+❌ **WRONG - Copied without attribution**:
+```asciidoc
+Kubernetes is an open-source system for automating deployment, scaling,
+and management of containerized applications.
+```
+
+**Prohibited**:
+- Copying documentation verbatim from external sources
+- Slightly rewording existing tutorials
+- Presenting others' examples as original work
+
+**Required**:
+- Write original explanations
+- Add Red Hat-specific context
+- Use proper attribution with quotes and links
+
+**CRITICAL: No Em Dashes**:
+Never use em dashes (—). Use commas, periods, or en dashes (–) instead.
+
+✅ **CORRECT**:
+```asciidoc
+OpenShift, Red Hat's platform, simplifies deployments.
+The process is simple. Just follow these steps.
+2020–2025 (en dash for ranges)
+```
+
+❌ **WRONG - Em dash used**:
+```asciidoc
+OpenShift—Red Hat's platform—simplifies deployments.
+The process is simple—just follow these steps.
+```
+
+**Why**: Follows Red Hat Corporate Style Guide and improves readability.
+
+**CRITICAL: External Links Must Open in New Tab**:
+All external links MUST use `^` caret to open in new tab, preventing learners from losing their place.
+
+✅ **CORRECT - External links with caret**:
+```asciidoc
+According to link:https://docs.redhat.com/...[Red Hat Documentation^], OpenShift provides...
+See the link:https://www.redhat.com/guides[Getting Started Guide^] for more details.
+```
+
+❌ **WRONG - Missing caret**:
+```asciidoc
+According to link:https://docs.redhat.com/...[Red Hat Documentation], OpenShift provides...
+See the link:https://www.redhat.com/guides[Getting Started Guide] for more details.
+```
+
+**Internal links (NO caret)**:
+```asciidoc
+✅ CORRECT - Internal navigation without caret:
+Navigate to xref:04-module-02.adoc[Next Module] to continue.
+See xref:02-details.adoc#prerequisites[Prerequisites] section.
+```
+
+**Why**: External links without caret replace current tab, causing learners to lose their place in the workshop. Internal xrefs should NOT use caret to keep flow within the workshop.
+
+**CRITICAL: Bullets vs Numbers - Knowledge vs Tasks**:
+Knowledge/information sections use bullets (*). Task/step sections use numbers (.).
+
+✅ **CORRECT - Bullets for knowledge, numbers for tasks**:
+```asciidoc
+== Learning Objectives
+
+By the end of this module, you will understand:
+
+* How Tekton tasks encapsulate CI/CD steps
+* The relationship between tasks and pipelines
+* Best practices for pipeline design
+
+== Exercise 1: Create Your First Pipeline
+
+Follow these steps:
+
+. Open the OpenShift Console at {openshift_console_url}
+. Navigate to Pipelines → Create Pipeline
+. Enter the pipeline name: my-first-pipeline
+. Add a task from the catalog
+. Click Create
+
+=== Verify
+
+Check that your pipeline was created successfully:
+
+* Pipeline appears in the list
+* Status shows "Not started"
+* All tasks are configured correctly
+```
+
+❌ **WRONG - Mixed up bullets and numbers**:
+```asciidoc
+== Exercise 1: Create Your First Pipeline
+
+Follow these steps:
+
+* Open the OpenShift Console  ← WRONG (should be numbers)
+* Navigate to Pipelines
+* Click Create
+
+=== Verify
+
+. Pipeline appears in the list  ← WRONG (should be bullets)
+. Status shows "Not started"
+```
+
+**Rule**:
+- Learning objectives → Use bullets (*) for concepts to understand
+- Exercise steps → Use numbers (.) for sequential actions
+- Verification → Use bullets (*) for success indicators
+- Prerequisites → Use bullets (*) for requirements list
+- Benefits/features → Use bullets (*) for information points
+
+**Why**: Bullets indicate information to absorb; numbers indicate sequential actions to perform.
 
 **Required Structure**:
 - Learning objectives (3-4 items)
@@ -1656,7 +1836,7 @@ Skill: Perfect! Processing...
 
 [Generates module with:]
 - Architecture diagram referenced:
-  image::security-architecture.png[align="center",width=800,title="Container Security Architecture"]
+  image::security-architecture.png[Container Security Architecture,link=self,window=blank,align="center",width=800,title="Container Security Architecture"]
 
 - Code blocks formatted:
   [source,dockerfile]
