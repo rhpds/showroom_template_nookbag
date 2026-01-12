@@ -14,20 +14,28 @@ Generate a properly formatted `description.adoc` file for AgnosticV catalog entr
 
 ## Quick Start
 
-**Easiest way to use:**
+**How to use:**
 
-1. Navigate to your Showroom guide directory or AgnosticV catalog directory
-2. Run: `/generate-agv-description`
-3. Provide path to your Showroom guide (or press Enter if in current directory)
+1. Run: `/generate-agv-description` (from any directory)
+2. Choose: "Yes - I have a Showroom" or "No - Manual entry"
+3. If YES: Provide path to your Showroom (or press Enter to use current directory)
 4. Review auto-extracted information and adjust as needed
 5. Preview and confirm
 6. Done! Optionally commit to git
 
-**Even faster:** If already in your Showroom repo:
+**Example workflow:**
 ```bash
-cd ~/work/code/showroom_my_lab
+# Can run from anywhere
+cd ~/work/code/agnosticv/catalogs/my-catalog
+
+# Start skill
 /generate-agv-description
-# Just press Enter when asked for path (uses current directory)
+
+# Choose option 1 (Yes - I have Showroom)
+# Provide path: /Users/psrivast/work/code/showroom-ai-lab
+# Or press Enter if already in showroom directory
+
+# Skill auto-extracts content and suggests everything
 ```
 
 ## What This Skill Does
@@ -46,10 +54,11 @@ Interactively gathers information about your lab/demo and generates a complete `
 
 This skill will ask you for:
 
-0. **Showroom Location** (FIRST - makes everything else easier!)
-   - Path to your Showroom guide directory
+0. **Do you have a Showroom?** (FIRST - always asked)
+   - Choose: "Yes - I have Showroom" or "No - Manual entry"
+   - If YES: Provide path (or press Enter for current directory)
    - Auto-extracts module structure, technologies, and agenda
-   - Optional: can skip if no guide yet
+   - If NO: All questions require manual answers
 
 1. **Brief Overview**
    - What is this thing showing? (2-3 sentences)
@@ -123,32 +132,63 @@ When this skill runs, gather the following information interactively:
 
 ### Step 0: Locate Showroom Content (FIRST)
 
-**CRITICAL:** Before asking any questions, detect current directory first:
+**CRITICAL:** ALWAYS ask for Showroom path first, regardless of current directory.
 
-1. **Auto-detect current directory:**
-   - Check if current directory contains `antora.yml` and `content/modules/` - this is a Showroom repo!
-   - If detected, suggest: "I detected a Showroom guide in the current directory. Use this? (yes/other path/skip)"
+1. **Always ask this question first:**
+   ```
+   Is this catalog based on a Showroom guide?
 
-2. **If not auto-detected, ask:**
-   - "Where is your Showroom guide located?"
-   - Prompt: "Path to Showroom guide (press Enter to skip, or provide path like /Users/psrivast/work/code/showroom_my_lab)"
-   - If user provides a path, read the guide files to extract information automatically
-   - If user says "no guide yet" or presses Enter, proceed with manual entry
+   If you have a Showroom repository, I can auto-extract:
+   - Module structure and titles
+   - Technologies and products
+   - Learning objectives
+   - And suggest content for you
 
-If a Showroom path is provided:
+   Options:
+   1. Yes - I have a Showroom (I'll ask for path)
+   2. No - Skip Showroom (manual entry)
 
-1. **Read the guide structure:**
+   Your choice: [1/2]
+   ```
+
+2. **If user chooses 1 (YES - has Showroom):**
+   ```
+   What is the local path to your Showroom repository?
+
+   Current directory: {{ current_directory }}
+
+   Options:
+   - Press Enter to use current directory ({{ current_directory }})
+   - Type full path (e.g., /Users/psrivast/work/code/showroom-ai-lab)
+
+   Your Showroom path: [Enter or type path]
+   ```
+
+3. **If user chooses 2 (NO - skip Showroom):**
+   - Skip to manual entry (Step 1)
+   - All questions will require manual answers
+
+**After getting Showroom path:**
+
+1. **Validate the path:**
+   - Check if directory exists
+   - Check if it contains `site.yml` or `antora.yml`
+   - Check if it has `content/modules/` structure
+   - If NOT valid: "Directory doesn't appear to be a Showroom repo. Try again? [Yes/No]"
+
+2. **Read the guide structure:**
    - Look for `content/modules/*.adoc` files or `content/modules/ROOT/pages/*.adoc`
    - Read `antora.yml` or `site.yml` for title and metadata
    - Extract module titles from each module file
 
-2. **Extract key information:**
+3. **Extract key information:**
+   - Workshop/demo title
    - Module titles (for agenda)
    - Technologies mentioned in the guide
    - Any warnings or prerequisites mentioned
    - Guide structure (lab vs demo)
 
-3. **Use extracted info to pre-populate suggestions:**
+4. **Use extracted info to pre-populate suggestions:**
    - Show the user what you found
    - Offer to use this as a starting point
    - Allow user to edit/override
