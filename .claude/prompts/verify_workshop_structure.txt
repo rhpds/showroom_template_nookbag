@@ -138,7 +138,6 @@ Provide analysis as JSON:
 {
   "file_type": "workshop_content|navigation|infrastructure|technical_reference|supporting",
   "evaluation_focus": "Brief description of what was evaluated for this file type",
-  "workshop_readiness_score": 78,
   "workshop_complexity_assessment": {
     "estimated_modules": 3,
     "estimated_pages": 8,
@@ -152,50 +151,6 @@ Provide analysis as JSON:
     "timetable_with_durations": false,
     "mixed_learning_types": true,
     "enterprise_scenarios": true
-  },
-  "structure_analysis": {
-    "introduction": {
-      "score": 8,
-      "present": true,
-      "issues": ["Missing comprehensive timetable with duration estimates and learning types like Parasol Insurance"]
-    },
-    "learning_progression": {
-      "score": 7,
-      "present": true, 
-      "issues": ["Should follow Red Hat's proven 6-phase structure: Background → Setup → Core Implementation → Advanced → Production → Optional"]
-    },
-    "hands_on_activities": {
-      "score": 9,
-      "present": true,
-      "issues": ["Could benefit from business-context notebook exercises and enterprise application deployment patterns"]
-    },
-    "verification": {
-      "score": 6,
-      "present": false,
-      "issues": ["No verification commands in sections 2-4"]
-    },
-    "guidance": {
-      "score": 7,
-      "present": true,
-      "issues": ["Troubleshooting section optional - recommend for complex production workshops"],
-      "note": "Troubleshooting is optional based on workshop complexity"
-    },
-    "conclusion_module": {
-      "score": 0,
-      "present": false,
-      "issues": ["Missing mandatory conclusion module", "No consolidated references section"],
-      "critical": "All workshops MUST have a conclusion module with consolidated references"
-    },
-    "reinforcement": {
-      "score": 7,
-      "present": true,
-      "issues": ["Summary too brief"]
-    },
-    "facilitator_readiness": {
-      "score": 4,
-      "present": false,
-      "issues": ["No timing guidance", "Missing prep requirements"]
-    }
   },
   "missing_elements": [
     "Workshop duration estimates",

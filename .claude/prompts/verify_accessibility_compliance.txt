@@ -82,50 +82,7 @@ RESPONSE FORMAT:
 Provide analysis as JSON:
 
 {
-  "accessibility_score": 85,
   "compliance_level": "AA",
-  "accessibility_assessment": {
-    "language_accessibility": {
-      "score": 8,
-      "strengths": ["Clear, concise instructions", "Technical terms well explained"],
-      "issues": ["Some complex sentences in section 3", "Acronym 'RBAC' not defined on first use"]
-    },
-    "content_structure": {
-      "score": 9,
-      "strengths": ["Logical heading hierarchy", "Good use of lists"],
-      "issues": ["Missing table headers in configuration example"]
-    },
-    "visual_accessibility": {
-      "score": 6,
-      "strengths": ["Code blocks clearly formatted"],
-      "issues": ["Screenshots lack alt text", "Color coding in diagrams not explained"]
-    },
-    "cognitive_accessibility": {
-      "score": 8,
-      "strengths": ["Step-by-step instructions", "Clear prerequisites"],
-      "issues": ["Section 4 information density too high"]
-    },
-    "inclusive_language": {
-      "score": 9,
-      "strengths": ["Gender-neutral throughout", "Culturally sensitive"],
-      "issues": ["'Whitelist/blacklist' terminology should be updated"]
-    },
-    "navigation": {
-      "score": 7,
-      "strengths": ["Consistent terminology", "Good cross-references"],
-      "issues": ["No clear progress indicators", "Missing section overview"]
-    },
-    "assistive_technology": {
-      "score": 7,
-      "strengths": ["Proper heading structure", "Code language specified"],
-      "issues": ["Interactive elements need better labeling"]
-    },
-    "international_readiness": {
-      "score": 8,
-      "strengths": ["Time zones specified", "Global examples used"],
-      "issues": ["Some US-centric assumptions in examples"]
-    }
-  },
   "accessibility_issues": [
     {
       "type": "error",

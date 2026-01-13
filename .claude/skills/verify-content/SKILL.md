@@ -69,23 +69,27 @@ I'll run comprehensive verification using these validation frameworks:
 
 ### Step 4: Present Results
 
-I'll provide:
+I'll provide results in this order:
 
-**Summary Table**:
+**1. Detailed Issue Sections FIRST** (top of output):
+- Specific file locations and line numbers
+- Before/after examples for each issue
+- Implementation steps showing exactly how to fix
+- Why each issue matters
+- Grouped by issue type with exact counts
+
+**2. Validation Summary Table LAST** (bottom of output):
 - Clean table with Issue, Priority, and Files columns
 - No time estimates or fix duration
 - Clear priority levels (Critical, High, Medium, Low)
+- Total issue counts
 
-**Strengths Section**:
+**3. Strengths Section** (after summary table):
 - What your content does exceptionally well
 - Positive highlights to reinforce good practices
 - Recognition of quality work
 
-**Detailed Breakdown** (optional, on request):
-- Specific file locations and line numbers
-- Before/after examples
-- Implementation steps
-- How to fix each issue
+**CRITICAL**: Summary table comes LAST, not first. Detailed sections are at the TOP.
 
 ### Step 5: Offer Fixes (Optional)
 
@@ -110,15 +114,33 @@ User: content/modules/ROOT/pages/module-01-install-aap.adoc
 [Runs all workshop verification agents]
 
 Skill:
-📊 Summary Table of All Issues
+
+## 3 missing verification commands
+**Priority: Critical**
+**Affected Files:** module-01-install-aap.adoc
+
+### Details:
+
+1. **Line 45, module-01-install-aap.adoc**
+   - Current: Deployment step with no verification
+   - Required: Add `oc get pods -n ansible-automation-platform` with expected output
+   - Why: Learners can't verify deployment success
+   - Fix: Add verification command after deployment step showing expected "Running" status
+
+[... additional detailed sections for each issue ...]
+
+---
+
+## Validation Summary
+
 ┌──────────────────────────────────┬──────────┬───────────┐
 │              Issue               │ Priority │   Files   │
 ├──────────────────────────────────┼──────────┼───────────┤
-│ Missing verification commands    │ Critical │ 1 file    │
+│ 3 missing verification commands  │ Critical │ 1 file    │
 ├──────────────────────────────────┼──────────┼───────────┤
-│ Incorrect product name "OCP"     │ Critical │ 1 file    │
+│ 1 incorrect product name "OCP"   │ Critical │ 1 file    │
 ├──────────────────────────────────┼──────────┼───────────┤
-│ Missing alt text for images      │ Critical │ 1 file    │
+│ 2 images missing alt text        │ Critical │ 1 file    │
 ├──────────────────────────────────┼──────────┼───────────┤
 │ Incomplete troubleshooting       │ High     │ 1 file    │
 ├──────────────────────────────────┼──────────┼───────────┤
@@ -126,6 +148,8 @@ Skill:
 ├──────────────────────────────────┼──────────┼───────────┤
 │ Commands lack expected output    │ Medium   │ 1 file    │
 └──────────────────────────────────┴──────────┴───────────┘
+
+**Total Issues:** 11 (6 Critical, 3 High, 2 Medium)
 
 ---
 
@@ -136,8 +160,6 @@ Your module excels in these areas:
 1. Clear Step-by-Step Instructions - Installation steps are well-structured and easy to follow
 2. Proper AsciiDoc Formatting - Code blocks and syntax highlighting are correctly implemented
 3. Strong Technical Content - Accurate AAP installation procedures for OpenShift
-
-Would you like detailed breakdown of specific issues? [Yes/No]
 ```
 
 ### Example 2: Verify All Modules in Workshop
@@ -164,20 +186,41 @@ User: Yes
 [Runs verification on all files]
 
 Skill:
-📊 Summary Table of All Issues
+
+## 5 title case headings found across all files
+**Priority: High**
+**Affected Files:** index.adoc, 01-overview.adoc, 02-details.adoc, module-01-install-aap.adoc, module-02-configure-aap.adoc
+
+### Details:
+
+1. **Line 12, index.adoc**
+   - Current: `= Introduction To Ansible Automation Platform`
+   - Required: `= Introduction to Ansible Automation Platform`
+   - Why: Red Hat style guide requires sentence case
+   - Fix: Lowercase "To"
+
+[... additional detailed sections for each issue ...]
+
+---
+
+## Validation Summary
+
 ┌──────────────────────────────────┬──────────┬───────────┐
 │              Issue               │ Priority │   Files   │
 ├──────────────────────────────────┼──────────┼───────────┤
 │ Inconsistent heading styles      │ Critical │ All files │
 ├──────────────────────────────────┼──────────┼───────────┤
-│ Missing alt text for images      │ Critical │ 3 files   │
+│ 4 images missing alt text        │ Critical │ 3 files   │
 ├──────────────────────────────────┼──────────┼───────────┤
-│ Title case headings              │ High     │ All files │
+│ 5 title case headings            │ High     │ All files │
 ├──────────────────────────────────┼──────────┼───────────┤
-│ Missing Red Hat product names    │ High     │ 3 files   │
+│ 3 missing Red Hat product names  │ High     │ 3 files   │
 ├──────────────────────────────────┼──────────┼───────────┤
 │ Incomplete verification commands │ Medium   │ 2 files   │
 └──────────────────────────────────┴──────────┴───────────┘
+
+**Total Issues:** 17 (6 Critical, 8 High, 3 Medium)
+**Files Affected:** 5 files
 
 ---
 
@@ -189,8 +232,6 @@ Your workshop excels in these areas:
 2. Progressive Learning Flow - Well-structured progression from basic to advanced concepts
 3. Strong Technical Depth - Comprehensive AAP configuration coverage across modules
 4. Good Documentation Structure - Clear separation of overview, details, and hands-on modules
-
-Would you like detailed breakdown for specific files? [Yes/No]
 ```
 
 ## Verification Standards
