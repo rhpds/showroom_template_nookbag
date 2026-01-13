@@ -16,7 +16,7 @@ tabs:
   #   path: /wetty
   #   port: 443
   - name: Showroom
-    url: '${DOMAIN}'
+    url: 'https://${DOMAIN}'
 
   # Vertical split terminals
   - name: Bastion
