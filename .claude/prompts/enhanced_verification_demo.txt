@@ -406,6 +406,11 @@ Provide your analysis as a JSON object with this structure:
         "severity": "error",
         "files_affected": []
       },
+      "non_clickable_images": {
+        "violations_found": 0,
+        "severity": "error",
+        "files_affected": []
+      },
       "list_marker_semantic": {
         "violations_found": 0,
         "severity": "warning",
@@ -542,13 +547,17 @@ Reference the comprehensive style guidelines: `prompts/redhat_style_guide_valida
   - Internal: `xref:03-demo-platform.adoc[Next Section]` ✅ (no caret)
 
 **CRITICAL: Clickable Image Link Format Requirements:**
-- ✅ **ALL clickable images linking externally MUST use `^` caret** to open in new tab
-- ✅ **Format Option 1**: `image::case-study.png[Alt Text,600,link=https://example.com^]` (caret after URL)
-- ✅ **Format Option 2**: `link:https://example.com^[image:case-study.png[Alt Text,600]]` (caret before closing bracket)
-- ❌ **INVALID**: `image::case-study.png[Alt Text,link=https://example.com]` (missing caret)
+- ✅ **ALL images MUST be clickable** (screenshots use `link=self,window=blank` - NO caret)
+- ✅ **External image links MUST use `^` caret** to open in new tab
+- ✅ **Format for Screenshots/Self-links**: `image::screenshot.png[Alt Text,link=self,window=blank]` (NO caret)
+- ✅ **Format for External links**: `image::case-study.png[Alt Text,link=https://example.com^]` (YES caret)
+- ❌ **INVALID**: `image::screenshot.png[Alt Text,link=self^]` (DO NOT use caret with link=self)
+- ❌ **INVALID**: `image::case-study.png[Alt Text,link=https://example.com]` (external link missing caret)
+- ❌ **INVALID**: `image::dashboard.png[Dashboard]` (not clickable - missing link=self,window=blank)
 - 📝 **Image Link Examples**:
+  - Clickable screenshot: `image::dashboard.png[Dashboard,link=self,window=blank]` ✅
   - Clickable external: `image::roi.png[ROI Analysis,link=https://www.redhat.com/study^]` ✅
-  - Regular image: `image::dashboard.png[Dashboard]` ✅ (no link, no caret needed)
+  - Non-clickable image: `image::dashboard.png[Dashboard]` ❌ (MUST add link=self,window=blank)
 
 ## MANDATORY ACTIVE VALIDATION FRAMEWORK
 
@@ -576,7 +585,22 @@ You MUST perform these validation checks and produce ERROR or WARNING findings w
 **Required fix**: `image::diagram.png[Architecture,link=https://example.com^]`
 **Count tracking**: MUST count total violations and list all file locations
 
-### Check 3: List Marker Semantic Validation (NEW)
+### Check 3: Non-Clickable Image Detection (ALL IMAGES MUST BE CLICKABLE)
+**What to scan**: ALL `image::` macros in content files
+**Pattern to detect violations**:
+- `image::[^[]+\[[^\]]*\]` that does NOT contain `link=` attribute
+- Specifically: images without `link=self,window=blank` or `link=https://...^`
+**Error condition**: Image without any `link=` attribute
+**Severity**: ERROR
+**Why this matters**: Non-clickable images frustrate presenters trying to show full-size screenshots and details. Based on team feedback from Nate Stephany, ALL images must open full-size in new tab.
+**Example violation**: `image::dashboard-screenshot.png[Dashboard View]`
+**Required fix**: `image::dashboard-screenshot.png[Dashboard View,link=self,window=blank]`
+**Count tracking**: MUST count total violations and list all file locations
+**Note**:
+- Screenshots/regular images use `link=self,window=blank` (NO caret)
+- External image links use `link=https://example.com^` (YES caret)
+
+### Check 4: List Marker Semantic Validation (NEW)
 **What to scan**: All list markers in relation to their section context
 **Section Detection Patterns**:
 - **Knowledge sections**: Headers containing "Know", "Overview", "Introduction", "Background", "Learning objectives", "Prerequisites", "Concepts", "Benefits", "Value proposition"
@@ -951,23 +975,30 @@ When performing validation, you MUST:
    - Count: Total violations across all files
    - Track: File names where violations found
 
-3. **List Marker Semantic Check** (Scan all sections)
+3. **Non-Clickable Images Check** (Scan all files)
+   - Pattern: `image::[^[]+\[[^\]]*\]` that does NOT contain `link=`
+   - Detect: Images without `link=self,window=blank` (for screenshots) or `link=https://...^` (for external)
+   - Count: Total non-clickable images across all files
+   - Track: File names where violations found
+   - Note: `link=self` does NOT use caret - only external links use `^`
+
+4. **List Marker Semantic Check** (Scan all sections)
    - Classify each section by header keywords
    - Check list markers match section type
    - Count: Violations by section type (Know/Show/Verify)
    - Track: Section headers and file names
 
-4. **List Blank Line Check** (Scan all lists)
+5. **List Blank Line Check** (Scan all lists)
    - Check for blank lines before/after lists
    - Count: Total spacing violations
    - Track: File names and approximate line numbers
 
-5. **Formatting Consistency Check** (Scan all content)
+6. **Formatting Consistency Check** (Scan all content)
    - Check other formatting issues
    - Count: Total formatting violations
    - Track: Issue types and file names
 
-6. **Build Summary Table**
+7. **Build Summary Table**
    - Sum all error-level violations → total_errors
    - Sum all warning-level violations → total_warnings
    - Sum all improvement suggestions → total_improvements
@@ -994,6 +1025,7 @@ When performing validation, you MUST:
 - `validation_summary.total_warnings` = count of `issues` where `type: "warning"`
 - `validation_summary.checks_performed.external_link_caret.violations_found` = count of external link caret errors in `issues`
 - `validation_summary.checks_performed.clickable_image_caret.violations_found` = count of clickable image caret errors in `issues`
+- `validation_summary.checks_performed.non_clickable_images.violations_found` = count of non-clickable image errors in `issues`
 - `validation_summary.checks_performed.list_marker_semantic.violations_found` = count of list marker warnings in `issues`
 - `validation_summary.checks_performed.list_blank_lines.violations_found` = count of list blank line errors in `issues`
 - `validation_summary.severity_breakdown.error` = `total_errors`
