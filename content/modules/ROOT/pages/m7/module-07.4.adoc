@@ -33,17 +33,14 @@ include::../login-pe.adoc[]
 
 . Visit your https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/developer-hub-config/[rhdh/developer-hub-config repository on GitLab, window="gitlab"].
 . Open the `values.yaml` file, then select *Edit > Edit single file*.
-. Uncomment the `--- ORCHESTRATOR PLUGIN ---` section in the `dynamic.plugins` section of the YAML, to enable the Orchestrator and Notification dynamic plugins.
+. Uncomment the `--- ORCHESTRATOR FEATURE ---` section in the YAML, to enable the Orchestrator.
 +
-[NOTE]
-====
-To uncomment multiple lines of code, highlight the lines and press `CMD + /` (on macOS) or `CTRL + /` (on Linux/Windows).
-====
+image:m7/orchestrator-enabled-flag.png[Orchestrator Enabled Flag, width=60%]
+. Next find the `--- ORCHESTRATOR ADDITIONAL PLUGINs ---` section, and uncomment the lines within to enable the notifications plugin(s) that are used in the workflow in this section.
 +
 image:m7/orchestrator-plugin.png[Orchestrator and Notification dynamic plugins, width=60%]
 +
-Note that the orchestrator plugin is not yet bundled with Red Hat Developer Hub, and needs to be referenced as an external package `@redhat/backstage-plugin-orchestrator-backend-dynamic@1.4.0`, which will be downloaded from the configured npm registry.
-. Look for the YAML between the `--- ORCHESTRATOR PLUGIN ---` block further down in the file and uncomment it.
+. Look for the YAML between the `--- ORCHESTRATOR ---` block further down in the file and uncomment it.
 +
 image:m7/orchestrator-plugin-configuration.png[Orchestrator configuration, width=60%]
 +
@@ -79,8 +76,6 @@ Register this template using the {product_name_rhdh} UI:
 
 . Login to your https://backstage-backstage.{openshift_cluster_ingress_domain}/[instance of {product_name_rhdh}^, window="rhdh"] as the `pe1` user with password `{common_password}`.
 . Select the image:common/plus-icon.png[width=15px] icon on the top navigation bar to access the *Self-service* menu.
-+
-image:m3/create-icon.png[] 
 . Click the *Register Existing Component* button.
 . Enter the following URL in the *Select URL* field and click *Analyze*:
 +
@@ -96,7 +91,7 @@ Three Software Templates will be imported: `namespace-small`,`namespace-large` a
 
 . Click *Import* when prompted.
 
-. Select the image:common/plus-icon.png[width=15px] icon on the top navigation barto see the new templates.
+. Select the image:common/plus-icon.png[width=15px] icon on the top navigation bar to see the new templates.
 +
 image:m7/rhdh-developer-self-service-templates.png[Developer Self Service Software Templates]
 
@@ -151,7 +146,7 @@ image:m7/openshift-console-import.png[OpenShift Console Import]
 . Paste the ArgoCD manifest in the editor. Click the *Create* button.
 +
 image:m7/openshift-console-import-create.png[OpenShift Console Import Create]
-. Verify in the https://console-openshift-console.{openshift_cluster_ingress_domain}/k8s/ns/orchestrator/core%7Ev1%7EPod[Orchestrator namespace in OpenShift^, window="console"] that a pod is created for the Serverless Workflow instance. The pod name starts with `create-ocp-namespace-swt`.
+. Verify in the https://console-openshift-console.{openshift_cluster_ingress_domain}/k8s/ns/backstage/core%7Ev1%7EPod[Backstage namespace in OpenShift^, window="console"] that a pod is created for the Serverless Workflow instance. The pod name starts with `create-ocp-namespace-swt`.
 +
 image:m7/openshift-console-orchestrator-namespace.png[OpenShift Pods in orchestrator namespace]
 . Visit your https://backstage-backstage.{openshift_cluster_ingress_domain}/[instance of {product_name_rhdh}^, window="rhdh"]. Ensure you're logged in as a Platform Engineer.
@@ -182,8 +177,6 @@ include::../login-developer.adoc[]
 
 . Select the *Orchestrator* item in the left-hand menu.
 . Click on the *Create OpenShift Namespace* workflow.
-+
-image:m7/orchestrator-select-workflow.png[]
 . Expect to see the workflow definition and a graphical representation of the workflow.
 +
 image:m7/orchestrator-workflow-overview.png[]
@@ -193,19 +186,17 @@ The workflow itself is pretty simple: if the user requests a small namespace to 
 If a large namespace is requested, the request needs to be approved. For simplicity reasons, we use issues in a GitLab repo as a ticketing system (in real life that would probably be ServiceNow or Jira or an equivalent system). If the request is approved, the software template is executed and the user notified. If the request is denied, the user is notified as well, but no namespace is created.
 . Click on the *Run* button at the top right of the screen to start an instance of the workflow.
 +
-image:m7/orchestrator-workflow-run.png[]
+image:m7/orchestrator-workflow-overview.png[]
 . You are presented with a form to enter the details of your request. Let's start with a request for a small namespace. Fill in the form as follows:
 .. *Namespace name*: `dev1-small-1`
 .. *Requester*: `dev1`
 .. *Size*: `small`
-.. *Reason*: you can leave this blank
+.. *Reason*: type any message you like here
 .. *Recipients*: `user:default/dev1`
 +
 image:m7/orchestrator-workflow-form.png[]
 . Click on *Next*. Expect to see an overview of your request.
 . Click on *Run* to start the workflow execution.
-+
-image:m7/orchestrator-workflow-run-2.png[]
 . After a few seconds the status of the workflow moves to *Run completed*.
 +
 image:m7/orchestrator-workflow-run-completed.png[]
@@ -220,8 +211,6 @@ image:m7/component-namespace-1.png[]
 . Return to the tab of {product_name_rhdh} to run another instance of the workflow, this time for a large namespace request.
 . Select the *Orchestrator* item in the left-hand menu.
 . Click the *Run* icon on the left of the workflow name.
-+
-image:m7/orchestrator-workflow-run-3.png[]
 . Fill in the form as follows:
 .. *Namespace name*: `dev1-large-1`
 .. *Requester*: `dev1`

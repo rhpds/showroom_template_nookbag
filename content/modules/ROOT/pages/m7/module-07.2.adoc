@@ -17,18 +17,13 @@ Key metrics available include:
 
 NOTE: The Adoption Insights plugin is current in Developer Preview. Refer to the https://docs.redhat.com/en/documentation/red_hat_developer_hub/1.5/html-single/adoption_insights_in_red_hat_developer_hub/index[Adoption Insights documentation^, window="docs"] for more information related to support.
 
-=== Platform Engineer Activity: Enable Adoption Insights
+=== Platform Engineer Activity: Configure Adoption Insights
 
-Adoption Insights is enabled similar to other plugins for {product_name_rhdh} - by updating the dynamic plugins configuration and supplying plugin specific configuration.
+Adoption Insights is enabled by default as of {product_name_rhdh} v1.8. This plugin requires additional configuration to display accurate user metrics. Specifically, the `licensedUsers` configuration is used to provide accurate insight into the usage of {product_name_rhdh} by actual versus licensed number of users.
 
 . Open your https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/developer-hub-config/-/blob/main/values.yaml[values.yaml file, window="gitlab"].
 . Make sure you're logged in to GitLab as `pe1` / `{common_password}`.
 . Select *Edit > Edit single file*.
-. Find the YAML surrounded by `--- ADOPTION INSIGHTS PLUGIN ---` and uncomment it by highlighting it and pressing `CMD + /` or `CTRL + /`.
-. Don't commit the changes yet.
-
-The Adoption Insights plugin requires additional configuration to display accurate user metrics. Specifically, the `licensedUsers` configuration is used to provide accurate insight into the usage of {product_name_rhdh} by actual versus licensed number of users.
-
 . Scroll down in the _values.yaml_ file and find the `--- ADOPTION INSIGHTS ---` block in the `appConfig.app` configuration.
 +
 image:m7/adoption-insights-plugin-config-commented-block.png[Adoption Insights configuration]
@@ -46,7 +41,7 @@ As you're familiar with by now, you can refresh the https://openshift-gitops-ser
 
 image:m7/adoption-insights-plugin-dashboard.png[]
 
-=== Developer Activity: Generate Data for Adoption Insights
+=== Developer Activity: Generate Additional Data for Adoption Insights
 
 Once the new deployment has finished you'll need to interact with {product_name_rhdh} to generate events that the Adoption Insights dashboard can display. There are a few ways to do this:
 
@@ -62,7 +57,7 @@ Perform multiple searches and view multiple APIs and Components to generate suff
 
 Now that you've generated some events, login to {product_name_rhdh} as the `pe1` user. Expand the **Administration** section in the side menu and click the **Adoption Insights** link.
 
-image:m7/adoption-insights-with-data.png[]
+image:m7/adoption-insights-plugin-dashboard.png[]
 
 === Conclusion
 

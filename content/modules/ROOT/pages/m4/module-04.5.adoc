@@ -116,10 +116,7 @@ image:m4/parasol-un-commented-prodcount.png[]
 == View `parasol-store` component on {product_name_rhdh}
 
 . Navigate to `parasol-store-my-feature-branch` component https://backstage-backstage.{openshift_cluster_ingress_domain}/catalog/default/component/parasol-store-my-feature-branch/ci[from your {product_name_rhdh}^, window="rhdh"] 
-. Access the *CI tab* to view the pipeline.  You will see a new pipeline being triggered for the change you just made.
-+
-image:m4/parasol-innerloop-pipeline1.png[width=80%]
-. Shortly, the pipeline will be marked as *Succeeded*
+. Access the *CI tab* to view the pipeline. You will see a new pipeline being triggered for the change you just made. Shortly, the pipeline will be marked as *Succeeded*
 +
 image:m4/parasol-innerloop-pipeline-ok.png[width=80%]
 +

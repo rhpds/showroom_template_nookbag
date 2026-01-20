@@ -61,13 +61,6 @@ Your changes in GitLab should resemble the following screenshot.
 
 image::m4/gitlab-locations.png[]
 
-=== View the Imported Templates
-
-After you complete the configuration in the following sections and commit your changes, you can verify the templates are available by navigating to the https://backstage-backstage.{openshift_cluster_ingress_domain}/create[*Create* screen, window="rhdh"]. You should see both templates for importing APIs and applications to {product_name_rhdh}.
-
-image::m4/import-templates-list.png[]
-
-
 == Setup GitLab Entity Auto-Discovery
 
 The new templates require plugins to function, and ensure the newly created Entities are detected by {product_name_rhdh}: 
@@ -91,12 +84,17 @@ image::m4/uncomment-dynamic-plugin.png[width=60%]
 +
 image::m4/uncomment-auto-discovery.png[width=60%]
 +
-NOTE: This YAML snippet enables auto-discovery for all files named _all-location.yaml_ (entityFilename) where the repo name starts with the word _all-location_ (projectPattern). 
+NOTE: This YAML snippet enables auto-discovery for all files named _all-location.yaml_ (the `entityFilename` option) where the repo name starts with the word _all-location_ (the `projectPattern` option). 
 . Scroll down and enter a commit message `feat: Enable GitLab plugin and component auto discovery`.
 . Commit the file now using the *Commit Changes* button at the bottom of the page.
 
 . Refresh the https://openshift-gitops-server-openshift-gitops.{openshift_cluster_ingress_domain}[`backstage` Application, window="argo"] to rollout the new {product_name_rhdh} configuration - login as `admin` / `{openshift_gitops_password}`. Wait until the Application turns green and marked as Healthy. 
 
+=== View the Imported Templates
+
+After you complete the configuration in the following sections and commit your changes, you can verify the templates are available by navigating to the https://backstage-backstage.{openshift_cluster_ingress_domain}/create[*Create* screen, window="rhdh"]. You should see both templates for importing APIs and applications to {product_name_rhdh}.
+
+image::m4/import-templates-list.png[]
 
 == Onboard Parasol's System and Domain
 

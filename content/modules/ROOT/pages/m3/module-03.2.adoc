@@ -10,9 +10,7 @@ Register this template using the {product_name_rhdh} UI:
 
 . Login to your https://backstage-backstage.{openshift_cluster_ingress_domain}/[instance of {product_name_rhdh}^, window="rhdh"] as the `pe1` user with password `{common_password}`.
 . Select the image:common/plus-icon.png[width=15px] icon on the top navigation bar to access the *Self-service* menu.
-+
-image:m3/create-icon.png[] 
-. Click the *Register Existing Component* button.
+. Click the *Import an existing Git repository* button.
 +
 image:m3/rhdh-catalog-create.png[The empty Create UI]
 . Enter the following URL in the *Select URL* field and click *Analyze*:

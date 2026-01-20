@@ -74,7 +74,7 @@ image::m6/sigstore_landscapelayout_overview.svg[]
 
 Ok, after all this theory, let's get practical - how can we support our developers by providing them with an easy to use code signing approach without slowing them down? 
 
-First of all - developers use `git`, either directly via command line or indirectly from within their IDE. With that said, before we start we need to setup out console environment.
+First of all - developers use `git`, either directly via command line or indirectly from within their IDE. With that said, before we start we need to setup our console environment.
 
 NOTE: Since this workshop is targeted at Platform Engineers, we will focus on a quick demonstration here using our workshop environment. Similar to the previous chapter - if you'd like to try it out locally, just expand the section below, but having an IDE and `git` installed is not a prerequisite for this workshop.
 
@@ -86,21 +86,24 @@ include::./module-06.3.1-optional.adoc[]
 
 === Setup
 
+You'll use a terminal provided in the OpenShift Web Console. This has been preinstalled in your OpenShift environment using the Web Terminal Operator.
+
 *1. Open the Terminal*
 
 * Open the {openshift_cluster_console_url}/terminal[Terminal^, window="terminal"] logging in as `admin` and `{common_password}`
+* Click *Start* to use the default configuration.
 
 *2. Terminal Setup*
 
-Since the default terminal doesn't come with the binaries (`cosign`, `gitsign`) and a `git` without any configuration, we have prepared a script that
+Since the default terminal doesn't come with the binaries (`cosign`, `gitsign`) and a `git` without any configuration, we have prepared a script that:
 
 * downloads the binaries from the cluster itself (the Trusted Artifact Signer Operator installs a basic server with all the binaries needed in matching versions)
 * configures your git environment
-* configures environment variables with the appropriate endpoints for `fulcio`, `rekor` and the OIDC system (in our case the https://access.redhat.com/products/red-hat-build-of-keycloak[Red Hat Build of Keycloak], but any OIDC system would work)
+* configures environment variables with the appropriate endpoints for `fulcio`, `rekor` and the OIDC system (in our case the https://access.redhat.com/products/red-hat-build-of-keycloak[Red Hat Build of Keycloak], but any OIDC compliant provider would work)
 
 Feel free to inspect the script on https://github.com/redhat-tssc-tmm/security-roadshow/blob/main/ocp_terminal_setup.sh[GitHub] before executing it in the terminal session you just opened:
 
-TIP: It's a Linux terminal, so use `<ctrl><shift><v>` to paste
+TIP: It's a Linux terminal, so use `<ctrl><shift><v>` to paste., or `<cmd><shift><v>` on macOS.
 
 [source,bash,role=execute,subs=attributes+]
 ----
@@ -156,13 +159,14 @@ Root status:
 ...
 ----
 
+NOTE: In a production environment you could specify a custom Web Terminal container image that includes these tools out of the box. The same applies to a web-based development environment such as OpenShift Dev Spaces.
 
 
 === Developer Activity: Create a branch, git clone
 
 Since we want to sign code commits, we need some code to work on. 
 
-As Developers, let's go back to the `parasol-store` app, clone it and create a branch to work on. If you like, you can go back to https://gitlab-gitlab.{openshift_cluster_ingress_domain}/parasol/parasol-store[parasol-store on GitLab^], create a branch and copy the `https` URL manually - but we can also do it quickly via commandline:
+As Developers, let's go back to the `parasol-store` app, clone it and create a branch to work on. If you like, you can go back to https://gitlab-gitlab.{openshift_cluster_ingress_domain}/parasol/parasol-store[parasol-store on GitLab^], create a branch and copy the `https` URL manually - but we can also do it quickly via command-line:
 
 [source,bash,role=execute,subs=attributes+]
 ----
@@ -217,7 +221,7 @@ Now we can commit our change with an appropriate commit message (you can of cour
 git commit -m "added an empty file to test commit signing"
 ----
 
-And here something unexpected happens (if you have used `git` on the commandline before) - you're asked to copy a URL to a browser...  
+And here something unexpected happens (if you have used `git` on the command-line before) - you're asked to copy a URL to a browser...  
 
 [source,bash,subs=attributes+]
 ----
@@ -245,9 +249,9 @@ Use `dev1` and `{common_password}` to authenticate.
 
 image::m6/gitsign_auth_success.png[]
 
-Now copy the full code (best to use `<ctrl><a>` since the code is longer than the field) and paste it back into your terminal session (and remember, developers don't have to do that unless they are working on a remote ssh session). 
+Now copy the full code (best to use `<ctrl><a>` or `<cmd><a>` since the code is longer than the field) and paste it back into your terminal session (and remember, developers don't have to do that unless they are working on a remote ssh session). 
 
-TIP: `gitsign` doesn't echo the password (verification code) - so just paste (`ctrl-shift-v`) and hit enter. If you get an error (`error getting signer: oauth2: "invalid_grant" "Code not valid"`) don't worry, just use the upward arrow to recall the last command and do it again - since you couldn't successfully prove your identity, nothing has been committed yet.
+TIP: `gitsign` doesn't echo the password (verification code) - so just paste (`ctrl-shift-v` or `cmd-shift-v`) and hit enter. If you get an error (`error getting signer: oauth2: "invalid_grant" "Code not valid"`) don't worry, just use the upward arrow to recall the last command (`git commit`) and do it again - since you couldn't successfully prove your identity, nothing has been committed yet.
 
 [source,bash,subs=attributes+]
 ----
@@ -444,7 +448,7 @@ https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/parasol-store-dev-
 
 We'll follow the same steps we did in xref:m4/module-04.5.adoc[Chapter 4.5] (working on a feature branch) - but this time, our pipeline will have git commit verification built in! 
 
-Since we already created a `parasol-store` branch (`new-feature-with-signed-commits`) above via commandline - we'll simply use that.
+Since we already created a `parasol-store` branch (`new-feature-with-signed-commits`) above via command-line - we'll simply use that.
 
 NOTE: For details what we're doing and why - go back to xref:m4/module-04.5.adoc[Chapter 4.5] for a detailed explanation. We're now setting up a developer environment, but with the new template.
 

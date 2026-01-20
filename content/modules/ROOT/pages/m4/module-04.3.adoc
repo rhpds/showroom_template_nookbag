@@ -178,7 +178,7 @@ image:m4/view-parasol-store-component.png[]
 image:m4/parasol-store-topo.png[]
 
 . *CI Tab* displays any Pipeline Runs. This is currently empty because there are no pipeline runs yet.
-. *CD Tab* displays the deployed components/systems using Argo D plugin
+. *CD Tab* displays the deployed components/systems using Argo CD plugin
 +
 image:m4/parasol-store-argo.png[]
 
