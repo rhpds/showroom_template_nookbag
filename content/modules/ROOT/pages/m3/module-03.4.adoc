@@ -2,9 +2,9 @@
 
 == Developer Activity: Create a new Component from the Template
 
-IMPORTANT: Please make sure you are logged in as a Developer with `dev1` / `{common_password}` as you were guided to in the previous step.
-
 include::../style.adoc[]
+
+include::../login-developer.adoc[]
 
 Create a new software Component and supporting infrastructure using the *Quarkus Service* template that was created by the platform engineer:
 
