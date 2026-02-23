@@ -1,0 +1,227 @@
+= Creating a Content Repository
+:navtitle: Creating a Content Repository
+
+A Showroom content repository is an https://antora.org[Antora] project that contains your lab instructions written in AsciiDoc.
+The Showroom platform clones, builds, and serves this content at runtime.
+
+== Start from the Template
+
+The recommended starting point is https://github.com/rhpds/showroom_template_nookbag[showroom_template_nookbag].
+
+. In GitHub, click **Use this template** to create a new repository.
+Suggested naming: `showroom_<lab-name>` (for example `showroom_my-ansible-workshop`).
+. Clone your new repo locally.
+. Replace the sample pages in `content/modules/ROOT/pages/` with your own content.
+
+The template gives you a clean structure with zero boilerplate, the Red Hat Demo Platform UI theme, and a dev-mode extension for previewing variables.
+
+== Directory Layout
+
+[source,text]
+----
+your-content-repo/
+├── content/
+│   ├── antora.yml              <1>
+│   ├── lib/                    <2>
+│   │   └── dev-mode.js
+│   ├── supplemental-ui/        <3>
+│   │   └── partials/
+│   └── modules/ROOT/
+│       ├── nav.adoc            <4>
+│       ├── assets/images/      <5>
+│       ├── examples/           <6>
+│       ├── pages/              <7>
+│       │   ├── index.adoc
+│       │   ├── module-01.adoc
+│       │   └── module-02.adoc
+│       └── partials/           <8>
+├── site.yml                    <9>
+├── default-site.yml            <10>
+└── ui-config.yml               <11>
+----
+<1> Antora component descriptor -- defines the component name, version, navigation, and default AsciiDoc attributes.
+<2> JavaScript extensions (dev-mode, attribute injection, etc.).
+<3> Custom CSS or HTML partials that override the UI theme.
+<4> Navigation file -- controls the sidebar table of contents.
+<5> Images referenced from your AsciiDoc pages.
+<6> Downloadable files (scripts, configs) that readers can copy.
+<7> Your lab pages -- one AsciiDoc file per module or section.
+<8> Reusable AsciiDoc snippets you can include inline.
+<9> Production Antora playbook -- uses the Red Hat theme, no dev-mode.
+<10> Development Antora playbook -- enables dev-mode and uses a simpler theme.
+<11> Showroom UI configuration -- defines tabs, layout width, and dynamic URLs.
+See xref:ui-config.adoc[].
+
+== The Antora Component Descriptor (`antora.yml`)
+
+The `content/antora.yml` file is the heart of your Antora component.
+Here is a minimal example:
+
+[source,yaml]
+----
+name: modules
+title: My Workshop Title
+version: master
+nav:
+  - modules/ROOT/nav.adoc
+
+asciidoc:
+  attributes:
+    lab_name: My Workshop
+    guid: '%GUID%'
+    ssh_user: lab-user
+    ssh_password: changeme
+    page-pagination: true
+----
+
+=== AsciiDoc Attributes and Variable Injection
+
+At deploy time, Showroom replaces attribute placeholders with real runtime values from `user_data`.
+This means you can write:
+
+[source,asciidoc]
+----
+SSH to the bastion:
+
+[source,bash,subs="attributes"]
+ ssh {ssh_user}@{bastion_public_hostname}
+----
+
+And the rendered page will show the actual username and hostname for each lab participant.
+
+The full list of available attributes depends on what your infrastructure roles write into `user_data`.
+See xref:user-data.adoc[] for the complete flow.
+
+TIP: Provide sensible defaults in `antora.yml` so the content renders correctly during local development and in CI previews.
+
+== Antora Playbook (`site.yml`)
+
+Your content repo needs an Antora playbook file -- typically `site.yml` (or `default-site.yml`).
+This file tells Antora where to find your content, which UI theme to use, and where to write the output.
+
+The Showroom Antora container image auto-detects the playbook at build time, preferring `site.yml` and falling back to `default-site.yml`.
+You can override the filename in your AgnosticV config:
+
+[source,yaml]
+----
+ocp4_workload_showroom_content_antora_playbook: site.yml
+----
+
+== Navigation (`nav.adoc`)
+
+The `content/modules/ROOT/nav.adoc` file defines the sidebar navigation:
+
+[source,asciidoc]
+----
+* xref:index.adoc[Lab Overview]
+
+* xref:module-01.adoc[1. Getting Started]
+* xref:module-02.adoc[2. Deploy the Application]
+----
+
+Pages not listed in `nav.adoc` are still accessible by URL but will not appear in the sidebar (unless dev-mode is enabled).
+
+== Dev Mode
+
+The dev-mode extension is a convenience for content authors.
+When enabled, it adds a panel at the top of every page showing all AsciiDoc attributes and their current values.
+This helps you verify that variable injection is working correctly.
+
+=== In deployed environments
+
+Dev mode is controlled by a role variable, not by the playbook file.
+The Showroom Antora container image dynamically injects the dev-mode extension at build time based on an environment variable:
+
+* **OCP4**: set `ocp4_workload_showroom_antora_enable_dev_mode: "true"` in your AgnosticV config.
+* **VM**: set `showroom_antora_enable_dev_mode: "true"`.
+
+You can also expose this as a catalog parameter so developers can toggle it when ordering:
+
+[source,yaml]
+----
+__meta__:
+  catalog:
+    parameters:
+      - name: ocp4_workload_showroom_antora_enable_dev_mode
+        formLabel: Showroom Dev Mode
+        openAPIV3Schema:
+          type: string
+          default: 'false'
+          enum: ['true', 'false']
+----
+
+=== In local development
+
+When running Antora locally, you can enable dev-mode by adding the extension to your playbook.
+The template's `default-site.yml` has it enabled by default:
+
+[source,yaml]
+----
+antora:
+  extensions:
+    - require: ./content/lib/dev-mode.js
+      enabled: true    # set to false to disable
+----
+
+== Local Development
+
+=== Option 1: Podman / Docker (recommended)
+
+[source,bash]
+----
+cd your-content-repo
+podman run --rm --name antora -v $PWD:/antora -p 8080:8080 -i -t ghcr.io/juliaaano/antora-viewer
+----
+
+On SELinux-enabled systems, append `:z` to the volume mount:
+
+[source,bash]
+----
+podman run --rm --name antora -v $PWD:/antora:z -p 8080:8080 -i -t ghcr.io/juliaaano/antora-viewer
+----
+
+Open http://localhost:8080 in your browser.
+Live reload is not supported -- stop and restart the container after making changes.
+
+=== Option 2: Podman Compose (live reload)
+
+If your template includes a `podman-compose.yaml`:
+
+[source,bash]
+----
+podman-compose up --build
+----
+
+Open http://localhost:8080. Edit content files and refresh the browser to see changes.
+
+=== Option 3: Local Antora CLI
+
+If you have Node.js and Antora installed:
+
+[source,bash]
+----
+./utilities/lab-build      # build HTML
+./utilities/lab-serve      # serve on http://localhost:8080
+----
+
+== Adding External Links
+
+You can add links to external resources (documentation, product pages, etc.) in the Showroom UI links dropdown.
+Add them to `content/antora.yml`:
+
+[source,yaml]
+----
+asciidoc:
+  attributes:
+    page-links:
+      - url: https://docs.redhat.com
+        text: Red Hat Documentation
+      - url: https://access.redhat.com
+        text: Red Hat Customer Portal
+----
+
+== Next Steps
+
+* xref:ui-config.adoc[] -- configure the tab layout, terminal tabs, and embedded consoles.
+* xref:agnosticv-config.adoc[] -- wire your content repo into an AgnosticV catalog item.
+* xref:user-data.adoc[] -- understand how runtime variables become AsciiDoc attributes.

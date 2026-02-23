@@ -1,7 +1,18 @@
-* xref:module-01.adoc[1. RPM Native Container]
-** xref:module-01.adoc#repositories[Repositories]
-** xref:module-01.adoc#software[Software]
+* xref:index.adoc[What is Showroom?]
 
-* xref:module-02.adoc[2. GitHub Sourced Container]
-** xref:module-02.adoc#prerequisites[Install Prerequisites]
-** xref:module-02.adoc#container[Enable Container]
+.Content Developer Guide
+* xref:quick-start.adoc[Quick Start]
+* xref:content-repo.adoc[Creating a Content Repository]
+* xref:agnosticv-config.adoc[AgnosticV Configuration]
+* xref:ui-config.adoc[UI Configuration]
+* xref:user-data.adoc[User Data and Variables]
+* xref:ocp4-role-reference.adoc[OCP4 Role Reference]
+* xref:vm-role-reference.adoc[VM Role Reference]
+
+.Showroom Developer Guide
+* xref:architecture.adoc[Architecture]
+* xref:deployer.adoc[Showroom Deployer]
+* xref:images.adoc[Showroom Images]
+* xref:nookbag.adoc[Nookbag UI]
+* xref:ocp-integration.adoc[OCP Integration]
+* xref:contributing.adoc[Contributing]
