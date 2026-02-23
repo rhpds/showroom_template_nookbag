@@ -1,0 +1,27 @@
+= How to Use This Demo Guide
+:source-highlighter: rouge
+:toc: macro
+:toclevels: 1
+
+toc::[]
+
+This guide helps sales engineers and technical presenters deliver an effective demonstration to customers.
+
+Every demo is different — adapt this guide to your specific audience and time constraints.
+
+== Demo Overview
+Read this section first. It provides the background, use case, and benefits to present to the customer.
+
+These demos focus on business value rather than technical details. Dive into technical depth only when the customer asks.
+
+== Demo Modules
+Each module uses a *Know* and *Show* structure.
+
+=== Know
+Background and insights for you and the customer. Describes what you will show and why it matters.
+
+=== Show
+Step-by-step guide to follow during the live demonstration.
+
+== Next Steps
+Start with the *Demo Overview* section!

@@ -1,0 +1,34 @@
+= OpenShift Pipelines Demo Overview
+:toc:
+:toc-placement: preamble
+:icons: font
+
+OpenShift Pipelines automates CI/CD workflows natively on OpenShift using Tekton.
+
+== Background
+
+ACME Corp releases software every 6-8 weeks. Manual deployments take 3-5 business days,
+introduce errors, and block the team from delivering faster.
+
+== Problem
+
+* *Long cycle times*: 6-8 week release cycles → missed market opportunities
+* *Manual steps*: Deployment requires 3-5 days of manual work → human error risk
+* *Inconsistency*: Each environment configured differently → "works on my machine" issues
+
+Benefits to the customer:
+
+* Reduce deployment time from days to minutes
+* Eliminate manual deployment errors
+* Consistent builds across dev, staging, and production
+
+== Common Customer Questions
+
+*"How does this integrate with our existing Git workflows?"*
+→ Show Module 2 — pipelines trigger automatically on git push
+
+*"What about security and compliance scanning?"*
+→ Module 3 demonstrates automated security scanning built into the pipeline
+
+*"How long does it take to set up?"*
+→ Module 1 shows a working pipeline running within 10 minutes
