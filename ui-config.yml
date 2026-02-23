@@ -6,6 +6,10 @@ default_width: 30
 # Persist the URL state so browser refresh doesn't reset the UI
 persist_url_state: true
 
+view_switcher:
+  enabled: true
+  default_mode: split
+
 tabs:
   # OCP Console
   # - name: OCP Console
