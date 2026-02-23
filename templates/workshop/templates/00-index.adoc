@@ -1,46 +1,48 @@
 = {{ Workshop Title }}
-:source-highlighter: rouge
-:toc: macro
-:toclevels: 1
 
-toc::[]
+Welcome to the {{ workshop name }} workshop!
 
-This guide helps workshop facilitators deliver an effective {{ technology/topic }} hands-on learning experience to participants.
+== What you'll learn
 
-Every workshop session is different and you will need to adapt this guide to your specific audience and time constraints.
-For instance, if you have less than the noted amount of time, you can skip some sections or combine modules.
+In this workshop, you will:
 
-The following sections will help you understand the guide and how to use it to prepare and execute the workshop.
+* {{ Learning objective 1 }}
+* {{ Learning objective 2 }}
+* {{ Learning objective 3 }}
+* {{ Learning objective 4 }}
 
-== Workshop overview
-The **Workshop Overview** section provides an overview of the learning objectives, target audience, and expected outcomes.
-It includes the business context for {{ technology/topic }} and benefits participants will gain.
-It also provides presentation tips and common participant questions you might encounter.
+== Who this is for
 
-IMPORTANT: You need to read this section thoroughly to understand the learning objectives and participant expectations.
+This workshop is designed for {{ target audience }} who want to {{ main goal }}.
 
-These workshops focus on hands-on skill building through practical exercises.
-You are encouraged to dive into technical details when participants ask questions.
-However, maintain focus on the learning objectives and ensure all participants can follow along.
+**Experience level**: {{ Beginner/Intermediate/Advanced }}
 
-== Workshop details
-The **Workshop Details** section provides a single location to find logistical information for the workshop.
-Here you will find:
+== Prerequisites
 
-* Proposed timing for each module
-* Required tools and software versions
-* Environment setup instructions
-* Troubleshooting common issues
-* Follow-up resources and next steps
-* Authors and contact information
+Before starting this workshop, you should have:
 
-IMPORTANT: Review the technical requirements before the workshop to ensure all participants can complete the exercises.
+* {{ Prerequisite 1 }}
+* {{ Prerequisite 2 }}
+* {{ Prerequisite 3 (optional) }}
 
-== Workshop modules
-This is the main learning content of the workshop.
-The modules contain step-by-step hands-on exercises for participants to complete.
+== Workshop environment
 
-Encourage participants to ask questions and help each other during hands-on activities.
+{{ Brief description of the lab environment and what's pre-configured }}
 
-== Next steps
-Get started by reading the **Workshop Overview** section!
+You will have access to:
+
+* OpenShift cluster: {openshift_console_url}
+* Username: {user}
+* Password: {password}
+
+NOTE: All environment details and credentials are available in the lab interface.
+
+== Estimated time
+
+This workshop will take approximately **{{ X hours }}** to complete.
+
+You can work at your own pace.
+
+== Let's get started!
+
+Click on **Workshop Overview** in the navigation to begin your learning journey.
