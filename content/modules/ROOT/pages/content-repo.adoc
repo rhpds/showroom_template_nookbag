@@ -220,6 +220,44 @@ asciidoc:
         text: Red Hat Customer Portal
 ----
 
+== Extensions
+
+Showroom content images include the https://github.com/sntke/antora-mermaid-extension[Mermaid extension] for Antora, which lets you embed diagrams and visualizations written in text directly in your AsciiDoc pages.
+
+Add the extension to your `site.yml` or `default-site.yml` playbook:
+
+[source,yaml]
+----
+antora:
+  extensions:
+    - require: '@sntke/antora-mermaid-extension' # <1>
+      mermaid_library_url: https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs # <2>
+      script_stem: header-scripts # <3>
+      mermaid_initialize_options: # <4>
+        start_on_load: true
+----
+<1> The Antora extension package (pre-installed in the Showroom Antora image).
+<2> The Mermaid JS library loaded by the browser.
+<3> Injects the script tag into the HTML `<head>`.
+<4> Mermaid initialisation options -- `start_on_load` renders diagrams automatically.
+
+Then use a `[mermaid]` block in your AsciiDoc pages:
+
+[source,asciidoc]
+----
+[mermaid]
+\....
+sequenceDiagram
+autonumber
+
+participant a as Alice
+participant b as Bob
+
+a ->>+ b : Hello.
+b -->>- a : Hi, there.
+\....
+----
+
 == Next Steps
 
 * xref:ui-config.adoc[] -- configure the tab layout, terminal tabs, and embedded consoles.
