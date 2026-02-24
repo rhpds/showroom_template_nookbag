@@ -1,12 +1,19 @@
 name: github pages
 
 on:
-  workflow_dispatch:
   push:
     branches: [main]
-    paths-ignore:
-      - "README.adoc"
-      - ".gitignore"
+    paths:
+      - 'content/**'
+      - 'site.yml'
+      - '.github/workflows/gh-pages.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'content/**'
+      - 'site.yml'
+      - '.github/workflows/gh-pages.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -23,21 +30,21 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - name: configure pages
-        uses: actions/configure-pages@v5
       - name: setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 20.13.1
+          node-version: '20'
       - name: install antora
-        run: npm install --global @antora/cli@3.1 @antora/site-generator@3.1
+        run: npm i -g @antora/cli@3.1 @antora/site-generator@3.1
       - name: antora generate
-        run: antora generate site.yml --stacktrace
+        run: antora --fetch site.yml
       - name: upload pages artifact
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
           path: www
   deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: build
     environment:
       name: github-pages
