@@ -21,13 +21,13 @@ Use this path when your lab provisions an OpenShift cluster and Showroom runs as
 
 In your catalog item's `common.yaml`, declare the Showroom collection as a dependency:
 
-[source,yaml]
+[source,yaml,subs="+attributes"]
 ----
 requirements_content:
   collections:
     - name: https://github.com/agnosticd/showroom.git
       type: git
-      version: v1.4.0
+      version: {showroom-collection-version}
 ----
 
 === 2. List the workloads
@@ -80,13 +80,13 @@ Use this path when your lab provisions VMs (typically on OpenShift CNV) and Show
 
 === 1. Add the collection to your catalog item
 
-[source,yaml]
+[source,yaml,subs="+attributes"]
 ----
 requirements_content:
   collections:
     - name: https://github.com/agnosticd/showroom.git
       type: git
-      version: v1.4.0
+      version: {showroom-collection-version}
 ----
 
 === 2. Include the role in post-software workloads

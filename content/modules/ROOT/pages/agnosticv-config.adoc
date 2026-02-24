@@ -8,13 +8,13 @@ This page explains how to wire up the `agnosticd.showroom` collection in an http
 Every catalog item that uses Showroom must declare the collection in `requirements_content`.
 This tells AgnosticD to install the collection before running workloads:
 
-[source,yaml]
+[source,yaml,subs="+attributes"]
 ----
 requirements_content:
   collections:
     - name: https://github.com/agnosticd/showroom.git
       type: git
-      version: v1.4.0    # <1>
+      version: {showroom-collection-version}    # <1>
 ----
 <1> Always pin to a specific release tag. Use https://github.com/agnosticd/showroom/tags[the tags list] to find the latest version.
 
@@ -207,7 +207,7 @@ ocp4_workload_showroom_passthrough_user_data: true
 Exposing catalog parameters for development::
 Make the collection version, dev-mode, and UI config overridable from the catalog:
 +
-[source,yaml]
+[source,yaml,subs="+attributes"]
 ----
 __meta__:
   catalog:
@@ -216,7 +216,7 @@ __meta__:
         formLabel: Showroom Collection Version
         openAPIV3Schema:
           type: string
-          default: 'v1.4.0'
+          default: '{showroom-collection-version}'
       - name: ocp4_workload_showroom_antora_enable_dev_mode
         formLabel: Showroom Dev Mode
         openAPIV3Schema:
