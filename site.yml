@@ -16,8 +16,5 @@ ui:
   supplemental_files:
     - path: ./content/supplemental-ui
 
-runtime:
-  cache_dir: ./.cache/antora
-
 output:
   dir: ./www
