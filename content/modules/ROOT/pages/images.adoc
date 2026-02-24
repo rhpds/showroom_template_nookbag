@@ -65,7 +65,7 @@ Images follow semantic versioning. When a version is released, three tags are pu
 |`v1`
 |===
 
-The Ansible roles reference specific versions in their defaults (e.g. `quay.io/rhpds/showroom-content:v1.4.0`).
+The Ansible roles reference specific versions in their defaults (e.g. `quay.io/rhpds/showroom-content:{showroom-collection-version}`).
 The `v1.4` and `v1` tags allow automatic pickup of patch releases.
 
 == Build and Release Process

@@ -16,5 +16,9 @@ ui:
   supplemental_files:
     - path: ./content/supplemental-ui
 
+asciidoc:
+  attributes:
+    showroom-collection-version: v1.5.2
+
 output:
   dir: ./www

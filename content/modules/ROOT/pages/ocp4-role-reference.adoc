@@ -86,7 +86,7 @@ When `ACTION=destroy` (or `remove`): deletes the Showroom namespace(s), letting 
 
 |`ocp4_workload_showroom_content_image`
 |string
-|`quay.io/rhpds/showroom-content:v1.4.0`
+|`quay.io/rhpds/showroom-content:{showroom-collection-version}`
 |Container image that clones and renders the Antora content.
 
 |`ocp4_workload_showroom_content_only`
