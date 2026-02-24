@@ -1,0 +1,47 @@
+= Demo Module 1: Your First Pipeline
+:source-highlighter: rouge
+:toc: macro
+:toclevels: 1
+
+In this module you will show how a Tekton pipeline automates the full build-test-deploy
+cycle for ACME Corp's application.
+
+== Part 1: Creating the Pipeline
+
+=== Know
+
+ACME currently deploys manually — a developer packages the application, uploads to a server,
+and another team member runs deployment scripts. This takes 3-5 days and fails 20% of the time.
+
+*What you will show*: A pipeline that does in 5 minutes what takes ACME 3 days manually.
+
+*Business value*: 60x faster deployments, zero manual steps, consistent every time.
+
+=== Show
+
+. Navigate to *Pipelines* in the OpenShift Developer Console
+. Click *Create Pipeline*
+. Name the pipeline: `acme-build-deploy`
+. Add tasks:
+  * `git-clone` → clones the source repository
+  * `buildah` → builds the container image
+  * `deploy` → rolls out to production
+. Click *Create*
+
+Expected result: Pipeline appears in the list with status "Not started".
+
+== Part 2: Running the Pipeline
+
+=== Know
+
+The pipeline connects to ACME's Git repository and automatically builds on every commit.
+This replaces 3-5 days of manual work.
+
+=== Show
+
+. Click *Start* on the `acme-build-deploy` pipeline
+. Watch the tasks complete in sequence (approximately 3 minutes)
+. Click on each task to show real-time logs
+. When complete, navigate to *Topology* to see the updated deployment
+
+Expected result: Application updated, pipeline shows "Succeeded" in green.
