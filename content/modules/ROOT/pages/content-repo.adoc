@@ -13,7 +13,7 @@ Suggested naming: `showroom_<lab-name>` (for example `showroom_my-ansible-worksh
 . Clone your new repo locally.
 . Replace the sample pages in `content/modules/ROOT/pages/` with your own content.
 
-The template gives you a clean structure with zero boilerplate, the Red Hat Demo Platform UI theme, and a dev-mode extension for previewing variables.
+The template gives you a clean structure with zero boilerplate and the Red Hat Demo Platform UI theme.
 
 == Directory Layout
 
@@ -22,34 +22,29 @@ The template gives you a clean structure with zero boilerplate, the Red Hat Demo
 your-content-repo/
 ├── content/
 │   ├── antora.yml              <1>
-│   ├── lib/                    <2>
-│   │   └── dev-mode.js
-│   ├── supplemental-ui/        <3>
+│   ├── supplemental-ui/        <2>
 │   │   └── partials/
 │   └── modules/ROOT/
-│       ├── nav.adoc            <4>
-│       ├── assets/images/      <5>
-│       ├── examples/           <6>
-│       ├── pages/              <7>
+│       ├── nav.adoc            <3>
+│       ├── assets/images/      <4>
+│       ├── examples/           <5>
+│       ├── pages/              <6>
 │       │   ├── index.adoc
 │       │   ├── module-01.adoc
 │       │   └── module-02.adoc
-│       └── partials/           <8>
-├── site.yml                    <9>
-├── default-site.yml            <10>
-└── ui-config.yml               <11>
+│       └── partials/           <7>
+├── site.yml                    <8>
+└── ui-config.yml               <9>
 ----
 <1> Antora component descriptor -- defines the component name, version, navigation, and default AsciiDoc attributes.
-<2> JavaScript extensions (dev-mode, attribute injection, etc.).
-<3> Custom CSS or HTML partials that override the UI theme.
-<4> Navigation file -- controls the sidebar table of contents.
-<5> Images referenced from your AsciiDoc pages.
-<6> Downloadable files (scripts, configs) that readers can copy.
-<7> Your lab pages -- one AsciiDoc file per module or section.
-<8> Reusable AsciiDoc snippets you can include inline.
-<9> Production Antora playbook -- uses the Red Hat theme, no dev-mode.
-<10> Development Antora playbook -- enables dev-mode and uses a simpler theme.
-<11> Showroom UI configuration -- defines tabs, layout width, and dynamic URLs.
+<2> Custom CSS or HTML partials that override the UI theme.
+<3> Navigation file -- controls the sidebar table of contents.
+<4> Images referenced from your AsciiDoc pages.
+<5> Downloadable files (scripts, configs) that readers can copy.
+<6> Your lab pages -- one AsciiDoc file per module or section.
+<7> Reusable AsciiDoc snippets you can include inline.
+<8> Antora playbook -- uses the Red Hat theme.
+<9> Showroom UI configuration -- defines tabs, layout width, and dynamic URLs.
 See xref:ui-config.adoc[].
 
 == The Antora Component Descriptor (`antora.yml`)
@@ -96,7 +91,7 @@ TIP: Provide sensible defaults in `antora.yml` so the content renders correctly 
 
 == Antora Playbook (`site.yml`)
 
-Your content repo needs an Antora playbook file -- typically `site.yml` (or `default-site.yml`).
+Your content repo needs an Antora playbook file -- typically `site.yml`.
 This file tells Antora where to find your content, which UI theme to use, and where to write the output.
 
 The Showroom Antora container image auto-detects the playbook at build time, preferring `site.yml` and falling back to `default-site.yml`.
@@ -152,16 +147,10 @@ __meta__:
 
 === In local development
 
-When running Antora locally, you can enable dev-mode by adding the extension to your playbook.
-The template's `default-site.yml` has it enabled by default:
+Dev mode is not available when running Antora locally.
+The `dev-mode.js` extension is bundled inside the Showroom Antora container image and injected at build time -- it is not part of the content repository.
 
-[source,yaml]
-----
-antora:
-  extensions:
-    - require: ./content/lib/dev-mode.js
-      enabled: true    # set to false to disable
-----
+To verify your AsciiDoc attributes locally, inspect `content/antora.yml` directly or deploy to RHDP with dev mode enabled.
 
 == Local Development
 
@@ -224,7 +213,7 @@ asciidoc:
 
 Showroom content images include the https://github.com/sntke/antora-mermaid-extension[Mermaid extension] for Antora, which lets you embed diagrams and visualizations written in text directly in your AsciiDoc pages.
 
-Add the extension to your `site.yml` or `default-site.yml` playbook:
+Add the extension to your `site.yml` playbook:
 
 [source,yaml]
 ----
