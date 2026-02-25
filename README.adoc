@@ -95,7 +95,7 @@ asciidoc:
       text: Red Hat
 ----
 
-image::ui-links.png[]
+image::.images/ui-links.png[]
 
 == Dev Mode
 
@@ -114,7 +114,7 @@ extensions:
 
 . Produces
 +
-image::dev-mode.png[]
+image::.images/dev-mode.png[]
 
 == Creating Content with Claude Code
 
