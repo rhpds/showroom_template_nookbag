@@ -27,7 +27,7 @@ This page covers how to contribute to the Showroom platform -- the Ansible colle
 
 == Collection Versioning
 
-The collection follows semantic versioning. Tags are in the format `v{major}.{minor}.{patch}` (e.g. `{showroom-collection-version}`).
+The collection follows semantic versioning. Tags are in the format `v\{major}.\{minor}.\{patch}` (e.g. `{showroom-collection-version}`).
 
 * **Patch** -- bug fixes, documentation updates, image version bumps.
 * **Minor** -- new features, new role variables, new tab service support.

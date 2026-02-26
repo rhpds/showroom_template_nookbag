@@ -10,7 +10,7 @@ Nookbag is a JavaScript/CSS bundle that:
 * Renders the split-pane layout with a resizable divider.
 * Creates tabbed panels in the right pane (terminals, consoles, external URLs).
 * Reads `ui-config.yml` to determine which tabs to show and how to configure them.
-* Supports dynamic variable substitution in tab URLs (`${DOMAIN}`, `${GUID}`).
+* Supports dynamic variable substitution in tab URLs (`$\{DOMAIN}`, `$\{GUID}`).
 * Persists user preferences (active tab, pane width) across page refreshes.
 
 == How It Is Consumed
@@ -65,7 +65,7 @@ The Antora UI bundle (e.g. `rhdp_showroom_theme`) controls the styling of the **
 
 == Versioning
 
-Nookbag releases follow the `nookbag-v{major}.{minor}.{patch}` tag format (e.g. `nookbag-v0.3.0`).
+Nookbag releases follow the `nookbag-v\{major}.\{minor}.\{patch}` tag format (e.g. `nookbag-v0.3.0`).
 The release artifact is a ZIP file at:
 
 ----

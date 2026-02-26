@@ -90,17 +90,17 @@ Tabs can point to internal services (terminal, console) or external URLs.
 
 === Variable Substitution
 
-Tab URLs support variable substitution using `${VARIABLE}` syntax.
+Tab URLs support variable substitution using `$\{VARIABLE}` syntax.
 These are replaced at runtime with values from the deployment:
 
 [cols="1,3",options="header"]
 |===
 |Variable |Description
 
-|`${DOMAIN}`
+|`$\{DOMAIN}`
 |The apps domain of the OpenShift cluster (e.g. `apps.cluster.example.com`).
 
-|`${GUID}`
+|`$\{GUID}`
 |The unique environment identifier.
 |===
 
