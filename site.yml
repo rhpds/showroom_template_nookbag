@@ -16,6 +16,10 @@ ui:
   supplemental_files:
     - path: ./content/supplemental-ui
 
+antora:
+  extensions:
+    - '@sntke/antora-mermaid-extension'
+
 asciidoc:
   attributes:
     showroom-collection-version: v1.5.2

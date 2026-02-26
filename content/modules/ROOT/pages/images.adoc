@@ -72,7 +72,7 @@ The `v1.4` and `v1` tags allow automatic pickup of patch releases.
 
 Images are built automatically via GitHub Actions when a git tag is pushed:
 
-. Create a tag using the format: `{image_name}-v{semantic_version}`
+. Create a tag using the format: `\{image_name}-v\{semantic_version}`
 +
 Example: `showroom-content-v1.4.5`
 
