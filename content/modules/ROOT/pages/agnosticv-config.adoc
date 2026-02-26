@@ -30,8 +30,8 @@ Add Showroom workloads to the `workloads` list.
 workloads:
   - ocp4_workload_my_operators
   - ocp4_workload_my_app
-  - agnosticd.showroom.ocp4_workload_showroom_ocp_integration  # <1>
-  - agnosticd.showroom.ocp4_workload_showroom                  # <2>
+  - agnosticd.showroom.ocp4_workload_ocp_console_embed  # <1>
+  - agnosticd.showroom.ocp4_workload_showroom            # <2>
 ----
 <1> Optional -- enables OCP console embedding in Showroom iframes. See xref:ocp-integration.adoc[].
 <2> The main Showroom deployment. Must be last.
@@ -165,7 +165,7 @@ https://github.com/rhpds/agnosticv/tree/main/agd_v2/aap-multiinstance-workshop[a
 ----
 workloads:
   # ... other workloads ...
-  - agnosticd.showroom.ocp4_workload_showroom_ocp_integration
+  - agnosticd.showroom.ocp4_workload_ocp_console_embed
   - agnosticd.showroom.ocp4_workload_showroom
 
 ocp4_workload_showroom_content_git_repo: https://github.com/rhpds/aap-selfserv-intro-showroom.git
@@ -205,7 +205,7 @@ ocp4_workload_showroom_passthrough_user_data: true
 == Common Patterns
 
 Exposing catalog parameters for development::
-Make the collection version, dev-mode, and UI config overridable from the catalog:
+Make the collection version and dev-mode overridable from the catalog:
 +
 [source,yaml,subs="+attributes"]
 ----
@@ -217,13 +217,14 @@ __meta__:
         openAPIV3Schema:
           type: string
           default: '{showroom-collection-version}'
-      - name: ocp4_workload_showroom_antora_enable_dev_mode
+      - name: ocp4_workload_showroom_enable_dev_mode
         formLabel: Showroom Dev Mode
         openAPIV3Schema:
-          type: string
-          default: 'false'
-          enum: ['true', 'false']
+          type: boolean
+          default: false
 ----
++
+See xref:ocp4-role-reference.adoc#_dev_mode[Dev Mode] in the OCP4 Role Reference for the full list of dev-mode variables.
 
 Propagating bastion credentials::
 When your environment provisions a bastion host, propagate its credentials so Showroom's Wetty terminal can auto-SSH:

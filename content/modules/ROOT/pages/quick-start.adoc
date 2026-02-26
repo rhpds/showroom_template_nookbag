@@ -42,7 +42,7 @@ workloads:
   - agnosticd.showroom.ocp4_workload_showroom
 ----
 
-If you want the OpenShift web console embedded as an iframe tab, add `ocp4_workload_ocp_console_embed` or `ocp4_workload_showroom_ocp_integration` before the main Showroom workload.
+If you want the OpenShift web console embedded as an iframe tab, add `ocp4_workload_ocp_console_embed` before the main Showroom workload.
 See xref:ocp-integration.adoc[].
 
 === 3. Point to your content repo
