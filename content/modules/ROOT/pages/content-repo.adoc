@@ -247,6 +247,31 @@ b -->>- a : Hi, there.
 \....
 ----
 
+== Creating Content with AI Tools
+
+The https://github.com/rhpds/rhdp-skills-marketplace[RHDP Skills Marketplace] provides skills for generating and validating Showroom content using Claude Code or Cursor IDE.
+
+Install the marketplace skills, then use:
+
+[cols="1,2",options="header"]
+|===
+| Skill | What it does
+
+| `/showroom:create-lab`
+| Generate workshop modules from reference materials with AsciiDoc formatting.
+
+| `/showroom:create-demo`
+| Generate presenter-led demo content with Know/Show structure.
+
+| `/showroom:verify-content`
+| Validate content against Red Hat standards (style, AsciiDoc, scaffold files).
+
+| `/showroom:blog-generate`
+| Convert completed modules into blog posts.
+|===
+
+See the https://github.com/rhpds/rhdp-skills-marketplace[RHDP Skills Marketplace README] for setup instructions.
+
 == Next Steps
 
 * xref:ui-config.adoc[] -- configure the tab layout, terminal tabs, and embedded consoles.
