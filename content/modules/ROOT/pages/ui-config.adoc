@@ -146,7 +146,7 @@ tabs:
 
 === OpenShift Console
 
-The OpenShift web console in an iframe (requires `ocp4_workload_showroom_ocp_integration` or `ocp4_workload_ocp_console_embed`):
+The OpenShift web console in an iframe (requires `ocp4_workload_ocp_console_embed`):
 
 [source,yaml]
 ----

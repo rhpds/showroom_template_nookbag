@@ -103,12 +103,65 @@ When `ACTION=destroy` (or `remove`): deletes the Showroom namespace(s), letting 
 |string
 |`quay.io/rhpds/antora:v1.2.0`
 |Antora builder image used in the init container.
+|===
+
+== Dev Mode
+
+Dev mode adds diagnostic features to Showroom that are useful during content development.
+Currently, it controls the Antora dev-mode extension, which adds an _Attributes_ reference page and displays unlisted pages in the navigation.
+Future container-level dev-mode flags will follow the same pattern.
+
+=== Master Toggle
+
+Set the master toggle to enable dev mode for *all* Showroom containers at once:
+
+[source,yaml]
+----
+ocp4_workload_showroom_enable_dev_mode: true
+----
+
+=== Per-Container Toggles
+
+You can also enable dev mode for individual containers without turning on the master toggle.
+When the master toggle is `true`, all per-container dev modes are enabled regardless of their individual settings.
+
+[cols="1,1,1,3",options="header"]
+|===
+|Variable |Type |Default |Description
+
+|`ocp4_workload_showroom_enable_dev_mode`
+|boolean
+|`false`
+|Master toggle. When `true`, enables dev mode for all containers.
 
 |`ocp4_workload_showroom_antora_enable_dev_mode`
-|string
-|`"false"`
-|Enable the dev-mode extension that displays attributes and unlisted pages.
+|boolean
+|`false`
+|Enable the Antora dev-mode extension (attribute reference page, unlisted pages in nav). Also enabled when the master toggle is `true`.
 |===
+
+=== Example: Enable Dev Mode from the Catalog
+
+To let users toggle dev mode from the demo.redhat.com catalog form:
+
+[source,yaml]
+----
+__meta__:
+  catalog:
+    parameters:
+      - name: ocp4_workload_showroom_enable_dev_mode
+        formLabel: Showroom Dev Mode
+        openAPIV3Schema:
+          type: boolean
+          default: false
+----
+
+Or in `dev.yaml`:
+
+[source,yaml]
+----
+ocp4_workload_showroom_enable_dev_mode: true
+----
 
 == Terminal Configuration
 

@@ -300,6 +300,25 @@ showroom_terminal2_ssh_password: "{{ common_password }}"
 |URL of the zero-touch UI bundle.
 |===
 
+== Dev Mode
+
+Dev mode enables diagnostic features in the Antora build, including an _Attributes_ reference page and unlisted pages in the navigation.
+
+[cols="1,1,1,3",options="header"]
+|===
+|Variable |Type |Default |Description
+
+|`showroom_antora_enable_dev_mode`
+|boolean
+|`false`
+|Enable the Antora dev-mode extension.
+|===
+
+[source,yaml]
+----
+showroom_antora_enable_dev_mode: true
+----
+
 == Lab User Configuration
 
 [cols="1,1,1,3",options="header"]
