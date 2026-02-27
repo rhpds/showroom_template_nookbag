@@ -53,7 +53,21 @@ ocp4_workload_showroom_content_git_repo: https://github.com/yourorg/your-lab-con
 ocp4_workload_showroom_content_git_repo_ref: main
 ----
 
-=== 4. Pin the version for production
+=== 4. Enable dev mode while developing
+
+In your catalog item's `dev.yaml`, enable dev mode so you can see all AsciiDoc attributes and unlisted pages while building your content:
+
+[source,yaml]
+----
+ocp4_workload_showroom_enable_dev_mode: true
+----
+
+IMPORTANT: Always set this in `dev.yaml`, *never* in `common.yaml` or `prod.yaml`.
+Dev mode is a development-time aid -- it should not be visible to end users.
+
+See xref:content-repo.adoc#_dev_mode[Dev Mode] for details on what it provides.
+
+=== 5. Pin the version for production
 
 In `prod.yaml`, always pin the content branch to a tag or a known-good commit -- never ship `main` to production:
 
@@ -62,7 +76,7 @@ In `prod.yaml`, always pin the content branch to a tag or a known-good commit --
 ocp4_workload_showroom_content_git_repo_ref: v1.0.0
 ----
 
-=== 5. Order from the catalog
+=== 6. Order from the catalog
 
 Once your catalog item is merged and synced, order it from https://demo.redhat.com[demo.redhat.com].
 The provisioned environment will include a Showroom URL in the access information.
@@ -131,7 +145,21 @@ showroom_host: "{{ bastion_public_hostname }}"
 showroom_tls_provider: zerossl           # or 'letsencrypt' or 'none'
 ----
 
-=== 6. Pin the version for production
+=== 6. Enable dev mode while developing
+
+In your catalog item's `dev.yaml`, enable dev mode:
+
+[source,yaml]
+----
+showroom_enable_dev_mode: true
+----
+
+IMPORTANT: Always set this in `dev.yaml`, *never* in `common.yaml` or `prod.yaml`.
+Dev mode is a development-time aid -- it should not be visible to end users.
+
+See xref:content-repo.adoc#_dev_mode[Dev Mode] for details on what it provides.
+
+=== 7. Pin the version for production
 
 In `prod.yaml`:
 

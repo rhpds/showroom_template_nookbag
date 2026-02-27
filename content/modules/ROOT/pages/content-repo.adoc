@@ -118,32 +118,39 @@ Pages not listed in `nav.adoc` are still accessible by URL but will not appear i
 
 == Dev Mode
 
-The dev-mode extension is a convenience for content authors.
-When enabled, it adds a panel at the top of every page showing all AsciiDoc attributes and their current values.
-This helps you verify that variable injection is working correctly.
+Dev mode is a built-in diagnostic tool that every content developer should enable during development.
+When active, it:
 
-=== In deployed environments
+* Adds an **Attributes** reference page listing every AsciiDoc attribute and its current value -- invaluable for verifying that variable injection works correctly.
+* Shows **unlisted pages** (pages not in `nav.adoc`) in the sidebar under a _Dev Mode_ section, so you can navigate to work-in-progress pages without adding them to the navigation yet.
 
-Dev mode is controlled by a role variable, not by the playbook file.
-The Showroom Antora container image dynamically injects the dev-mode extension at build time based on an environment variable:
+=== Enabling dev mode
 
-* **OCP4**: set `ocp4_workload_showroom_antora_enable_dev_mode: "true"` in your AgnosticV config.
-* **VM**: set `showroom_antora_enable_dev_mode: "true"`.
+Add a single line to your catalog item's `dev.yaml`:
 
-You can also expose this as a catalog parameter so developers can toggle it when ordering:
+[cols="1a,1a",options="header"]
+|===
+|OCP4 workload |VM workload
 
+|
 [source,yaml]
 ----
-__meta__:
-  catalog:
-    parameters:
-      - name: ocp4_workload_showroom_antora_enable_dev_mode
-        formLabel: Showroom Dev Mode
-        openAPIV3Schema:
-          type: string
-          default: 'false'
-          enum: ['true', 'false']
+ocp4_workload_showroom_enable_dev_mode: true
 ----
+|
+[source,yaml]
+----
+showroom_enable_dev_mode: true
+----
+|===
+
+IMPORTANT: Always enable dev mode in `dev.yaml`, *never* in `common.yaml` or `prod.yaml`.
+It is a development-time aid and must not be visible to end users in production.
+
+TIP: The working examples in `tests/showroom-ocp4/dev.yaml` and `tests/showroom-vm/dev.yaml` in agnosticv both enable dev mode -- use them as a reference.
+
+You can also expose dev mode as a catalog parameter so it can be toggled from the demo.redhat.com order form.
+See xref:ocp4-role-reference.adoc#_dev_mode[OCP4 Dev Mode] or xref:vm-role-reference.adoc#_dev_mode[VM Dev Mode] for the full variable reference and catalog parameter examples.
 
 === In local development
 

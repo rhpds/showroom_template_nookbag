@@ -204,8 +204,32 @@ ocp4_workload_showroom_passthrough_user_data: true
 
 == Common Patterns
 
+Enabling dev mode for development::
+Dev mode is a diagnostic tool every content developer should use.
+It adds an _Attributes_ reference page and shows unlisted pages in the sidebar.
++
+Enable it in `dev.yaml` -- *never* in `common.yaml` or `prod.yaml`:
++
+[cols="1a,1a",options="header"]
+|===
+|OCP4 (`dev.yaml`) |VM (`dev.yaml`)
+
+|
+[source,yaml]
+----
+ocp4_workload_showroom_enable_dev_mode: true
+----
+|
+[source,yaml]
+----
+showroom_enable_dev_mode: true
+----
+|===
++
+See xref:content-repo.adoc#_dev_mode[Dev Mode] for what it provides and xref:ocp4-role-reference.adoc#_dev_mode[OCP4] / xref:vm-role-reference.adoc#_dev_mode[VM] role references for the full variable list.
+
 Exposing catalog parameters for development::
-Make the collection version and dev-mode overridable from the catalog:
+Make the collection version and dev-mode overridable from the catalog order form:
 +
 [source,yaml,subs="+attributes"]
 ----
@@ -223,8 +247,6 @@ __meta__:
           type: boolean
           default: false
 ----
-+
-See xref:ocp4-role-reference.adoc#_dev_mode[Dev Mode] in the OCP4 Role Reference for the full list of dev-mode variables.
 
 Propagating bastion credentials::
 When your environment provisions a bastion host, propagate its credentials so Showroom's Wetty terminal can auto-SSH:
