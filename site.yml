@@ -16,9 +16,9 @@ ui:
   supplemental_files:
     - path: ./content/supplemental-ui
 
-antora:
-  extensions:
-    - '@sntke/antora-mermaid-extension'
+# antora:
+#   extensions:
+#     - '@sntke/antora-mermaid-extension'
 
 asciidoc:
   attributes:
