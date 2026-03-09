@@ -88,6 +88,7 @@ The full list of available attributes depends on what your infrastructure roles 
 See xref:user-data.adoc[] for the complete flow.
 
 TIP: Provide sensible defaults in `antora.yml` so the content renders correctly during local development and in CI previews.
+See the xref:attribute-example.adoc[] page for a live demonstration of attribute injection.
 
 == Antora Playbook (`site.yml`)
 
