@@ -36,6 +36,10 @@ jobs:
           node-version: '20'
       - name: install antora
         run: npm i -g @antora/cli@3.1 @antora/site-generator@3.1 @sntke/antora-mermaid-extension@0.0.9
+      - name: override ui bundle for gh-pages
+        run: >-
+          sed -i 's|url: .*ui-bundle.zip|url: https://github.com/rhpds/rhdp_showroom_theme/releases/download/patternfly-6/ui-bundle.zip|'
+          site.yml
       - name: antora generate
         run: antora --fetch site.yml
       - name: upload pages artifact
