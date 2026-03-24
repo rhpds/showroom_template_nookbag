@@ -19,16 +19,34 @@ and another team member runs deployment scripts. This takes 3-5 days and fails 2
 
 === Show
 
-. Navigate to *Pipelines* in the OpenShift Developer Console
-. Click *Create Pipeline*
-. Name the pipeline: `acme-build-deploy`
-. Add tasks:
-  * `git-clone` → clones the source repository
-  * `buildah` → builds the container image
-  * `deploy` → rolls out to production
-. Click *Create*
+. Log in to the cluster and switch to the ACME project:
++
+[source,role="execute"]
+----
+oc login --server={openshift_api_url} --token={openshift_token}
+oc project acme-pipelines
+----
 
-Expected result: Pipeline appears in the list with status "Not started".
+. Apply the pre-built pipeline definition:
++
+[source,role="execute"]
+----
+oc apply -f https://raw.githubusercontent.com/rhpds/acme-pipelines/main/pipeline.yaml
+----
+
+. Confirm the pipeline was created:
++
+[source,role="execute"]
+----
+oc get pipeline acme-build-deploy
+----
+
+Expected result: Pipeline appears with status "Not started".
+
+[NOTE]
+====
+*Presenter Tip:* Point out that this single `oc apply` replaces the 3-5 days of manual packaging and deployment ACME's team currently does — and it's repeatable every time.
+====
 
 == Part 2: Running the Pipeline
 
@@ -39,9 +57,35 @@ This replaces 3-5 days of manual work.
 
 === Show
 
-. Click *Start* on the `acme-build-deploy` pipeline
-. Watch the tasks complete in sequence (approximately 3 minutes)
-. Click on each task to show real-time logs
-. When complete, navigate to *Topology* to see the updated deployment
+. Start the pipeline run:
++
+[source,role="execute"]
+----
+tkn pipeline start acme-build-deploy \
+  --param git-url=https://github.com/acme/app.git \
+  --param image-url=image-registry.openshift-image-registry.svc:5000/acme-pipelines/app:latest \
+  --workspace name=source,claimName=acme-source-pvc \
+  --showlog
+----
 
-Expected result: Application updated, pipeline shows "Succeeded" in green.
+. In a second terminal, watch the pods spin up in real time:
++
+[source,role="execute"]
+----
+watch oc get pods -l tekton.dev/pipeline=acme-build-deploy
+----
+
+. When the run completes, confirm the new image is deployed:
++
+[source,role="execute"]
+----
+oc get pipelinerun --sort-by=.metadata.creationTimestamp | tail -1
+oc get deployment acme-app -o jsonpath='{.spec.template.spec.containers[0].image}'
+----
+
+Expected result: Application updated, pipeline run shows "Succeeded".
+
+[NOTE]
+====
+*Presenter Tip:* While the pipeline runs, narrate each task — git-clone, buildah build, deploy — and tie each back to a manual step ACME was doing before. "This task alone saved their team two days."
+====
