@@ -259,6 +259,20 @@ b -->>- a : Hi, there.
 \....
 ----
 
+The diagram above renders as:
+
+[mermaid]
+....
+sequenceDiagram
+autonumber
+
+participant a as Alice
+participant b as Bob
+
+a ->>+ b : Hello.
+b -->>- a : Hi, there.
+....
+
 == AsciiDoc Experimental Features (UI Macros)
 
 The `experimental` AsciiDoc attribute unlocks three UI macros for documenting user interactions: **buttons**, **keyboard shortcuts**, and **menu selections**.
