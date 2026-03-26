@@ -43,7 +43,7 @@ your-content-repo/
 <5> Downloadable files (scripts, configs) that readers can copy.
 <6> Your lab pages -- one AsciiDoc file per module or section.
 <7> Reusable AsciiDoc snippets you can include inline.
-<8> Antora playbook -- uses the Red Hat theme.
+<8> Antora playbook -- do not modify; uses the Red Hat theme and extension settings managed by the template.
 <9> Showroom UI configuration -- defines tabs, layout width, and dynamic URLs.
 See xref:ui-config.adoc[].
 
@@ -94,6 +94,10 @@ See the xref:attribute-example.adoc[] page for a live demonstration of attribute
 
 Your content repo needs an Antora playbook file -- typically `site.yml`.
 This file tells Antora where to find your content, which UI theme to use, and where to write the output.
+
+IMPORTANT: Do not modify `site.yml`.
+It contains settings that must not change -- the UI theme, extensions, and output path are managed by the template.
+All content-specific configuration (AsciiDoc attributes, navigation, component metadata) belongs in `content/antora.yml`.
 
 The Showroom Antora container image auto-detects the playbook at build time, preferring `site.yml` and falling back to `default-site.yml`.
 You can override the filename in your AgnosticV config:
@@ -255,6 +259,20 @@ b -->>- a : Hi, there.
 \....
 ----
 
+The diagram above renders as:
+
+[mermaid]
+....
+sequenceDiagram
+autonumber
+
+participant a as Alice
+participant b as Bob
+
+a ->>+ b : Hello.
+b -->>- a : Hi, there.
+....
+
 == AsciiDoc Experimental Features (UI Macros)
 
 The `experimental` AsciiDoc attribute unlocks three UI macros for documenting user interactions: **buttons**, **keyboard shortcuts**, and **menu selections**.
@@ -262,7 +280,7 @@ These render with distinct styling so readers can instantly recognise interactiv
 
 === Enabling `experimental`
 
-Add `experimental: true` to the `asciidoc.attributes` section of your `site.yml` playbook:
+Add `experimental: true` to the `asciidoc.attributes` section of your `content/antora.yml`:
 
 [source,yaml]
 ----
@@ -271,17 +289,8 @@ asciidoc:
     experimental: true
 ----
 
-You can also set it per-component in `content/antora.yml`:
-
-[source,yaml]
-----
-asciidoc:
-  attributes:
-    experimental: ''
-----
-
-NOTE: In AsciiDoc, setting an attribute to an empty string (`''`) is equivalent to `true`.
-Both forms activate the experimental macros.
+NOTE: The template already includes `experimental: true` in the default `content/antora.yml`.
+In AsciiDoc, setting an attribute to an empty string (`''`) is equivalent to `true` -- both forms activate the experimental macros.
 
 === Button Macro -- `btn:[]`
 

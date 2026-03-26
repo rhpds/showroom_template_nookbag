@@ -23,7 +23,7 @@ The Showroom roles download and inject it at deploy time:
 [source,yaml]
 ----
 ocp4_workload_showroom_zero_touch_bundle: >-
-  https://github.com/rhpds/nookbag/releases/download/nookbag-v0.3.1/nookbag-v0.3.1.zip
+  https://github.com/rhpds/nookbag/releases/download/nookbag-v0.3.2/nookbag-v0.3.2.zip
 
 ocp4_workload_showroom_zero_touch_ui_enabled: true
 ----
@@ -35,7 +35,7 @@ ocp4_workload_showroom_zero_touch_ui_enabled: true
 showroom_ui: zero-touch
 
 showroom_ui_zero_bundle: >-
-  https://github.com/rhpds/nookbag/releases/download/nookbag-v0.3.1/nookbag-v0.3.1.zip
+  https://github.com/rhpds/nookbag/releases/download/nookbag-v0.3.2/nookbag-v0.3.2.zip
 ----
 
 Content developers do not normally need to change these settings.
@@ -69,7 +69,7 @@ Nookbag releases follow the `nookbag-v\{major}.\{minor}.\{patch}` tag format (e.
 The release artifact is a ZIP file at:
 
 ----
-https://github.com/rhpds/nookbag/releases/download/nookbag-v0.3.1/nookbag-v0.3.1.zip
+https://github.com/rhpds/nookbag/releases/download/nookbag-v0.3.2/nookbag-v0.3.2.zip
 ----
 
 When a new version is released, update the bundle URL in the Showroom collection role defaults.

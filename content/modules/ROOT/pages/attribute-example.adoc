@@ -2,7 +2,7 @@
 :navtitle: Attribute Injection Example
 
 This page demonstrates how AsciiDoc attribute injection works in Showroom.
-The values shown below are resolved from `site.yml` attributes during local development, and from `user_data` at deploy time.
+The values shown below are resolved from `content/antora.yml` attributes during local development, and from `user_data` at deploy time.
 
 == Environment Info
 
@@ -72,6 +72,6 @@ In your AsciiDoc source, you write attribute references with curly braces:
 ssh \{bastion_ssh_user_name}@\{bastion_public_hostname}
 ----
 
-At build time, Antora replaces them with the values defined in `site.yml` (local dev) or injected from `user_data` (deployed environment).
+At build time, Antora replaces them with the values defined in `content/antora.yml` (local dev) or injected from `user_data` (deployed environment).
 
-TIP: Always provide sensible defaults in `site.yml` or `content/antora.yml` so your content renders correctly during local development. See xref:user-data.adoc[] for the full injection flow.
+TIP: Always provide sensible defaults in `content/antora.yml` so your content renders correctly during local development. See xref:user-data.adoc[] for the full injection flow.
