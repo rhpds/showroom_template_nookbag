@@ -1,0 +1,25 @@
+---
+- name: "Module 1 Solve — create test artifacts on localhost"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Create test directory
+      ansible.builtin.file:
+        path: /tmp/showroom-test/myproject
+        state: directory
+        mode: "0755"
+
+    - name: Create README.md
+      ansible.builtin.copy:
+        content: |
+          # My Project
+          Created by the showroom-automation test suite.
+        dest: /tmp/showroom-test/myproject/README.md
+        mode: "0644"
+
+    - name: Create lab-notes.txt
+      ansible.builtin.copy:
+        content: "Lab notes placeholder\n"
+        dest: /tmp/showroom-test/lab-notes.txt
+        mode: "0644"

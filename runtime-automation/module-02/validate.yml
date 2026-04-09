@@ -1,0 +1,19 @@
+---
+- name: "Module 2 Validation — check config file on localhost"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Check config file exists
+      ansible.builtin.stat:
+        path: /tmp/showroom-test/config/app.conf
+      register: r_conf
+
+    - name: Validate config file
+      validation_check:
+        check: "{{ r_conf.stat.exists | default(false) }}"
+        pass_msg: "✅ app.conf exists in /tmp/showroom-test/config/"
+        error_msg: |
+          ❌ app.conf not found in /tmp/showroom-test/config/
+
+          Run solve first to create the config file.
