@@ -1,0 +1,20 @@
+---
+- name: "Module 2 Solve — create config file on localhost"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Create config directory
+      ansible.builtin.file:
+        path: /tmp/showroom-test/config
+        state: directory
+        mode: "0755"
+
+    - name: Create app.conf
+      ansible.builtin.copy:
+        content: |
+          [app]
+          debug = false
+          port = 8080
+        dest: /tmp/showroom-test/config/app.conf
+        mode: "0644"

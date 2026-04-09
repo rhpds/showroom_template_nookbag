@@ -1,0 +1,40 @@
+---
+- name: "Module 1 Validation — check test artifacts on localhost"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Check myproject directory
+      ansible.builtin.stat:
+        path: /tmp/showroom-test/myproject
+      register: r_dir
+
+    - name: Check README.md
+      ansible.builtin.stat:
+        path: /tmp/showroom-test/myproject/README.md
+      register: r_readme
+
+    - name: Check lab-notes.txt
+      ansible.builtin.stat:
+        path: /tmp/showroom-test/lab-notes.txt
+      register: r_notes
+
+    - name: Build task summary
+      ansible.builtin.set_fact:
+        _task1_ok: "{{ r_dir.stat.exists | default(false) and r_dir.stat.isdir | default(false) }}"
+        _task2_ok: "{{ r_readme.stat.exists | default(false) }}"
+        _task3_ok: "{{ r_notes.stat.exists | default(false) }}"
+
+    - name: Validate all tasks
+      validation_check:
+        check: "{{ _task1_ok and _task2_ok and _task3_ok }}"
+        pass_msg: |
+          ✅ Task 1: /tmp/showroom-test/myproject exists
+          ✅ Task 2: README.md exists in myproject
+          ✅ Task 3: lab-notes.txt exists
+        error_msg: |
+          {{ '✅' if _task1_ok else '❌' }} Task 1: /tmp/showroom-test/myproject
+          {{ '✅' if _task2_ok else '❌' }} Task 2: README.md in myproject
+          {{ '✅' if _task3_ok else '❌' }} Task 3: lab-notes.txt
+
+          Run solve first to create the test artifacts.
