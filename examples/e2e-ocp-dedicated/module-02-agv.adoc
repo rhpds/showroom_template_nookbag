@@ -16,18 +16,44 @@ ocp4_workload_showroom_wetty_image: "quay.io/rhpds/wetty:v3.0"
 ocp4_workload_showroom_runtime_automation_enable: true
 ocp4_workload_showroom_runtime_automation_image: "quay.io/rhpds/zt-runner:v2.4.2"
 
-# ServiceAccount scope — cluster-admin required for dedicated clusters
-# (solve.yml needs to create Namespaces, RoleBindings, etc.)
-# Also valid for tenant labs if your playbooks need cluster-wide access.
+# cluster-admin SA — set when solve.yml needs to create Namespaces, RoleBindings, etc.
+# Required for dedicated clusters. Optional for tenant labs.
 ocp4_workload_runtime_automation_k8s_cluster_admin: true
 ocp4_workload_runtime_automation_k8s_openshift_api_url: "{{ openshift_api_url }}"
 ocp4_workload_runtime_automation_k8s_openshift_api_token: "{{ openshift_cluster_admin_token }}"
 
-# Workloads — showroom + runner SA + E2E load test
-agnosticd_workloads:
-  - agnosticd.showroom.ocp4_workload_showroom
+# Workloads — load test added conditionally via run_e2e_load_test parameter
+workloads: >-
+  {{
+    [
+      'agnosticd.showroom.ocp4_workload_showroom',
+      'rhpds.ftl.ocp4_workload_runtime_automation_k8s'
+    ] +
+    (
+      ['rhpds.ftl.ocp4_runtime_automation_load_test']
+      if run_e2e_load_test | default(false) | bool
+      else []
+    )
+  }}
+
+remove_workloads:
   - rhpds.ftl.ocp4_workload_runtime_automation_k8s
-  - rhpds.ftl.ocp4_runtime_automation_load_test       # runs all solve+validate at provision time
+  - agnosticd.showroom.ocp4_workload_showroom
+----
+
+Add a catalog parameter so the load test can be toggled at order time:
+
+[source,yaml]
+----
+__meta__:
+  catalog:
+    parameters:
+    - name: run_e2e_load_test
+      description: "Run E2E load test after provisioning — triggers solve and validate on all modules"
+      formLabel: "Run E2E Load Test"
+      openAPIV3Schema:
+        type: boolean
+        default: false
 ----
 
 == ServiceAccount Scope
