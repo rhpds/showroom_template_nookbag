@@ -45,9 +45,15 @@ SA has `admin` RoleBinding in `student_ns` only. Set `ocp4_workload_runtime_auto
 * `runtime-automation/module-01/` and `module-02/` — example solve.yml and validate.yml
 * `conclusion.adoc` — wrap-up and reference repos
 
+== What the Buttons Look Like
+
+image::solve-validate-buttons.png[Solve and Validate buttons in the showroom UI,700]
+
+The ▶ button on each code block sends the command to the terminal tab.
+The *Solve* and *Validate* buttons appear at the bottom of each module page.
+
 == Note on Solve/Validate at Summit
 
-NOTE: Solve and Validate buttons are for *development only*.
+NOTE: Solve and Validate buttons are for *development only* (demos, internal workshops).
 At Summit/production events, Demolition or the load test Ansible role calls
-`/stream/solve` and `/stream/validate` automatically — buttons are not added to
-production lab modules.
+`/stream/solve` and `/stream/validate` automatically — *buttons are not added to Summit lab modules*.
