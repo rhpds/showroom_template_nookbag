@@ -157,3 +157,19 @@ No `k8s_kubeconfig` is injected. Playbooks use SSH to reach targets.
 ++++
 <div class="validate-button-placeholder" data-module="module-01"></div>
 ++++
+
+NOTE: The divs above are invisible — `inject-buttons.js` renders them into the *Solve* and *Validate* buttons at runtime. When a runner is deployed and your showroom is running, the buttons appear here.
+
+Copy this pattern into any module page in your showroom (replace `module-01` with your module name):
+
+[source,asciidoc]
+----
+\++++
+<div class="solve-button-placeholder" data-module="module-01"></div>
+\++++
+
+\++++
+<div class="validate-button-placeholder" data-module="module-01"></div>
+\++++
+----
+

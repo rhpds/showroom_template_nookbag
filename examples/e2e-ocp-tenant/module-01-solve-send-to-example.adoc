@@ -108,16 +108,33 @@ curl -N https://showroom-GUID.apps.CLUSTER.example.com/stream/validate/module-01
 
 Each curl streams Ansible output live. `validation_check` lines show fix hints on failure.
 
-=== ServiceAccount — OCP Tenant
+=== ServiceAccount
 
-`ocp4_workload_runtime_automation_k8s` creates `zt-runner` SA with `admin` RoleBinding
-in `student_ns` only (namespace-scoped). If solve.yml needs cluster-wide access:
+The `ocp4_workload_runtime_automation_k8s` workload does the following automatically:
+
+* Creates a `zt-runner` ServiceAccount in each student's namespace
+* Creates a kubeconfig Secret bound to that SA
+* Injects `k8s_kubeconfig`, `student_ns`, `student_user`, and `guid` as extravars into every solve/validate playbook
+
+Your playbooks can use `{{ k8s_kubeconfig }}` immediately — no manual credential setup needed.
+
+*Default scope:* The SA has `admin` RoleBinding in `student_ns` only (namespace-scoped).
+This is sufficient when solve.yml only creates resources inside the student namespace.
+
+==== Optional: Cluster-Admin SA
+
+If your solve.yml needs cluster-scoped resources (Namespaces, ClusterRoleBindings, CRDs, etc.),
+add this to your AgV `common.yaml`:
 
 [source,yaml]
 ----
-# AgV catalog common.yaml
+# Optional — use when solve.yml needs cluster-wide access
 ocp4_workload_runtime_automation_k8s_cluster_admin: true
+ocp4_workload_runtime_automation_k8s_openshift_api_url: "{{ openshift_api_url }}"
+ocp4_workload_runtime_automation_k8s_openshift_api_token: "{{ openshift_cluster_admin_token }}"
 ----
+
+This works for both tenant and dedicated labs.
 
 === Buttons (development only)
 
@@ -128,3 +145,19 @@ ocp4_workload_runtime_automation_k8s_cluster_admin: true
 ++++
 <div class="validate-button-placeholder" data-module="module-01"></div>
 ++++
+
+NOTE: The divs above are invisible — `inject-buttons.js` renders them into the *Solve* and *Validate* buttons at runtime. When a runner is deployed and your showroom is running, the buttons appear here.
+
+Copy this pattern into any module page in your showroom (replace `module-01` with your module name):
+
+[source,asciidoc]
+----
+\++++
+<div class="solve-button-placeholder" data-module="module-01"></div>
+\++++
+
+\++++
+<div class="validate-button-placeholder" data-module="module-01"></div>
+\++++
+----
+

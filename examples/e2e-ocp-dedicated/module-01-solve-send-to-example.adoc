@@ -129,20 +129,34 @@ curl -N https://showroom-GUID.apps.CLUSTER.example.com/stream/validate/module-01
 
 Each curl streams Ansible output live. `validation_check` lines show fix hints on failure.
 
-=== ServiceAccount — OCP Dedicated
+=== ServiceAccount
 
-`ocp4_workload_runtime_automation_k8s` creates `zt-runner` SA. For dedicated labs
-the SA needs cluster-admin to create namespaces and manage RBAC. Set in AgV:
+The `ocp4_workload_runtime_automation_k8s` workload does the following automatically:
+
+* Creates a `zt-runner` ServiceAccount
+* Creates a kubeconfig Secret bound to that SA
+* Injects `k8s_kubeconfig` and `guid` as extravars into every solve/validate playbook
+
+NOTE: For dedicated clusters `student_ns` is empty — use a fixed namespace like `demo-project`
+with `| default('demo-project', true) | trim` fallback in your playbooks.
+
+Your playbooks can use `{{ k8s_kubeconfig }}` immediately — no manual credential setup needed.
+
+*Default scope:* The SA has `admin` RoleBinding in `student_ns` only (namespace-scoped).
+
+==== Optional: Cluster-Admin SA
+
+If your solve.yml needs cluster-scoped resources (Namespaces, ClusterRoleBindings, CRDs, etc.),
+add this to your AgV `common.yaml`. This is typically needed for dedicated clusters where
+solve.yml must create the project namespace itself, but also works for tenant labs:
 
 [source,yaml]
 ----
-# AgV catalog common.yaml — REQUIRED for dedicated labs
+# Optional — use when solve.yml needs cluster-wide access
 ocp4_workload_runtime_automation_k8s_cluster_admin: true
 ocp4_workload_runtime_automation_k8s_openshift_api_url: "{{ openshift_api_url }}"
 ocp4_workload_runtime_automation_k8s_openshift_api_token: "{{ openshift_cluster_admin_token }}"
 ----
-
-Without `cluster_admin: true`, solve.yml cannot create Namespaces or ClusterRoleBindings.
 
 === Buttons (development only)
 
@@ -153,3 +167,19 @@ Without `cluster_admin: true`, solve.yml cannot create Namespaces or ClusterRole
 ++++
 <div class="validate-button-placeholder" data-module="module-01"></div>
 ++++
+
+NOTE: The divs above are invisible — `inject-buttons.js` renders them into the *Solve* and *Validate* buttons at runtime. When a runner is deployed and your showroom is running, the buttons appear here.
+
+Copy this pattern into any module page in your showroom (replace `module-01` with your module name):
+
+[source,asciidoc]
+----
+\++++
+<div class="solve-button-placeholder" data-module="module-01"></div>
+\++++
+
+\++++
+<div class="validate-button-placeholder" data-module="module-01"></div>
+\++++
+----
+
