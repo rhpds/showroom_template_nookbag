@@ -26,10 +26,7 @@ ocp4_workload_showroom_content_antora_playbook: site.yml
 ocp4_workload_showroom_terminal_type: showroom
 ocp4_workload_showroom_wetty_image: "quay.io/rhpds/wetty:v3.0"
 
-# E2E runtime automation
-# Summit 2026: both vars below are set globally in summit-2026/account.yaml.
-# Non-Summit labs: add both here.
-ocp4_workload_showroom_runtime_automation_enable: true
+# E2E runtime automation image (runner version)
 ocp4_workload_showroom_runtime_automation_image: "quay.io/rhpds/zt-runner:v2.4.2"
 
 # cluster-admin SA — set when solve.yml needs to create Namespaces, RoleBindings, etc.
@@ -93,6 +90,19 @@ with `| default('demo-project', true) | trim` fallback in your playbooks.
 `ocp4_runtime_automation_load_test` calls `/stream/solve` then `/stream/validate` for
 every module at provision time and fails the provision if any validation fails.
 This is what runs at Summit — students never see the Solve/Validate buttons.
+
+== Non-Summit / Non-RHDP Labs
+
+For labs that do NOT use the `summit-2026/account.yaml` (internal workshops, demos, non-RHDP deployments),
+add the enable flag explicitly in your `common.yaml`:
+
+[source,yaml]
+----
+ocp4_workload_showroom_runtime_automation_enable: true
+----
+
+For Summit 2026 labs, this is set globally in `agnosticv/summit-2026/account.yaml` —
+you do not need to add it per-catalog.
 
 == Working Example
 
