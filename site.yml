@@ -1,6 +1,6 @@
 ---
 site:
-  title: Showroom Template Demo
+  title: Showroom Template
   url: https://github.com/rhpds/showroom_template_nookbag
   start_page: modules::index.adoc
 
@@ -11,16 +11,29 @@ content:
 
 ui:
   bundle:
-    url: https://github.com/rhpds/rhdp_showroom_theme/releases/download/rh-summit-2025/ui-bundle.zip
+    # rh-one-2025 | rh-summit-2025
+    url: https://github.com/rhpds/rhdp_showroom_theme/releases/download/rh-one-2025/ui-bundle.zip
     snapshot: true
+  supplemental_files:
+    - path: ./content/supplemental-ui
+    - path: ./content/lib
+    - path: .nojekyll
+    - path: ui.yml
+      contents: "static_files: [ .nojekyll ]"
+
+runtime:
+  cache_dir: ./.cache/antora
 
 antora:
   extensions:
-    - require: '@sntke/antora-mermaid-extension'
-      mermaid_library_url: https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs
-      script_stem: header-scripts
-      mermaid_initialize_options:
-        start_on_load: true
+    # dev-mode: set enabled: true for local development hot-reload
+    - require: ./content/lib/dev-mode.js
+      enabled: false
+
+    # inject-buttons.js: inlines buttons.js + site-extra.css into every page.
+    # Required for solve/validate panels and send-to terminal buttons.
+    # Remove this extension if you don't need E2E buttons.
+    - require: ./content/lib/inject-buttons.js
 
 output:
   dir: ./www

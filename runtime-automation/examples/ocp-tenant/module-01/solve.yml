@@ -1,0 +1,47 @@
+---
+# SOLVE — OCP Tenant (multi-user)
+# Runner: sidecar pod on OCP, kubernetes.core with zt-runner SA kubeconfig
+# Extravars injected automatically: k8s_kubeconfig, student_ns, student_user, guid
+#
+# student_ns  = devuser-{guid}-zttest    (per-user namespace)
+# student_ns2 = devuser-{guid}-ztworkspace
+# student_user = devuser-{guid}
+# k8s_kubeconfig = SA token kubeconfig (bypass SSO, has admin on student_ns)
+
+- name: Module 1 Solve
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+
+    # kubernetes.core.k8s — create/update OCP resources
+    # Always pass kubeconfig — without it, runner uses its own in-cluster config
+    # Use | default('default', true) | trim for dedicated labs where student_ns is empty
+    - name: Create ConfigMap in student namespace
+      kubernetes.core.k8s:
+        kubeconfig: "{{ k8s_kubeconfig | default(omit) }}"
+        validate_certs: false
+        state: present
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: my-config
+            namespace: "{{ student_ns | default('default', true) | trim }}"
+          data:
+            key: value
+            owner: "{{ student_user }}"
+
+    - name: Create Secret in student namespace
+      kubernetes.core.k8s:
+        kubeconfig: "{{ k8s_kubeconfig | default(omit) }}"
+        validate_certs: false
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: my-secret
+            namespace: "{{ student_ns }}"
+          stringData:
+            api-key: my-value

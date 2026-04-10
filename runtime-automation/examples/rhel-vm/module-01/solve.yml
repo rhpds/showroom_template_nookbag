@@ -1,0 +1,52 @@
+---
+# SOLVE — RHEL VM + Bastion
+# Runner: Podman container ON the bastion (no OCP cluster)
+# SSH key: /app/.ssh/id_rsa (mounted by vm_workload_runtime_automation)
+# SSH config: /app/.ssh/config (maps node hostname → IP, written at provision time)
+# Can target both 'node' and 'bastion' in the same playbook
+
+- name: Build inventory from SSH config
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    # Node hostname resolves via /app/.ssh/config (written at provision time)
+    - ansible.builtin.add_host:
+        name: node
+        ansible_user: lab-user
+        ansible_ssh_private_key_file: /app/.ssh/id_rsa
+        ansible_ssh_common_args: "-F /app/.ssh/config"
+
+    - ansible.builtin.add_host:
+        name: bastion
+        ansible_user: lab-user
+        ansible_ssh_private_key_file: /app/.ssh/id_rsa
+        ansible_ssh_common_args: "-F /app/.ssh/config"
+
+# Tasks on the node VM
+- name: Node tasks
+  hosts: node
+  gather_facts: false
+  tasks:
+    - name: Create project directory on node
+      ansible.builtin.file:
+        path: /home/lab-user/myproject
+        state: directory
+        mode: "0755"
+
+    - name: Create README on node
+      ansible.builtin.copy:
+        content: "# My Project\nCreated by E2E runner.\n"
+        dest: /home/lab-user/myproject/README.md
+        mode: "0644"
+
+# Tasks on the bastion
+- name: Bastion tasks
+  hosts: bastion
+  gather_facts: false
+  tasks:
+    - name: Create notes file on bastion
+      ansible.builtin.file:
+        path: /home/lab-user/lab-notes.txt
+        state: touch
+        mode: "0644"
