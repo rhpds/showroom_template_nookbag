@@ -32,10 +32,44 @@ ls /home/lab-user/myproject/
 
 == Solve and Validate
 
-NOTE: Solve and Validate buttons are for development and debugging only.
+NOTE: Solve and Validate buttons below are for *development and debugging only*.
 At Summit/production events, Demolition or the load test Ansible role calls
-`/stream/solve` and `/stream/validate` automatically — buttons are not added
-to production lab modules.
+`/stream/solve` and `/stream/validate` automatically.
+Buttons are not added to production lab modules.
+
+=== Developer Workflow
+
+[source,sh]
+----
+# 1. Write solve.yml and validate.yml in runtime-automation/module-01/
+# The runner is a Podman container on the BASTION — no OCP cluster.
+# SSH key: /app/.ssh/id_rsa | SSH config: /app/.ssh/config
+
+# 2. Push changes
+git add runtime-automation/ && git commit -m "Update playbooks" && git push
+
+# 3. Restart the showroom pod (Podman container on bastion restarts too)
+oc rollout restart deployment/showroom -n showroom-NAMESPACE
+# OR for RHEL VM labs: restart the Podman container on bastion
+# ssh bastion "cd /opt/showroom && podman-compose restart runner"
+
+# 4. Test solve — streams live Ansible output
+curl -N https://showroom-GUID.apps.CLUSTER.example.com/stream/solve/module-01
+
+# 5. Test validate — streams pass/fail with fix instructions per task
+curl -N https://showroom-GUID.apps.CLUSTER.example.com/stream/validate/module-01
+----
+
+Each curl streams Ansible output live. `validation_check` lines show fix hints on failure.
+The runner SSHes from bastion to node via `/app/.ssh/config` and `/app/.ssh/id_rsa`.
+
+=== No SA Required — RHEL VM
+
+RHEL labs use `vm_workload_runtime_automation` (not `ocp4_workload_runtime_automation_k8s`).
+No `zt-runner` SA — the runner is a Podman container on the bastion using SSH keys.
+No `k8s_kubeconfig` is injected. Playbooks use SSH to reach targets.
+
+=== Buttons (development only)
 
 ++++
 <div class="solve-button-placeholder" data-module="module-01"></div>

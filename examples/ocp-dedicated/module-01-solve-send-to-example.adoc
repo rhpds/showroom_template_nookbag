@@ -26,10 +26,48 @@ oc get rolebinding developer-admin -n demo-project
 
 == Solve and Validate
 
-NOTE: Solve and Validate buttons are for development and debugging only.
+NOTE: Solve and Validate buttons below are for *development and debugging only*.
 At Summit/production events, Demolition or the load test Ansible role calls
-`/stream/solve` and `/stream/validate` automatically — buttons are not added
-to production lab modules.
+`/stream/solve` and `/stream/validate` automatically.
+Buttons are not added to production lab modules.
+
+=== Developer Workflow
+
+[source,sh]
+----
+# 1. Write solve.yml and validate.yml in runtime-automation/module-01/
+
+# 2. Push changes
+git add runtime-automation/ && git commit -m "Update playbooks" && git push
+
+# 3. Restart showroom pod to pick up new playbooks
+oc rollout restart deployment/showroom -n showroom-NAMESPACE
+
+# 4. Test solve — streams live Ansible output
+curl -N https://showroom-GUID.apps.CLUSTER.example.com/stream/solve/module-01
+
+# 5. Test validate — streams pass/fail with fix instructions per task
+curl -N https://showroom-GUID.apps.CLUSTER.example.com/stream/validate/module-01
+----
+
+Each curl streams Ansible output live. `validation_check` lines show fix hints on failure.
+
+=== ServiceAccount — OCP Dedicated
+
+`ocp4_workload_runtime_automation_k8s` creates `zt-runner` SA. For dedicated labs
+the SA needs cluster-admin to create namespaces and manage RBAC. Set in AgV:
+
+[source,yaml]
+----
+# AgV catalog common.yaml — REQUIRED for dedicated labs
+ocp4_workload_runtime_automation_k8s_cluster_admin: true
+ocp4_workload_runtime_automation_k8s_openshift_api_url: "{{ openshift_api_url }}"
+ocp4_workload_runtime_automation_k8s_openshift_api_token: "{{ openshift_cluster_admin_token }}"
+----
+
+Without `cluster_admin: true`, solve.yml cannot create Namespaces or ClusterRoleBindings.
+
+=== Buttons (development only)
 
 ++++
 <div class="solve-button-placeholder" data-module="module-01"></div>
