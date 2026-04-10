@@ -16,12 +16,38 @@ ocp4_workload_showroom_wetty_image: "quay.io/rhpds/wetty:v3.0"  # v3.0+ for post
 ocp4_workload_showroom_runtime_automation_enable: true
 ocp4_workload_showroom_runtime_automation_image: "quay.io/rhpds/zt-runner:v2.4.2"
 
-# Workloads — add both showroom and the k8s runner SA workload
+# ServiceAccount scope — choose one:
+# Default (no flag): SA gets admin RoleBinding in student_ns only (namespace-scoped)
+# Set cluster_admin: true if solve.yml needs to create Namespaces, CRDs, ClusterRoles, etc.
+# ocp4_workload_runtime_automation_k8s_cluster_admin: true
+
+# Workloads — showroom + runner SA + E2E load test
 agnosticd_workloads:
   - agnosticd.showroom.ocp4_workload_showroom
   - rhpds.ftl.ocp4_workload_runtime_automation_k8s   # creates zt-runner SA + kubeconfig
+  - rhpds.ftl.ocp4_runtime_automation_load_test       # runs all solve+validate at provision time
 ----
 
-NOTE: `runtime_automation_enable: true` deploys the zt-runner sidecar container.
-The `ocp4_workload_runtime_automation_k8s` workload creates the per-student SA,
-kubeconfig, and injects `k8s_kubeconfig` and `student_ns` as extravars.
+== ServiceAccount Scope
+
+`ocp4_workload_runtime_automation_k8s` creates a `zt-runner` ServiceAccount per student.
+
+[cols="1,2"]
+|===
+| Setting | When to use
+
+| Default (no flag) | SA gets `admin` RoleBinding in `student_ns` only. Use when solve.yml only creates resources inside the student namespace.
+
+| `ocp4_workload_runtime_automation_k8s_cluster_admin: true` | SA gets cluster-admin. Use when solve.yml needs to create Namespaces, ClusterRoleBindings, CRDs, or any cluster-scoped resources. Works in both tenant and dedicated.
+|===
+
+== Load Test Role
+
+`ocp4_runtime_automation_load_test` calls `/stream/solve` then `/stream/validate` for
+every module at provision time and fails the provision if any validation fails.
+This is what runs at Summit — students never see the Solve/Validate buttons.
+
+== Working Example
+
+See the actual test catalog for this pattern in AgnosticV:
+https://github.com/rhpds/agnosticv/tree/master/tests/zt-ocp-pipelines-tenant[tests/zt-ocp-pipelines-tenant]

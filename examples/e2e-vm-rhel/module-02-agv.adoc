@@ -16,13 +16,18 @@ showroom_ansible_runner_image: quay.io/rhpds/zt-runner
 showroom_ansible_runner_image_tag: v2.4.2
 showroom_ansible_runner_path: "/stream"
 
-# Workloads
+# Workloads — showroom + runner + (optional) E2E load test
 agnosticd_workloads:
   - agnosticd.showroom.vm_workload_showroom
-  - rhpds.ftl.vm_workload_runtime_automation    # mounts SSH keys at /app/.ssh/
+  - rhpds.ftl.vm_workload_runtime_automation         # mounts SSH keys at /app/.ssh/
+  - rhpds.ftl.vm_runtime_automation_load_test        # runs all solve+validate at provision time
 ----
 
 NOTE: The `vm_workload_runtime_automation` workload mounts the SSH private key at
 `/app/.ssh/id_rsa` and writes `/app/.ssh/config` with host aliases for `node` and
 `bastion` — so playbooks can use these names directly without IP lookups.
 There is no `k8s_kubeconfig` or `student_ns` in the RHEL VM pattern.
+
+`vm_runtime_automation_load_test` calls `/stream/solve` then `/stream/validate` for
+every module at provision time. If any validation fails the provision fails.
+This is what runs at Summit — students never see the buttons.
