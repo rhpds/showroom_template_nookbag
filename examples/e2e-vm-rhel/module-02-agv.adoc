@@ -12,7 +12,7 @@ requirements_content:
   collections:
     - name: https://github.com/agnosticd/showroom.git
       type: git
-      version: v1.6.6
+      version: v1.6.6     # see note below
     - name: https://github.com/agnosticd/core_workloads.git
       type: git
       version: "{{ tag }}"
@@ -23,6 +23,14 @@ requirements_content:
       type: git
       version: "{{ tag }}"
 
+----
+
+IMPORTANT: Use *agnosticd/showroom version v1.6.6 or later*.
+v1.6.6 adds the runtime automation variables required for the zt-runner sidecar.
+Earlier versions silently ignore these vars and the runner will not be deployed.
+
+[source,yaml]
+----
 # vm_workload_showroom settings
 showroom_content_git_repo: https://github.com/YOUR-ORG/YOUR-SHOWROOM.git
 showroom_content_git_repo_ref: main
