@@ -1,0 +1,12 @@
+= OCP Dedicated + Bastion Use Case
+
+This use case covers labs where each student receives a dedicated OpenShift cluster
+with cluster-admin access and an SSH bastion host.
+The runner sidecar runs inside the Showroom pod with a cluster-admin SA kubeconfig,
+and can also SSH to the bastion to run shell scripts.
+
+.What's included in this example
+* `module-01-solve-send-to-example.adoc` — send-to-terminal code blocks and solve/validate placeholders
+* `module-02-agv.adoc` — AgnosticV settings for the OCP dedicated pattern
+* `runtime-automation/` — example solve and validate playbooks (OCP + bastion SSH)
+* `conclusion.adoc` — wrap-up and references

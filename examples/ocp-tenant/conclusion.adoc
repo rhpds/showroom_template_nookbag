@@ -1,0 +1,14 @@
+= Conclusion
+
+You have reviewed the OCP Tenant pattern for runtime automation.
+
+* Playbooks live under `runtime-automation/module-NN/` in your showroom content repo.
+* AgnosticV wires the zt-runner sidecar and injects `k8s_kubeconfig`, `student_ns`,
+  `student_user`, and `guid` as extravars.
+* For load testing and Summit delivery, the Demolition job calls `/stream/solve`
+  and `/stream/validate` — no buttons are shown to students.
+
+.Reference repos
+* https://github.com/rhpds/agnosticv[AgnosticV tests] — see `tests/zt-ocp-pipelines-tenant/`
+* https://github.com/rhpds/showroom-deployer[showroom-deployer chart]
+* https://github.com/rhpds/ansible-role-ftl-runtime-automation[ftl-runtime-automation role]

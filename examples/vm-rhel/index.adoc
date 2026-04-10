@@ -1,0 +1,11 @@
+= RHEL VM + Bastion Use Case
+
+This use case covers labs where students work on a RHEL VM via an SSH bastion host.
+There is no OpenShift cluster — the zt-runner runs as a Podman container on the bastion,
+connecting to both the bastion and the RHEL node via SSH keys mounted at `/app/.ssh/`.
+
+.What's included in this example
+* `module-01-solve-send-to-example.adoc` — send-to-wetty (bastion) and send-to-terminal (node) code blocks
+* `module-02-agv.adoc` — AgnosticV settings for the RHEL VM pattern
+* `runtime-automation/` — example playbooks targeting node and bastion via SSH
+* `conclusion.adoc` — wrap-up and references

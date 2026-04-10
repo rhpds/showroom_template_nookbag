@@ -1,0 +1,11 @@
+= OCP Tenant Use Case
+
+This use case covers labs where each student receives a dedicated namespace
+on a shared OpenShift cluster (multi-tenant model).
+The runner sidecar runs inside the Showroom pod with a per-student kubeconfig.
+
+.What's included in this example
+* `module-01-solve-send-to-example.adoc` — send-to code blocks and solve/validate button placeholders
+* `module-02-agv.adoc` — AgnosticV settings for the OCP tenant pattern
+* `runtime-automation/` — example solve and validate playbooks
+* `conclusion.adoc` — wrap-up and references

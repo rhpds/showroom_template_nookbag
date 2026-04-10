@@ -1,0 +1,15 @@
+= Conclusion
+
+You have reviewed the OCP Dedicated + Bastion pattern for runtime automation.
+
+* The runner has cluster-admin access — use `kubernetes.core.k8s` for OCP resources.
+* For bastion tasks, use `ansible.builtin.add_host` + `ansible.builtin.script`
+  to copy and run shell scripts on the bastion as `lab-user`.
+* `student_ns` is empty for dedicated labs — always use a fixed namespace fallback.
+* Bastion credentials are injected automatically as `bastion_host`, `bastion_port`,
+  `bastion_user`, and `bastion_password`.
+
+.Reference repos
+* https://github.com/rhpds/agnosticv[AgnosticV tests] — see `tests/zt-ocp-dedicated-grading/`
+* https://github.com/rhpds/showroom-deployer[showroom-deployer chart]
+* https://github.com/rhpds/ansible-role-ftl-runtime-automation[ftl-runtime-automation role]

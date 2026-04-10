@@ -1,0 +1,39 @@
+---
+# SOLVE — OCP Tenant (multi-user), Module 1
+# Runner: sidecar pod on OCP, kubernetes.core with zt-runner SA kubeconfig
+# Extravars: k8s_kubeconfig, student_ns, student_user, guid
+
+- name: Module 1 Solve
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+
+    - name: Create ConfigMap in student namespace
+      kubernetes.core.k8s:
+        kubeconfig: "{{ k8s_kubeconfig | default(omit) }}"
+        validate_certs: false
+        state: present
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: my-config
+            namespace: "{{ student_ns | default('default', true) | trim }}"
+          data:
+            key: value
+            owner: "{{ student_user }}"
+
+    - name: Create Secret in student namespace
+      kubernetes.core.k8s:
+        kubeconfig: "{{ k8s_kubeconfig | default(omit) }}"
+        validate_certs: false
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: my-secret
+            namespace: "{{ student_ns | default('default', true) | trim }}"
+          stringData:
+            api-key: my-value

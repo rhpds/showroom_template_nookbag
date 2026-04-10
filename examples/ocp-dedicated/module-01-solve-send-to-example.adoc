@@ -1,0 +1,40 @@
+= Module 1: Working on Your Dedicated Cluster
+
+Your cluster is pre-configured with cluster-admin access.
+Use the embedded terminal to run `oc` commands directly.
+
+== Task 1: Create the Project
+
+[source,sh,role="send-to-terminal"]
+----
+oc new-project demo-project
+----
+
+== Task 2: Grant Developer Access
+
+[source,sh,role="send-to-terminal"]
+----
+oc adm policy add-role-to-user admin developer -n demo-project
+----
+
+== Verify
+
+[source,sh,role="send-to-terminal"]
+----
+oc get rolebinding developer-admin -n demo-project
+----
+
+== Solve and Validate
+
+NOTE: Solve and Validate buttons are for development and debugging only.
+At Summit/production events, Demolition or the load test Ansible role calls
+`/stream/solve` and `/stream/validate` automatically — buttons are not added
+to production lab modules.
+
+++++
+<div class="solve-button-placeholder" data-module="module-01"></div>
+++++
+
+++++
+<div class="validate-button-placeholder" data-module="module-01"></div>
+++++

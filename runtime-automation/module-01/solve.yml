@@ -1,0 +1,13 @@
+---
+# SOLVE — Module 1
+# replace with your solve tasks
+
+- name: Module 1 Solve
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+
+    # replace with your solve tasks
+    - ansible.builtin.debug:
+        msg: "Module 1 solve placeholder — replace with your tasks"

@@ -1,0 +1,47 @@
+---
+# SOLVE — OCP Dedicated + Bastion, Module 1
+# Runner: sidecar pod on OCP with cluster-admin SA
+# student_ns is EMPTY for dedicated — use a fixed namespace with fallback
+# Extravars: k8s_kubeconfig, bastion_host, bastion_port, bastion_user, bastion_password
+
+- name: Module 1 Solve — OCP resource (cluster-admin)
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+
+    # student_ns is empty for dedicated — set a fixed namespace
+    - name: Set target namespace
+      ansible.builtin.set_fact:
+        _ns: "{{ student_ns | default('demo-project', true) | trim }}"
+
+    - name: Create namespace
+      kubernetes.core.k8s:
+        kubeconfig: "{{ k8s_kubeconfig | default(omit) }}"
+        validate_certs: false
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: "{{ _ns }}"
+
+    - name: Grant developer admin access
+      kubernetes.core.k8s:
+        kubeconfig: "{{ k8s_kubeconfig | default(omit) }}"
+        validate_certs: false
+        state: present
+        definition:
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: RoleBinding
+          metadata:
+            name: developer-admin
+            namespace: "{{ _ns }}"
+          subjects:
+            - kind: User
+              name: developer
+              apiGroup: rbac.authorization.k8s.io
+          roleRef:
+            kind: ClusterRole
+            name: admin
+            apiGroup: rbac.authorization.k8s.io

@@ -1,0 +1,46 @@
+= Module 1: Working on the RHEL Node
+
+Your lab has two targets: a *bastion* (wetty tab) and a *RHEL node* (terminal tab).
+Use the correct `send-to` role for each target.
+
+== Task 1: Run a command on the bastion
+
+The wetty tab connects to the bastion.
+Use `role="send-to-wetty"` to send commands there.
+
+[source,sh,role="send-to-wetty"]
+----
+echo "Hello from the bastion" > /home/lab-user/lab-notes.txt
+----
+
+== Task 2: Run a command on the RHEL node
+
+The terminal tab connects to the RHEL node via SSH.
+Use `role="send-to-terminal"` to send commands there.
+
+[source,sh,role="send-to-terminal"]
+----
+mkdir -p /home/lab-user/myproject && echo "# My Project" > /home/lab-user/myproject/README.md
+----
+
+== Verify
+
+[source,sh,role="send-to-terminal"]
+----
+ls /home/lab-user/myproject/
+----
+
+== Solve and Validate
+
+NOTE: Solve and Validate buttons are for development and debugging only.
+At Summit/production events, Demolition or the load test Ansible role calls
+`/stream/solve` and `/stream/validate` automatically — buttons are not added
+to production lab modules.
+
+++++
+<div class="solve-button-placeholder" data-module="module-01"></div>
+++++
+
+++++
+<div class="validate-button-placeholder" data-module="module-01"></div>
+++++

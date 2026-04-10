@@ -1,0 +1,39 @@
+---
+# VALIDATE — OCP Tenant, Module 2
+# Checks that the Deployment exists and has at least one ready replica
+
+- name: Module 2 Validation
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+
+    - name: Check Deployment exists
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ k8s_kubeconfig | default(omit) }}"
+        validate_certs: false
+        api_version: apps/v1
+        kind: Deployment
+        name: my-app
+        namespace: "{{ student_ns }}"
+      register: r_deploy
+
+    - name: Build results
+      ansible.builtin.set_fact:
+        _task1_ok: "{{ r_deploy.resources | length > 0 }}"
+        _task2_ok: >-
+          {{ (r_deploy.resources | length > 0) and
+             (r_deploy.resources[0].status.readyReplicas | default(0) | int >= 1) }}
+
+    - name: Validate all tasks
+      validation_check:
+        check: "{{ _task1_ok and _task2_ok }}"
+        pass_msg: |
+          ✅ Task 1: Deployment my-app exists in {{ student_ns }}
+          ✅ Task 2: Deployment has at least 1 ready replica
+        error_msg: |
+          {{ '✅' if _task1_ok else '❌' }} Task 1: Deployment my-app in {{ student_ns }}
+          {{ '✅' if _task2_ok else '❌' }} Task 2: At least 1 ready replica
+
+          Fix:
+            oc rollout status deployment/my-app -n {{ student_ns }}

@@ -1,0 +1,38 @@
+= Module 1: Working in Your Namespace
+
+Each student has a dedicated namespace: `{student_ns}`.
+Run the commands below to create the required resources.
+
+== Task 1: Create the ConfigMap
+
+[source,sh,role="send-to-wetty"]
+----
+oc create configmap my-config \
+  --from-literal=key=value \
+  --from-literal=owner={student_user} \
+  -n {student_ns}
+----
+
+== Task 2: Create the Secret
+
+[source,sh,role="send-to-wetty"]
+----
+oc create secret generic my-secret \
+  --from-literal=api-key=my-value \
+  -n {student_ns}
+----
+
+== Solve and Validate
+
+NOTE: Solve and Validate buttons are for development and debugging only.
+At Summit/production events, Demolition or the load test Ansible role calls
+`/stream/solve` and `/stream/validate` automatically — buttons are not added
+to production lab modules.
+
+++++
+<div class="solve-button-placeholder" data-module="module-01"></div>
+++++
+
+++++
+<div class="validate-button-placeholder" data-module="module-01"></div>
+++++

@@ -1,0 +1,36 @@
+---
+# SOLVE — OCP Tenant, Module 2
+# Creates a Deployment in the student namespace
+
+- name: Module 2 Solve
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+
+    - name: Create Deployment in student namespace
+      kubernetes.core.k8s:
+        kubeconfig: "{{ k8s_kubeconfig | default(omit) }}"
+        validate_certs: false
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: my-app
+            namespace: "{{ student_ns | default('default', true) | trim }}"
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                app: my-app
+            template:
+              metadata:
+                labels:
+                  app: my-app
+              spec:
+                containers:
+                  - name: my-app
+                    image: quay.io/rhpds/openshift-getting-started:latest
+                    ports:
+                      - containerPort: 8080

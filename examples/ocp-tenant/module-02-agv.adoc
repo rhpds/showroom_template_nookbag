@@ -1,0 +1,31 @@
+= Module 2: AgnosticV Configuration (OCP Tenant)
+
+Add the following settings to your catalog item's `common.yaml`.
+
+[source,yaml]
+----
+# Showroom deployer chart
+ocp4_workload_showroom_content_git_repo: https://github.com/YOUR-ORG/YOUR-SHOWROOM.git
+ocp4_workload_showroom_content_git_repo_ref: main
+ocp4_workload_showroom_content_antora_playbook: site.yml
+ocp4_workload_showroom_chart_package_url: https://rhpds.github.io/showroom-deployer
+ocp4_workload_showroom_deployer_chart_name: showroom-single-pod
+ocp4_workload_showroom_deployer_chart_version: "2.1.4"   # pin to a tested version
+
+# Terminal tab — wetty required for send-to-wetty
+ocp4_workload_showroom_terminal_type: wetty
+ocp4_workload_showroom_wetty_image: "quay.io/rhpds/wetty:v3.0"  # v3.0+ for postMessage
+
+# E2E runtime automation
+ocp4_workload_showroom_runtime_automation_enable: true
+ocp4_workload_showroom_runtime_automation_image: "quay.io/rhpds/zt-runner:v2.4.2"
+
+# Workloads — add both showroom and the k8s runner SA workload
+agnosticd_workloads:
+  - agnosticd.showroom.ocp4_workload_showroom
+  - rhpds.ftl.ocp4_workload_runtime_automation_k8s   # creates zt-runner SA + kubeconfig
+----
+
+NOTE: `runtime_automation_enable: true` deploys the zt-runner sidecar container.
+The `ocp4_workload_runtime_automation_k8s` workload creates the per-student SA,
+kubeconfig, and injects `k8s_kubeconfig` and `student_ns` as extravars.

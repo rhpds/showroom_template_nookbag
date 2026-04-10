@@ -1,0 +1,28 @@
+= Module 2: AgnosticV Configuration (RHEL VM)
+
+Add the following settings to your catalog item's `common.yaml`.
+RHEL VM labs use `vm_workload_showroom` (not `ocp4_workload_showroom`).
+
+[source,yaml]
+----
+# vm_workload_showroom settings
+showroom_content_git_repo: https://github.com/YOUR-ORG/YOUR-SHOWROOM.git
+showroom_content_git_repo_ref: main
+showroom_wetty_image: "quay.io/rhpds/wetty:v3.0"   # required for send-to-wetty
+
+# E2E runtime automation — runner as Podman container on the bastion
+showroom_ansible_runner_api: true
+showroom_ansible_runner_image: quay.io/rhpds/zt-runner
+showroom_ansible_runner_image_tag: v2.4.2
+showroom_ansible_runner_path: "/stream"
+
+# Workloads
+agnosticd_workloads:
+  - agnosticd.showroom.vm_workload_showroom
+  - rhpds.ftl.vm_workload_runtime_automation    # mounts SSH keys at /app/.ssh/
+----
+
+NOTE: The `vm_workload_runtime_automation` workload mounts the SSH private key at
+`/app/.ssh/id_rsa` and writes `/app/.ssh/config` with host aliases for `node` and
+`bastion` — so playbooks can use these names directly without IP lookups.
+There is no `k8s_kubeconfig` or `student_ns` in the RHEL VM pattern.

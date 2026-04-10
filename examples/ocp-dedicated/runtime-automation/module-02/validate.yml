@@ -1,0 +1,34 @@
+---
+# VALIDATE — OCP Dedicated, Module 2
+# SSH to bastion and run a validate script; rc==0 means pass
+
+- name: Build SSH inventory
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - ansible.builtin.add_host:
+        name: bastion
+        ansible_host: "{{ bastion_host }}"
+        ansible_port: "{{ bastion_port | default(22) }}"
+        ansible_user: "{{ bastion_user | default('lab-user') }}"
+        ansible_password: "{{ bastion_password }}"
+        ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+
+- name: Validate on bastion
+  hosts: bastion
+  gather_facts: false
+  tasks:
+    - name: Run validate script
+      ansible.builtin.script:
+        executable: /bin/bash
+        cmd: "{{ playbook_dir }}/validate-module2.sh"
+      register: r_val
+      ignore_errors: true
+
+    - name: Report result
+      validation_check:
+        check: "{{ r_val.rc == 0 }}"
+        pass_msg: "{{ r_val.stdout | trim }}"
+        error_msg: |
+          ❌ Validation failed: {{ r_val.stdout | trim }}
+          Fix: run the Solve button or create the resource manually.

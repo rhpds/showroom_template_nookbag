@@ -1,0 +1,16 @@
+---
+# VALIDATE — Module 2
+# replace with your validation tasks
+
+- name: Module 2 Validation
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+
+    # replace with your checks
+    - name: Placeholder validation
+      validation_check:
+        check: true
+        pass_msg: "Module 2 placeholder — replace with your validation"
+        error_msg: "Module 2 placeholder — replace with your validation"
