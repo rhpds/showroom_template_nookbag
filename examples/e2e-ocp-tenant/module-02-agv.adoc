@@ -4,6 +4,23 @@ Add the following settings to your catalog item's `common.yaml`.
 
 [source,yaml]
 ----
+tag: main   # override in dev.yaml with branch name, prod.yaml with release tag
+
+requirements_content:
+  collections:
+  - name: https://github.com/agnosticd/namespaced_workloads.git
+    type: git
+    version: "{{ tag }}"
+  - name: https://github.com/agnosticd/showroom.git
+    type: git
+    version: v1.6.6     # v1.6.6+ required for runtime_automation_enable var
+  - name: https://github.com/agnosticd/core_workloads.git
+    type: git
+    version: "{{ tag }}"
+  - name: https://github.com/rhpds/rhpds-ftl.git
+    type: git
+    version: "{{ tag }}"
+
 ocp4_workload_showroom_content_git_repo: https://github.com/YOUR-ORG/YOUR-SHOWROOM.git
 ocp4_workload_showroom_content_git_repo_ref: main
 ocp4_workload_showroom_content_antora_playbook: site.yml
@@ -13,6 +30,8 @@ ocp4_workload_showroom_terminal_type: wetty
 ocp4_workload_showroom_wetty_image: "quay.io/rhpds/wetty:v3.0"  # v3.0+ for postMessage
 
 # E2E runtime automation
+# Summit 2026: both vars below are set globally in summit-2026/account.yaml.
+# Non-Summit labs: add both here.
 ocp4_workload_showroom_runtime_automation_enable: true
 ocp4_workload_showroom_runtime_automation_image: "quay.io/rhpds/zt-runner:v2.4.2"
 
