@@ -1,0 +1,167 @@
+= Module 1: Working in Your Namespace
+
+Each student has a dedicated namespace: `{student_ns}`.
+Run the commands below to create the required resources.
+
+== Task 1: Create the ConfigMap
+
+[source,sh,role="send-to-wetty"]
+----
+oc create configmap my-config \
+  --from-literal=key=value \
+  --from-literal=owner={student_user} \
+  -n {student_ns}
+----
+
+== Task 2: Create the Secret
+
+[source,sh,role="send-to-wetty"]
+----
+oc create secret generic my-secret \
+  --from-literal=api-key=my-value \
+  -n {student_ns}
+----
+
+== How Validation Works
+
+The `validate.yml` playbook uses the `validation_check` plugin to emit per-task results.
+This is how the Validate button (and Demolition) get ✅/❌ per task:
+
+[source,yaml]
+----
+---
+# validate.yml — OCP Tenant: check ConfigMap and Secret exist in student_ns
+- name: Module 1 Validation
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+
+    - name: Check ConfigMap exists
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ k8s_kubeconfig | default(omit) }}"
+        validate_certs: false
+        api_version: v1
+        kind: ConfigMap
+        name: my-config
+        namespace: "{{ student_ns }}"
+      register: r_cm
+
+    - name: Check Secret exists
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ k8s_kubeconfig | default(omit) }}"
+        validate_certs: false
+        api_version: v1
+        kind: Secret
+        name: my-secret
+        namespace: "{{ student_ns }}"
+      register: r_secret
+
+    - name: Build results
+      ansible.builtin.set_fact:
+        _task1_ok: "{{ r_cm.resources | length > 0 }}"
+        _task2_ok: "{{ r_secret.resources | length > 0 }}"
+
+    - name: Validate all tasks
+      validation_check:
+        check: "{{ _task1_ok and _task2_ok }}"
+        pass_msg: |
+          ✅ Task 1: ConfigMap my-config exists in {{ student_ns }}
+          ✅ Task 2: Secret my-secret exists in {{ student_ns }}
+        error_msg: |
+          {{ '✅' if _task1_ok else '❌' }} Task 1: ConfigMap my-config in {{ student_ns }}
+          {{ '✅' if _task2_ok else '❌' }} Task 2: Secret my-secret in {{ student_ns }}
+
+          Fix:
+            oc create configmap my-config --from-literal=key=value -n {{ student_ns }}
+            oc create secret generic my-secret --from-literal=api-key=value -n {{ student_ns }}
+----
+
+The `validation_check` plugin is provided by the `rhpds.ftl` collection. The runner streams
+its output over SSE so the Validate button panel shows results in real time.
+
+== Solve and Validate
+
+NOTE: Solve and Validate buttons below are for *development and debugging only*.
+At Summit/production events, Demolition or the load test Ansible role calls
+`/stream/solve` and `/stream/validate` automatically.
+Buttons are not added to production lab modules.
+
+=== Developer Workflow
+
+[source,sh]
+----
+# 1. Write solve.yml and validate.yml in runtime-automation/module-01/
+
+# 2. Push changes
+git add runtime-automation/ && git commit -m "Update playbooks" && git push
+
+# 3. Restart showroom pod to pick up new playbooks
+oc rollout restart deployment/showroom -n showroom-NAMESPACE
+
+# 4. Test solve — streams live Ansible output
+curl -N https://showroom-GUID.apps.CLUSTER.example.com/stream/solve/module-01
+
+# 5. Test validate — streams pass/fail with fix instructions per task
+curl -N https://showroom-GUID.apps.CLUSTER.example.com/stream/validate/module-01
+----
+
+Each curl streams Ansible output live. `validation_check` lines show fix hints on failure.
+
+=== ServiceAccount
+
+The `ocp4_workload_runtime_automation_k8s` workload does the following automatically:
+
+* Creates a `zt-runner` ServiceAccount in each student's namespace
+* Creates a kubeconfig Secret bound to that SA
+* Injects `k8s_kubeconfig`, `student_ns`, `student_user`, and `guid` as extravars into every solve/validate playbook
+
+Your playbooks can use `{{ k8s_kubeconfig }}` immediately — no manual credential setup needed.
+
+*Default scope:* The SA has `admin` RoleBinding in `student_ns` only (namespace-scoped).
+This is sufficient when solve.yml only creates resources inside the student namespace.
+
+==== Optional: Cluster-Admin SA
+
+If your solve.yml needs cluster-scoped resources (Namespaces, ClusterRoleBindings, CRDs, etc.),
+add this to your AgV `common.yaml`:
+
+[source,yaml]
+----
+# Optional — use when solve.yml needs cluster-wide access
+ocp4_workload_runtime_automation_k8s_cluster_admin: true
+ocp4_workload_runtime_automation_k8s_openshift_api_url: "{{ openshift_api_url }}"
+ocp4_workload_runtime_automation_k8s_openshift_api_token: "{{ openshift_cluster_admin_token }}"
+----
+
+This works for both tenant and dedicated labs.
+
+=== Buttons (development only)
+
+++++
+<div class="solve-button-placeholder" data-module="module-01"></div>
+++++
+
+++++
+<div class="validate-button-placeholder" data-module="module-01"></div>
+++++
+
+When a runner is deployed and your showroom is running, the buttons look like this:
+
+image::solve-validate-buttons.png[Solve and Validate buttons,700]
+
+NOTE: The divs above are invisible in this page — `inject-buttons.js` renders them into the *Solve* and *Validate* buttons at runtime.
+
+Copy this pattern into any module page in your showroom (replace `module-01` with your module name):
+
+[source,asciidoc]
+----
+\++++
+<div class="solve-button-placeholder" data-module="module-01"></div>
+\++++
+
+\++++
+<div class="validate-button-placeholder" data-module="module-01"></div>
+\++++
+----
+

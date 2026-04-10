@@ -1,0 +1,50 @@
+---
+# VALIDATE — RHEL VM + Bastion, Module 2
+# Check that httpd is installed and running on the node
+
+- name: Build inventory
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - ansible.builtin.add_host:
+        name: node
+        ansible_user: lab-user
+        ansible_ssh_private_key_file: /app/.ssh/id_rsa
+        ansible_ssh_common_args: "-F /app/.ssh/config"
+
+- name: Validate on node
+  hosts: node
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Check httpd is installed
+      ansible.builtin.shell:
+        cmd: rpm -q httpd
+      register: r_rpm
+      ignore_errors: true
+
+    - name: Check httpd service is running
+      ansible.builtin.systemd:
+        name: httpd
+      register: r_svc
+      ignore_errors: true
+
+    - name: Build results
+      ansible.builtin.set_fact:
+        _task1_ok: "{{ r_rpm.rc == 0 }}"
+        _task2_ok: "{{ r_svc.status.ActiveState | default('') == 'active' }}"
+
+    - name: Validate all tasks
+      validation_check:
+        check: "{{ _task1_ok and _task2_ok }}"
+        pass_msg: |
+          ✅ Task 1: httpd is installed on the node
+          ✅ Task 2: httpd service is running
+        error_msg: |
+          {{ '✅' if _task1_ok else '❌' }} Task 1: httpd installed (rpm -q httpd)
+          {{ '✅' if _task2_ok else '❌' }} Task 2: httpd service active
+
+          Fix:
+            sudo dnf install -y httpd
+            sudo systemctl enable --now httpd

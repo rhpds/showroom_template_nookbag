@@ -1,0 +1,68 @@
+= E2E Testing from Laptop
+
+Run solve + validate across all modules from your laptop to verify the full lab flow.
+This is what Demolition does at Summit — you can replicate it locally during development.
+
+== Stream Solve and Validate (SSE)
+
+[source,sh]
+----
+SHOWROOM=https://showroom-GUID.apps.CLUSTER.example.com
+
+# Stream solve output live — shows Ansible task names as they run
+curl -N $SHOWROOM/stream/solve/module-01
+curl -N $SHOWROOM/stream/solve/module-02
+
+# Stream validate output live — shows ✅/❌ per task
+curl -N $SHOWROOM/stream/validate/module-01
+curl -N $SHOWROOM/stream/validate/module-02
+----
+
+Each SSE stream closes when the playbook finishes. The last line contains the `validation_check` result.
+
+== Runner API (job-based)
+
+[source,sh]
+----
+# Submit a solve job and get the Job ID
+JOB=$(curl -sk -X POST $SHOWROOM/runner/api/module-01/solve \
+  | python3 -c "import json,sys; print(json.load(sys.stdin)['Job_id'])")
+echo "Solve module-01: $JOB"
+
+# Wait then fetch result
+sleep 30
+curl -sk $SHOWROOM/runner/api/job/$JOB | python3 -m json.tool
+
+# Same for validate
+JOB=$(curl -sk -X POST $SHOWROOM/runner/api/module-01/validation \
+  | python3 -c "import json,sys; print(json.load(sys.stdin)['Job_id'])")
+sleep 30
+curl -sk $SHOWROOM/runner/api/job/$JOB
+----
+
+NOTE: Prefer `/stream/` endpoints during development — they show live Ansible output.
+Use the runner API when you need structured JSON results.
+
+== AgV Load Test (automated E2E at provision time)
+
+Add to your catalog to enable automated E2E testing after every provision:
+
+[source,yaml]
+----
+# In common.yaml — add after existing workloads
+agnosticd_workloads:
+  - agnosticd.showroom.ocp4_workload_showroom
+  - rhpds.ftl.ocp4_workload_runtime_automation_k8s
+  - rhpds.ftl.ocp4_runtime_automation_load_test   # runs all solve+validate
+
+# Optional catalog parameter to toggle E2E testing on/off
+# In __meta__.catalog.parameters:
+# - name: zt_load_testing_enabled
+#   formLabel: "Run E2E Load Test after provision"
+#   openAPIV3Schema:
+#     type: boolean
+#     default: false
+----
+
+The `ocp4_runtime_automation_load_test` role calls `/stream/solve` and `/stream/validate`
+for each module and fails the provision if any validation fails.

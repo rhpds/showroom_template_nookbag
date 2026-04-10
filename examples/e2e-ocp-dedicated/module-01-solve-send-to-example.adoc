@@ -1,0 +1,189 @@
+= Module 1: Working on Your Dedicated Cluster
+
+Your cluster is pre-configured with cluster-admin access.
+Use the embedded terminal to run `oc` commands directly.
+
+== Credentials
+
+[cols="1,2"]
+|===
+| OCP API URL | `{openshift_api_server_url}`
+| Username    | `{openshift_cluster_admin_username}`
+| Password    | `{openshift_cluster_admin_password}`
+| Console     | `{openshift_cluster_console_url}`
+|===
+
+== Login
+
+[source,sh,role="send-to-terminal",subs="attributes+"]
+----
+oc login {openshift_api_server_url} \
+  -u {openshift_cluster_admin_username} \
+  -p {openshift_cluster_admin_password} \
+  --insecure-skip-tls-verify
+----
+
+== Task 1: Create the Project
+
+[source,sh,role="send-to-terminal"]
+----
+oc new-project demo-project
+----
+
+== Task 2: Grant Developer Access
+
+[source,sh,role="send-to-terminal"]
+----
+oc adm policy add-role-to-user admin developer -n demo-project
+----
+
+== Verify
+
+[source,sh,role="send-to-terminal"]
+----
+oc get rolebinding developer-admin -n demo-project
+----
+
+== How Validation Works
+
+The `validate.yml` playbook checks namespace and RBAC using `validation_check`:
+
+[source,yaml]
+----
+---
+# validate.yml — OCP Dedicated: check namespace and developer access
+- name: Module 1 Validation — namespace and developer access
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+
+    - name: Check namespace exists
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ k8s_kubeconfig | default(omit) }}"
+        validate_certs: false
+        api_version: v1
+        kind: Namespace
+        name: demo-project
+      register: r_ns
+
+    - name: Check developer RoleBinding
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ k8s_kubeconfig | default(omit) }}"
+        validate_certs: false
+        api_version: rbac.authorization.k8s.io/v1
+        kind: RoleBinding
+        name: developer-admin
+        namespace: demo-project
+      register: r_rb
+      ignore_errors: true
+
+    - name: Build task summary
+      ansible.builtin.set_fact:
+        _task1_ok: "{{ r_ns.resources | length > 0 }}"
+        _task2_ok: "{{ r_rb.resources | default([]) | length > 0 }}"
+
+    - name: Validate
+      validation_check:
+        check: "{{ _task1_ok and _task2_ok }}"
+        pass_msg: |
+          ✅ Task 1: Namespace demo-project exists
+          ✅ Task 2: developer user has admin access
+        error_msg: |
+          {{ '✅' if _task1_ok else '❌' }} Task 1: Namespace demo-project
+          {{ '✅' if _task2_ok else '❌' }} Task 2: developer-admin RoleBinding
+
+          Fix:
+            oc new-project demo-project
+            oc adm policy add-role-to-user admin developer -n demo-project
+----
+
+NOTE: For dedicated clusters, `student_ns` is empty — use a fixed namespace like `demo-project`
+with `| default('demo-project', true) | trim` fallback in your playbooks.
+
+== Solve and Validate
+
+NOTE: Solve and Validate buttons below are for *development and debugging only*.
+At Summit/production events, Demolition or the load test Ansible role calls
+`/stream/solve` and `/stream/validate` automatically.
+Buttons are not added to production lab modules.
+
+=== Developer Workflow
+
+[source,sh]
+----
+# 1. Write solve.yml and validate.yml in runtime-automation/module-01/
+
+# 2. Push changes
+git add runtime-automation/ && git commit -m "Update playbooks" && git push
+
+# 3. Restart showroom pod to pick up new playbooks
+oc rollout restart deployment/showroom -n showroom-NAMESPACE
+
+# 4. Test solve — streams live Ansible output
+curl -N https://showroom-GUID.apps.CLUSTER.example.com/stream/solve/module-01
+
+# 5. Test validate — streams pass/fail with fix instructions per task
+curl -N https://showroom-GUID.apps.CLUSTER.example.com/stream/validate/module-01
+----
+
+Each curl streams Ansible output live. `validation_check` lines show fix hints on failure.
+
+=== ServiceAccount
+
+The `ocp4_workload_runtime_automation_k8s` workload does the following automatically:
+
+* Creates a `zt-runner` ServiceAccount
+* Creates a kubeconfig Secret bound to that SA
+* Injects `k8s_kubeconfig` and `guid` as extravars into every solve/validate playbook
+
+NOTE: For dedicated clusters `student_ns` is empty — use a fixed namespace like `demo-project`
+with `| default('demo-project', true) | trim` fallback in your playbooks.
+
+Your playbooks can use `{{ k8s_kubeconfig }}` immediately — no manual credential setup needed.
+
+*Default scope:* The SA has `admin` RoleBinding in `student_ns` only (namespace-scoped).
+
+==== Optional: Cluster-Admin SA
+
+If your solve.yml needs cluster-scoped resources (Namespaces, ClusterRoleBindings, CRDs, etc.),
+add this to your AgV `common.yaml`. This is typically needed for dedicated clusters where
+solve.yml must create the project namespace itself, but also works for tenant labs:
+
+[source,yaml]
+----
+# Optional — use when solve.yml needs cluster-wide access
+ocp4_workload_runtime_automation_k8s_cluster_admin: true
+ocp4_workload_runtime_automation_k8s_openshift_api_url: "{{ openshift_api_url }}"
+ocp4_workload_runtime_automation_k8s_openshift_api_token: "{{ openshift_cluster_admin_token }}"
+----
+
+=== Buttons (development only)
+
+++++
+<div class="solve-button-placeholder" data-module="module-01"></div>
+++++
+
+++++
+<div class="validate-button-placeholder" data-module="module-01"></div>
+++++
+
+When a runner is deployed and your showroom is running, the buttons look like this:
+
+image::solve-validate-buttons.png[Solve and Validate buttons,700]
+
+NOTE: The divs above are invisible in this page — `inject-buttons.js` renders them into the *Solve* and *Validate* buttons at runtime.
+
+Copy this pattern into any module page in your showroom (replace `module-01` with your module name):
+
+[source,asciidoc]
+----
+\++++
+<div class="solve-button-placeholder" data-module="module-01"></div>
+\++++
+
+\++++
+<div class="validate-button-placeholder" data-module="module-01"></div>
+\++++
+----
+

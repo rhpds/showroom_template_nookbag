@@ -1,0 +1,114 @@
+= Module 2: AgnosticV Configuration (OCP Tenant)
+
+Add the following settings to your catalog item's `common.yaml`.
+
+[source,yaml]
+----
+tag: main   # override in dev.yaml with branch name, prod.yaml with release tag
+
+requirements_content:
+  collections:
+  - name: https://github.com/agnosticd/namespaced_workloads.git
+    type: git
+    version: "{{ tag }}"
+  - name: https://github.com/agnosticd/showroom.git
+    type: git
+    version: v1.6.6
+  - name: https://github.com/agnosticd/core_workloads.git
+    type: git
+    version: "{{ tag }}"
+  - name: https://github.com/rhpds/rhpds-ftl.git
+    type: git
+    version: "{{ tag }}"
+
+----
+
+IMPORTANT: Use *agnosticd/showroom version v1.6.6 or later*.
+v1.6.6 adds the `ocp4_workload_showroom_runtime_automation_enable` and
+`ocp4_workload_showroom_runtime_automation_image` variables that wire the zt-runner
+sidecar into the showroom chart. Earlier versions silently ignore these vars and
+the runner will not be deployed.
+
+[source,yaml]
+----
+ocp4_workload_showroom_content_git_repo: https://github.com/YOUR-ORG/YOUR-SHOWROOM.git
+ocp4_workload_showroom_content_git_repo_ref: main
+ocp4_workload_showroom_content_antora_playbook: site.yml
+
+# Terminal tab — wetty required for send-to-wetty
+ocp4_workload_showroom_terminal_type: wetty
+ocp4_workload_showroom_wetty_image: "quay.io/rhpds/wetty:v3.0"  # v3.0+ for postMessage
+
+# E2E runtime automation image (runner version)
+ocp4_workload_showroom_runtime_automation_image: "quay.io/rhpds/zt-runner:v2.4.2"
+
+# Workloads — load test added conditionally via run_e2e_load_test parameter
+workloads: >-
+  {{
+    [
+      'agnosticd.showroom.ocp4_workload_showroom',
+      'rhpds.ftl.ocp4_workload_runtime_automation_k8s'
+    ] +
+    (
+      ['rhpds.ftl.ocp4_runtime_automation_load_test']
+      if run_e2e_load_test | default(false) | bool
+      else []
+    )
+  }}
+
+remove_workloads:
+  - rhpds.ftl.ocp4_workload_runtime_automation_k8s
+  - agnosticd.showroom.ocp4_workload_showroom
+----
+
+Add a catalog parameter so the load test can be toggled at order time:
+
+[source,yaml]
+----
+__meta__:
+  catalog:
+    parameters:
+    - name: run_e2e_load_test
+      description: "Run E2E load test after provisioning — triggers solve and validate on all modules"
+      formLabel: "Run E2E Load Test"
+      openAPIV3Schema:
+        type: boolean
+        default: false
+----
+
+== ServiceAccount Scope
+
+`ocp4_workload_runtime_automation_k8s` creates a `zt-runner` ServiceAccount per student.
+
+[cols="1,2"]
+|===
+| Setting | When to use
+
+| Default (no flag) | SA gets `admin` RoleBinding in `student_ns` only. Use when solve.yml only creates resources inside the student namespace.
+
+| `ocp4_workload_runtime_automation_k8s_cluster_admin: true` | SA gets cluster-admin. Use when solve.yml needs to create Namespaces, ClusterRoleBindings, CRDs, or any cluster-scoped resources. Works in both tenant and dedicated.
+|===
+
+== Load Test Role
+
+`ocp4_runtime_automation_load_test` calls `/stream/solve` then `/stream/validate` for
+every module at provision time and fails the provision if any validation fails.
+This is what runs at Summit — students never see the Solve/Validate buttons.
+
+== Non-Summit Labs
+
+For labs running outside of Summit (internal workshops, demos, always-on environments),
+add the enable flag explicitly in your `common.yaml`:
+
+[source,yaml]
+----
+ocp4_workload_showroom_runtime_automation_enable: true
+----
+
+Summit 2026 labs get this set globally via the event account config — you do not need to
+add it per-catalog when targeting Summit.
+
+== Working Example
+
+See the actual test catalog for this pattern in AgnosticV:
+https://github.com/rhpds/agnosticv/tree/master/tests/zt-ocp-pipelines-tenant[tests/zt-ocp-pipelines-tenant]

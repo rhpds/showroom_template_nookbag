@@ -1,0 +1,47 @@
+---
+# VALIDATE — OCP Tenant (multi-user), Module 1
+
+- name: Module 1 Validation
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+
+    - name: Check ConfigMap exists
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ k8s_kubeconfig | default(omit) }}"
+        validate_certs: false
+        api_version: v1
+        kind: ConfigMap
+        name: my-config
+        namespace: "{{ student_ns }}"
+      register: r_cm
+
+    - name: Check Secret exists
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ k8s_kubeconfig | default(omit) }}"
+        validate_certs: false
+        api_version: v1
+        kind: Secret
+        name: my-secret
+        namespace: "{{ student_ns }}"
+      register: r_secret
+
+    - name: Build results
+      ansible.builtin.set_fact:
+        _task1_ok: "{{ r_cm.resources | length > 0 }}"
+        _task2_ok: "{{ r_secret.resources | length > 0 }}"
+
+    - name: Validate all tasks
+      validation_check:
+        check: "{{ _task1_ok and _task2_ok }}"
+        pass_msg: |
+          ✅ Task 1: ConfigMap my-config exists in {{ student_ns }}
+          ✅ Task 2: Secret my-secret exists in {{ student_ns }}
+        error_msg: |
+          {{ '✅' if _task1_ok else '❌' }} Task 1: ConfigMap my-config in {{ student_ns }}
+          {{ '✅' if _task2_ok else '❌' }} Task 2: Secret my-secret in {{ student_ns }}
+
+          Fix:
+            oc create configmap my-config --from-literal=key=value -n {{ student_ns }}
+            oc create secret generic my-secret --from-literal=api-key=value -n {{ student_ns }}

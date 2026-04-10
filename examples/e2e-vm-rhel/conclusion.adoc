@@ -1,0 +1,16 @@
+= Conclusion
+
+You have reviewed the RHEL VM + Bastion pattern for runtime automation.
+
+* The zt-runner runs as a Podman container on the bastion — no OCP cluster required.
+* SSH keys are mounted at `/app/.ssh/id_rsa` and `/app/.ssh/config` by the
+  `vm_workload_runtime_automation` workload.
+* Playbooks can target both `node` and `bastion` in the same run using `add_host`.
+* Use the `hostvars` pattern to collect results from the node play and call
+  `validation_check` in the bastion play (only one `validation_check` per playbook).
+* There is no `k8s_kubeconfig` or `student_ns` — the runner has no OCP access.
+
+.Reference repos
+* https://github.com/rhpds/agnosticv[AgnosticV tests] — see `tests/zt-rhel-grading/`
+* https://github.com/rhpds/showroom-deployer[showroom-deployer chart]
+* https://github.com/rhpds/ansible-role-ftl-runtime-automation[ftl-runtime-automation role]

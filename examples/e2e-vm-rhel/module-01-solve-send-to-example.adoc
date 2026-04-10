@@ -1,0 +1,179 @@
+= Module 1: Working on the RHEL Node
+
+Your lab has two targets: a *bastion* (wetty tab) and a *RHEL node* (terminal tab).
+Use the correct `send-to` role for each target.
+
+== Task 1: Run a command on the bastion
+
+The wetty tab connects to the bastion.
+Use `role="send-to-wetty"` to send commands there.
+
+[source,sh,role="send-to-wetty"]
+----
+echo "Hello from the bastion" > /home/lab-user/lab-notes.txt
+----
+
+== Task 2: Run a command on the RHEL node
+
+The terminal tab connects to the RHEL node via SSH.
+Use `role="send-to-terminal"` to send commands there.
+
+[source,sh,role="send-to-terminal"]
+----
+mkdir -p /home/lab-user/myproject && echo "# My Project" > /home/lab-user/myproject/README.md
+----
+
+== Verify
+
+[source,sh,role="send-to-terminal"]
+----
+ls /home/lab-user/myproject/
+----
+
+== How Validation Works
+
+RHEL VM validation uses SSH via `/app/.ssh/config` and `/app/.ssh/id_rsa` (no kubeconfig).
+The runner uses `add_host` to define targets, then delegates tasks across hosts:
+
+[source,yaml]
+----
+---
+# validate.yml — RHEL VM: check files on node and bastion via SSH
+- name: Add SSH targets
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Add node to inventory
+      ansible.builtin.add_host:
+        name: node
+        ansible_user: lab-user
+        ansible_ssh_private_key_file: /app/.ssh/id_rsa
+        ansible_ssh_common_args: "-F /app/.ssh/config"
+
+    - name: Add bastion to inventory
+      ansible.builtin.add_host:
+        name: bastion
+        ansible_user: lab-user
+        ansible_ssh_private_key_file: /app/.ssh/id_rsa
+        ansible_ssh_common_args: "-F /app/.ssh/config"
+
+- name: Check tasks on node
+  hosts: node
+  gather_facts: false
+  tasks:
+    - name: Check myproject directory exists
+      ansible.builtin.stat:
+        path: /home/lab-user/myproject
+      register: r_dir
+
+    - name: Check README.md exists
+      ansible.builtin.stat:
+        path: /home/lab-user/myproject/README.md
+      register: r_readme
+
+- name: Check task on bastion and validate
+  hosts: bastion
+  gather_facts: false
+  tasks:
+    - name: Check lab-notes.txt on bastion
+      ansible.builtin.stat:
+        path: /home/lab-user/lab-notes.txt
+      register: r_notes
+
+    - name: Build task summary
+      ansible.builtin.set_fact:
+        _task1_ok: "{{ hostvars['node']['r_dir'].stat.exists and hostvars['node']['r_dir'].stat.isdir }}"
+        _task2_ok: "{{ hostvars['node']['r_readme'].stat.exists }}"
+        _task3_ok: "{{ r_notes.stat.exists }}"
+
+    - name: Validate all tasks
+      validation_check:
+        check: "{{ _task1_ok and _task2_ok and _task3_ok }}"
+        pass_msg: |
+          ✅ Task 1: /home/lab-user/myproject exists on node
+          ✅ Task 2: README.md exists in myproject on node
+          ✅ Task 3: lab-notes.txt exists on bastion
+        error_msg: |
+          {{ '✅' if _task1_ok else '❌' }} Task 1: /home/lab-user/myproject on node
+          {{ '✅' if _task2_ok else '❌' }} Task 2: README.md on node
+          {{ '✅' if _task3_ok else '❌' }} Task 3: lab-notes.txt on bastion
+
+          Fix:
+          {% if not _task1_ok %}  ssh node "mkdir -p /home/lab-user/myproject"
+          {% endif %}{% if not _task2_ok %}  ssh node "echo '# My Project' > /home/lab-user/myproject/README.md"
+          {% endif %}{% if not _task3_ok %}  touch /home/lab-user/lab-notes.txt
+          {% endif %}
+----
+
+Key RHEL pattern: `hostvars['node']['r_dir']` — access facts from other hosts in the play.
+The `node` and `bastion` host names come from `/app/.ssh/config` written by the runner workload.
+
+== Solve and Validate
+
+NOTE: Solve and Validate buttons below are for *development and debugging only*.
+At Summit/production events, Demolition or the load test Ansible role calls
+`/stream/solve` and `/stream/validate` automatically.
+Buttons are not added to production lab modules.
+
+=== Developer Workflow
+
+[source,sh]
+----
+# 1. Write solve.yml and validate.yml in runtime-automation/module-01/
+# The runner is a Podman container on the BASTION — no OCP cluster.
+# SSH key: /app/.ssh/id_rsa | SSH config: /app/.ssh/config
+
+# 2. Push changes
+git add runtime-automation/ && git commit -m "Update playbooks" && git push
+
+# 3. Restart the showroom pod (Podman container on bastion restarts too)
+oc rollout restart deployment/showroom -n showroom-NAMESPACE
+# OR for RHEL VM labs: restart the Podman container on bastion
+# ssh bastion "cd /opt/showroom && podman-compose restart runner"
+
+# 4. Test solve — streams live Ansible output
+curl -N https://showroom-GUID.apps.CLUSTER.example.com/stream/solve/module-01
+
+# 5. Test validate — streams pass/fail with fix instructions per task
+curl -N https://showroom-GUID.apps.CLUSTER.example.com/stream/validate/module-01
+----
+
+Each curl streams Ansible output live. `validation_check` lines show fix hints on failure.
+The runner SSHes from bastion to node via `/app/.ssh/config` and `/app/.ssh/id_rsa`.
+
+=== No SA Required — RHEL VM
+
+RHEL labs use `vm_workload_runtime_automation` (not `ocp4_workload_runtime_automation_k8s`).
+No `zt-runner` SA — the runner is a Podman container on the bastion using SSH keys.
+No `k8s_kubeconfig` is injected. Playbooks use SSH to reach targets.
+
+=== Buttons (development only)
+
+++++
+<div class="solve-button-placeholder" data-module="module-01"></div>
+++++
+
+++++
+<div class="validate-button-placeholder" data-module="module-01"></div>
+++++
+
+When a runner is deployed and your showroom is running, the buttons look like this:
+
+image::solve-validate-buttons.png[Solve and Validate buttons,700]
+
+NOTE: The divs above are invisible in this page — `inject-buttons.js` renders them into the *Solve* and *Validate* buttons at runtime.
+
+Copy this pattern into any module page in your showroom (replace `module-01` with your module name):
+
+[source,asciidoc]
+----
+\++++
+<div class="solve-button-placeholder" data-module="module-01"></div>
+\++++
+
+\++++
+<div class="validate-button-placeholder" data-module="module-01"></div>
+\++++
+----
+

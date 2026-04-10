@@ -1,9 +1,11 @@
 ---
-type: showroom
+# ui-config.yml — Showroom UI Configuration
+# Tab url must match the send-to-* role used in .adoc code blocks.
+# OCP nginx: tab urls need trailing slash e.g. /terminal/
+# RHEL Traefik: no trailing slash needed.
 
-# Set the left column width to 30%
-default_width: 30
-# Persist the URL state so browser refresh doesn't reset the UI
+type: showroom
+default_width: 35
 persist_url_state: true
 
 view_switcher:
@@ -11,23 +13,49 @@ view_switcher:
   default_mode: split
 
 tabs:
-  # OCP Console
+
+  # ── OCP TENANT (single terminal) ──────────────────────────────────────────
+  # role="send-to-wetty"
+  # - name: Terminal
+  #   url: /wetty
+  #   type: terminal
+
+  # ── OCP TENANT + CONSOLE ──────────────────────────────────────────────────
+  # role="send-to-wetty" | ${DOMAIN} substituted from showroom-userdata CM
+  # - name: Terminal
+  #   url: /wetty
+  #   type: terminal
   # - name: OCP Console
   #   url: 'https://console-openshift-console.${DOMAIN}'
+  #   external: false
 
-  # Single terminal
-  # - name: Bastion
-  #   path: /wetty
-  #   port: 443
+  # ── OCP DEDICATED (terminal container, no wetty) ──────────────────────────
+  # AgV: terminal_type: showroom → serves at /terminal/
+  # role="send-to-terminal"  |  trailing slash REQUIRED for nginx
+  # - name: Terminal
+  #   url: /terminal/
+  #   type: terminal
+  # - name: OCP Console
+  #   url: '{openshift_cluster_console_url}'
+  #   external: false
 
-  # Vertical split terminals
-  # - name: Bastion
-  #   path: /wetty
-  #   port: 443
-  #   secondary_name: Bastion
-  #   secondary_path: /wetty
-  #   secondary_port: 443
+  # ── RHEL VM (bastion + node) ───────────────────────────────────────────────
+  # vm_workload_showroom: bastion=/wetty  node=/terminal/
+  # role="send-to-wetty" for bastion | role="send-to-terminal" for node
+  # - name: Terminal (Bastion)
+  #   url: /wetty
+  #   type: terminal
+  # - name: Terminal (Node)
+  #   url: /terminal/
+  #   type: terminal
 
-  # External page
-  - name: Llamastack Docs
-    url: 'https://llama-stack.readthedocs.io/en/latest/'
+  # ── TTYD (Tyrell's setup) ─────────────────────────────────────────────────
+  # role="send-to-terminal"  |  execute-listener.js auto-injected by buttons.js
+  # - name: Terminal
+  #   url: /terminal/
+  #   type: terminal
+
+  # Placeholder — replace with your lab's tab config above
+  - name: Example Docs
+    url: 'https://docs.redhat.com'
+    external: false

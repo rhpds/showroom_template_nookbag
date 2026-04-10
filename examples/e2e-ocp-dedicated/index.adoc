@@ -1,0 +1,62 @@
+= OCP Dedicated + Bastion — E2E Testing Example
+
+Each student gets a dedicated OCP cluster with cluster-admin access and an SSH bastion host. The runner uses a cluster-admin SA and can SSH to the bastion.
+
+== Setup — Copy 3 Files Into Your Showroom
+
+[source,sh]
+----
+git clone https://github.com/rhpds/showroom_template_nookbag.git /tmp/ref-showroom
+cd /tmp/ref-showroom && git checkout e2e-template
+cd ~/path/to/YOUR-SHOWROOM-REPO
+
+mkdir -p content/supplemental-ui/js content/supplemental-ui/css content/lib
+cp /tmp/ref-showroom/content/supplemental-ui/js/buttons.js      content/supplemental-ui/js/
+cp /tmp/ref-showroom/content/supplemental-ui/css/site-extra.css content/supplemental-ui/css/
+cp /tmp/ref-showroom/content/lib/inject-buttons.js              content/lib/
+----
+
+Register the Antora extension in `site.yml`:
+
+[source,yaml]
+----
+antora:
+  extensions:
+    - require: ./content/lib/dev-mode.js
+      enabled: false
+    - require: ./content/lib/inject-buttons.js
+----
+
+
+== Send-To Terminal
+
+Tab URL in `ui-config.yml`: `/terminal/`
+
+Use `role="send-to-terminal"  (terminal tab at /terminal/)` on code blocks.
+
+== ServiceAccount
+
+SA *must* be cluster-admin. Set in AgV:
+`ocp4_workload_runtime_automation_k8s_cluster_admin: true`
+`ocp4_workload_runtime_automation_k8s_openshift_api_url: "{{ openshift_api_url }}"`
+`ocp4_workload_runtime_automation_k8s_openshift_api_token: "{{ openshift_cluster_admin_token }}"`
+
+== What Is Included
+
+* `module-01-solve-send-to-example.adoc` — send-to code blocks, solve/validate placeholders, developer workflow with curl commands
+* `module-02-agv.adoc` — AgnosticV settings for this lab type
+* `runtime-automation/module-01/` and `module-02/` — example solve.yml and validate.yml
+* `conclusion.adoc` — wrap-up and reference repos
+
+== What the Buttons Look Like
+
+image::solve-validate-buttons.png[Solve and Validate buttons in the showroom UI,700]
+
+The ▶ button on each code block sends the command to the terminal tab.
+The *Solve* and *Validate* buttons appear at the bottom of each module page.
+
+== Note on Solve/Validate at Summit
+
+NOTE: Solve and Validate buttons are for *development only* (demos, internal workshops).
+At Summit/production events, Demolition or the load test Ansible role calls
+`/stream/solve` and `/stream/validate` automatically — *buttons are not added to Summit lab modules*.

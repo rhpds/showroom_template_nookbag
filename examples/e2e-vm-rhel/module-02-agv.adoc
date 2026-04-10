@@ -1,0 +1,92 @@
+= Module 2: AgnosticV Configuration (RHEL VM)
+
+Add the following settings to your catalog item's `common.yaml`.
+RHEL VM labs use `vm_workload_showroom` (not `ocp4_workload_showroom`) and
+`post_software_final_workloads` with a `bastions:` key.
+
+[source,yaml]
+----
+tag: main   # override in dev.yaml with branch name, prod.yaml with release tag
+
+requirements_content:
+  collections:
+    - name: https://github.com/agnosticd/showroom.git
+      type: git
+      version: v1.6.6     # see note below
+    - name: https://github.com/agnosticd/core_workloads.git
+      type: git
+      version: "{{ tag }}"
+    - name: https://github.com/agnosticd/cloud_vm_workloads.git
+      type: git
+      version: "{{ tag }}"
+    - name: https://github.com/rhpds/rhpds-ftl.git
+      type: git
+      version: "{{ tag }}"
+
+----
+
+IMPORTANT: Use *agnosticd/showroom version v1.6.6 or later*.
+v1.6.6 adds the runtime automation variables required for the zt-runner sidecar.
+Earlier versions silently ignore these vars and the runner will not be deployed.
+
+[source,yaml]
+----
+# vm_workload_showroom settings
+showroom_content_git_repo: https://github.com/YOUR-ORG/YOUR-SHOWROOM.git
+showroom_content_git_repo_ref: main
+showroom_wetty_image: "quay.io/rhpds/wetty:v3.0"   # required for send-to-wetty
+
+# E2E runtime automation — runner as Podman container on the bastion
+showroom_ansible_runner_api: true
+showroom_ansible_runner_image: quay.io/rhpds/zt-runner
+showroom_ansible_runner_image_tag: v2.4.2
+showroom_ansible_runner_path: "/stream"
+
+# Workloads — load test added conditionally via run_e2e_load_test parameter
+post_software_final_workloads:
+  localhost:
+    - agnosticd.cloud_vm_workloads.agnosticv_userdata_import
+  bastions: >-
+    {{
+      [
+        'agnosticd.showroom.vm_workload_showroom',
+        'rhpds.ftl.vm_workload_runtime_automation'
+      ] +
+      (
+        ['rhpds.ftl.vm_runtime_automation_load_test']
+        if run_e2e_load_test | default(false) | bool
+        else []
+      )
+    }}
+----
+
+Add a catalog parameter so the load test can be toggled at order time:
+
+[source,yaml]
+----
+__meta__:
+  catalog:
+    parameters:
+    - name: run_e2e_load_test
+      description: "Run E2E load test after provisioning — triggers solve and validate on all modules"
+      formLabel: "Run E2E Load Test"
+      openAPIV3Schema:
+        type: boolean
+        default: false
+----
+
+NOTE: The `vm_workload_runtime_automation` workload mounts the SSH private key at
+`/app/.ssh/id_rsa` and writes `/app/.ssh/config` with host aliases for `node` and
+`bastion` — so playbooks can use these names directly without IP lookups.
+There is no `k8s_kubeconfig` or `student_ns` in the RHEL VM pattern.
+
+== Load Test Role
+
+`vm_runtime_automation_load_test` calls `/stream/solve` then `/stream/validate` for
+every module at provision time and fails the provision if any validation fails.
+This is what runs at Summit — students never see the Solve/Validate buttons.
+
+== Working Example
+
+See the actual test catalog for this pattern in AgnosticV:
+https://github.com/rhpds/agnosticv/tree/master/tests/zt-rhel-grading[tests/zt-rhel-grading]

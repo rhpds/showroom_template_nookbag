@@ -1,0 +1,31 @@
+---
+# SOLVE — OCP Dedicated, Module 2
+# SSH to bastion and run a shell script via ansible.builtin.script
+# bastion_user | default('lab-user') — never student_user (empty for dedicated)
+
+- name: Build SSH inventory
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - ansible.builtin.add_host:
+        name: bastion
+        ansible_host: "{{ bastion_host }}"
+        ansible_port: "{{ bastion_port | default(22) }}"
+        ansible_user: "{{ bastion_user | default('lab-user') }}"
+        ansible_password: "{{ bastion_password }}"
+        ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+
+- name: Module 2 Solve — run script on bastion
+  hosts: bastion
+  gather_facts: false
+  tasks:
+    # ansible.builtin.script copies the .sh from the runner to bastion and runs it
+    # playbook_dir points to the directory containing this solve.yml
+    - name: Run solve script on bastion
+      ansible.builtin.script:
+        executable: /bin/bash
+        cmd: "{{ playbook_dir }}/solve-module2.sh"
+      register: r_solve
+
+    - ansible.builtin.debug:
+        msg: "{{ r_solve.stdout }}"
