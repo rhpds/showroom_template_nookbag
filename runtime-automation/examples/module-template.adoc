@@ -7,7 +7,7 @@ Brief description of what the student will do.
 // OCP tenant/dedicated (wetty): role="send-to-wetty"
 // OCP dedicated (terminal):     role="send-to-terminal"
 // RHEL bastion:                  role="send-to-wetty"
-// RHEL node:                     role="send-to-terminal2"
+// RHEL node:                     role="send-to-terminal"
 // Add subs="attributes+" if code block uses {openshift_api_server_url} etc.
 
 == Your Task

@@ -40,13 +40,13 @@ tabs:
   #   external: false
 
   # ── RHEL VM (bastion + node) ───────────────────────────────────────────────
-  # vm_workload_showroom: bastion=/wetty  node=/terminal2
-  # role="send-to-wetty" for bastion | role="send-to-terminal2" for node
+  # vm_workload_showroom: bastion=/wetty  node=/terminal/
+  # role="send-to-wetty" for bastion | role="send-to-terminal" for node
   # - name: Terminal (Bastion)
   #   url: /wetty
   #   type: terminal
   # - name: Terminal (Node)
-  #   url: /terminal2
+  #   url: /terminal/
   #   type: terminal
 
   # ── TTYD (Tyrell's setup) ─────────────────────────────────────────────────
