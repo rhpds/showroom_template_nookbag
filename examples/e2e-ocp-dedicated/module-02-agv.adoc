@@ -4,13 +4,9 @@ Add the following settings to your catalog item's `common.yaml`.
 
 [source,yaml]
 ----
-# Showroom deployer chart
 ocp4_workload_showroom_content_git_repo: https://github.com/YOUR-ORG/YOUR-SHOWROOM.git
 ocp4_workload_showroom_content_git_repo_ref: main
 ocp4_workload_showroom_content_antora_playbook: site.yml
-ocp4_workload_showroom_chart_package_url: https://rhpds.github.io/showroom-deployer
-ocp4_workload_showroom_deployer_chart_name: showroom-single-pod
-ocp4_workload_showroom_deployer_chart_version: "2.1.4"
 
 # Terminal tab — showroom type gives a full /terminal/ tab (oc pre-configured)
 ocp4_workload_showroom_terminal_type: showroom
