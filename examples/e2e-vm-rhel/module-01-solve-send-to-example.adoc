@@ -30,6 +30,85 @@ mkdir -p /home/lab-user/myproject && echo "# My Project" > /home/lab-user/myproj
 ls /home/lab-user/myproject/
 ----
 
+== How Validation Works
+
+RHEL VM validation uses SSH via `/app/.ssh/config` and `/app/.ssh/id_rsa` (no kubeconfig).
+The runner uses `add_host` to define targets, then delegates tasks across hosts:
+
+[source,yaml]
+----
+---
+# validate.yml — RHEL VM: check files on node and bastion via SSH
+- name: Add SSH targets
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Add node to inventory
+      ansible.builtin.add_host:
+        name: node
+        ansible_user: lab-user
+        ansible_ssh_private_key_file: /app/.ssh/id_rsa
+        ansible_ssh_common_args: "-F /app/.ssh/config"
+
+    - name: Add bastion to inventory
+      ansible.builtin.add_host:
+        name: bastion
+        ansible_user: lab-user
+        ansible_ssh_private_key_file: /app/.ssh/id_rsa
+        ansible_ssh_common_args: "-F /app/.ssh/config"
+
+- name: Check tasks on node
+  hosts: node
+  gather_facts: false
+  tasks:
+    - name: Check myproject directory exists
+      ansible.builtin.stat:
+        path: /home/lab-user/myproject
+      register: r_dir
+
+    - name: Check README.md exists
+      ansible.builtin.stat:
+        path: /home/lab-user/myproject/README.md
+      register: r_readme
+
+- name: Check task on bastion and validate
+  hosts: bastion
+  gather_facts: false
+  tasks:
+    - name: Check lab-notes.txt on bastion
+      ansible.builtin.stat:
+        path: /home/lab-user/lab-notes.txt
+      register: r_notes
+
+    - name: Build task summary
+      ansible.builtin.set_fact:
+        _task1_ok: "{{ hostvars['node']['r_dir'].stat.exists and hostvars['node']['r_dir'].stat.isdir }}"
+        _task2_ok: "{{ hostvars['node']['r_readme'].stat.exists }}"
+        _task3_ok: "{{ r_notes.stat.exists }}"
+
+    - name: Validate all tasks
+      validation_check:
+        check: "{{ _task1_ok and _task2_ok and _task3_ok }}"
+        pass_msg: |
+          ✅ Task 1: /home/lab-user/myproject exists on node
+          ✅ Task 2: README.md exists in myproject on node
+          ✅ Task 3: lab-notes.txt exists on bastion
+        error_msg: |
+          {{ '✅' if _task1_ok else '❌' }} Task 1: /home/lab-user/myproject on node
+          {{ '✅' if _task2_ok else '❌' }} Task 2: README.md on node
+          {{ '✅' if _task3_ok else '❌' }} Task 3: lab-notes.txt on bastion
+
+          Fix:
+          {% if not _task1_ok %}  ssh node "mkdir -p /home/lab-user/myproject"
+          {% endif %}{% if not _task2_ok %}  ssh node "echo '# My Project' > /home/lab-user/myproject/README.md"
+          {% endif %}{% if not _task3_ok %}  touch /home/lab-user/lab-notes.txt
+          {% endif %}
+----
+
+Key RHEL pattern: `hostvars['node']['r_dir']` — access facts from other hosts in the play.
+The `node` and `bastion` host names come from `/app/.ssh/config` written by the runner workload.
+
 == Solve and Validate
 
 NOTE: Solve and Validate buttons below are for *development and debugging only*.

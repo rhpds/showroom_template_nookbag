@@ -3,6 +3,26 @@
 Your cluster is pre-configured with cluster-admin access.
 Use the embedded terminal to run `oc` commands directly.
 
+== Credentials
+
+[cols="1,2"]
+|===
+| OCP API URL | `{openshift_api_server_url}`
+| Username    | `{openshift_cluster_admin_username}`
+| Password    | `{openshift_cluster_admin_password}`
+| Console     | `{openshift_cluster_console_url}`
+|===
+
+== Login
+
+[source,sh,role="send-to-terminal",subs="attributes+"]
+----
+oc login {openshift_api_server_url} \
+  -u {openshift_cluster_admin_username} \
+  -p {openshift_cluster_admin_password} \
+  --insecure-skip-tls-verify
+----
+
 == Task 1: Create the Project
 
 [source,sh,role="send-to-terminal"]
@@ -23,6 +43,63 @@ oc adm policy add-role-to-user admin developer -n demo-project
 ----
 oc get rolebinding developer-admin -n demo-project
 ----
+
+== How Validation Works
+
+The `validate.yml` playbook checks namespace and RBAC using `validation_check`:
+
+[source,yaml]
+----
+---
+# validate.yml — OCP Dedicated: check namespace and developer access
+- name: Module 1 Validation — namespace and developer access
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+
+    - name: Check namespace exists
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ k8s_kubeconfig | default(omit) }}"
+        validate_certs: false
+        api_version: v1
+        kind: Namespace
+        name: demo-project
+      register: r_ns
+
+    - name: Check developer RoleBinding
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ k8s_kubeconfig | default(omit) }}"
+        validate_certs: false
+        api_version: rbac.authorization.k8s.io/v1
+        kind: RoleBinding
+        name: developer-admin
+        namespace: demo-project
+      register: r_rb
+      ignore_errors: true
+
+    - name: Build task summary
+      ansible.builtin.set_fact:
+        _task1_ok: "{{ r_ns.resources | length > 0 }}"
+        _task2_ok: "{{ r_rb.resources | default([]) | length > 0 }}"
+
+    - name: Validate
+      validation_check:
+        check: "{{ _task1_ok and _task2_ok }}"
+        pass_msg: |
+          ✅ Task 1: Namespace demo-project exists
+          ✅ Task 2: developer user has admin access
+        error_msg: |
+          {{ '✅' if _task1_ok else '❌' }} Task 1: Namespace demo-project
+          {{ '✅' if _task2_ok else '❌' }} Task 2: developer-admin RoleBinding
+
+          Fix:
+            oc new-project demo-project
+            oc adm policy add-role-to-user admin developer -n demo-project
+----
+
+NOTE: For dedicated clusters, `student_ns` is empty — use a fixed namespace like `demo-project`
+with `| default('demo-project', true) | trim` fallback in your playbooks.
 
 == Solve and Validate
 
