@@ -146,7 +146,11 @@ This works for both tenant and dedicated labs.
 <div class="validate-button-placeholder" data-module="module-01"></div>
 ++++
 
-NOTE: The divs above are invisible — `inject-buttons.js` renders them into the *Solve* and *Validate* buttons at runtime. When a runner is deployed and your showroom is running, the buttons appear here.
+When a runner is deployed and your showroom is running, the buttons look like this:
+
+image::solve-validate-buttons.png[Solve and Validate buttons,700]
+
+NOTE: The divs above are invisible in this page — `inject-buttons.js` renders them into the *Solve* and *Validate* buttons at runtime.
 
 Copy this pattern into any module page in your showroom (replace `module-01` with your module name):
 
