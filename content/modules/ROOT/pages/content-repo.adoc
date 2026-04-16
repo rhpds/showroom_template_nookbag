@@ -276,6 +276,88 @@ a ->>+ b : Hello.
 b -->>- a : Hi, there.
 ....
 
+=== Tabs
+
+The https://github.com/asciidoctor/asciidoctor-tabs[Tabs extension] adds tabbed content blocks to your pages -- useful for showing alternative instructions (e.g. different operating systems, tools, or approaches) without cluttering the page.
+
+The https://www.npmjs.com/package/@andrew-jones/antora-tabs-extension[`@andrew-jones/antora-tabs-extension`] wraps the upstream `@asciidoctor/tabs` package and automatically registers the Asciidoctor extension and injects the required CSS and JS assets into the UI.
+No supplemental files or partial overrides are needed.
+
+[source,yaml]
+----
+antora:
+  extensions:
+    - require: '@andrew-jones/antora-tabs-extension' # <1>
+----
+<1> The npm package is pre-installed in the Showroom Antora container image.
+
+Then use `[tabs]` blocks in your AsciiDoc pages:
+
+[source,asciidoc]
+----
+[tabs]
+====
+Linux::
++
+[source,bash]
+ sudo dnf install -y podman
+
+macOS::
++
+[source,bash]
+ brew install podman
+
+Windows::
++
+[source,powershell]
+ winget install RedHat.Podman
+====
+----
+
+The block above renders as:
+
+[tabs]
+====
+Linux::
++
+[source,bash]
+----
+sudo dnf install -y podman
+----
+
+macOS::
++
+[source,bash]
+----
+brew install podman
+----
+
+Windows::
++
+[source,powershell]
+----
+winget install RedHat.Podman
+----
+====
+
+Tabs with the same labels are synchronised across the page -- clicking "macOS" in one block selects "macOS" everywhere.
+
+=== Using Multiple Extensions
+
+Register all extensions together in `site.yml`:
+
+[source,yaml]
+----
+antora:
+  extensions:
+    - require: '@sntke/antora-mermaid-extension'
+      mermaid_library_url: https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs
+      script_stem: header-scripts
+      mermaid_initialize_options:
+        start_on_load: true
+    - require: '@andrew-jones/antora-tabs-extension'
+----
+
 == AsciiDoc Experimental Features (UI Macros)
 
 The `experimental` AsciiDoc attribute unlocks three UI macros for documenting user interactions: **buttons**, **keyboard shortcuts**, and **menu selections**.
