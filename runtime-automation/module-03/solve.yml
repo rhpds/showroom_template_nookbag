@@ -1,0 +1,27 @@
+---
+- name: "Module 3 Solve — verify .ssh read/write inside runtime container"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Write a test file to /app/.ssh
+      ansible.builtin.copy:
+        content: "ssh-mount-write-test\n"
+        dest: /app/.ssh/.zt-runner-write-test
+        mode: "0600"
+
+    - name: Read the test file back
+      ansible.builtin.slurp:
+        src: /app/.ssh/.zt-runner-write-test
+      register: r_read_back
+
+    - name: Verify round-trip content
+      ansible.builtin.assert:
+        that:
+          - (r_read_back.content | b64decode) == "ssh-mount-write-test\n"
+        fail_msg: "Write succeeded but read-back content did not match"
+
+    - name: Clean up test file
+      ansible.builtin.file:
+        path: /app/.ssh/.zt-runner-write-test
+        state: absent

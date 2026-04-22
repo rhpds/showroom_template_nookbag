@@ -1,0 +1,53 @@
+---
+- name: "Module 3 Validation — check runtime container can access .ssh mount"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Stat the .ssh mount point
+      ansible.builtin.stat:
+        path: /app/.ssh
+      register: r_ssh_dir
+
+    - name: List .ssh contents
+      ansible.builtin.find:
+        paths: /app/.ssh
+        file_type: any
+        hidden: true
+      register: r_ssh_files
+
+    - name: Attempt to write a temporary file
+      ansible.builtin.copy:
+        content: "write-test\n"
+        dest: /app/.ssh/.zt-runner-validate-test
+        mode: "0600"
+      register: r_write
+      ignore_errors: true
+
+    - name: Clean up temporary file
+      ansible.builtin.file:
+        path: /app/.ssh/.zt-runner-validate-test
+        state: absent
+      when: r_write is succeeded
+
+    - name: Build result flags
+      ansible.builtin.set_fact:
+        _dir_ok: "{{ r_ssh_dir.stat.exists | default(false) and r_ssh_dir.stat.isdir | default(false) }}"
+        _read_ok: "{{ r_ssh_files is succeeded }}"
+        _write_ok: "{{ r_write is succeeded }}"
+        _file_list: "{{ r_ssh_files.files | default([]) | map(attribute='path') | map('basename') | sort | join(', ') }}"
+
+    - name: Validate .ssh access
+      validation_check:
+        check: "{{ _dir_ok and _read_ok and _write_ok }}"
+        pass_msg: |
+          ✅ /app/.ssh exists and is a directory
+          ✅ Read access OK — contents: {{ _file_list | default('(empty)') }}
+          ✅ Write access OK
+        error_msg: |
+          {{ '✅' if _dir_ok else '❌' }} /app/.ssh exists and is a directory
+          {{ '✅' if _read_ok else '❌' }} Read access (ls)
+          {{ '✅' if _write_ok else '❌' }} Write access
+
+          If read/write fails, the podman unshare chown step may not have
+          remapped .ssh ownership for uid 1001 (the zt-runner container user).
