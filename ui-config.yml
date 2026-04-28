@@ -29,5 +29,5 @@ tabs:
   #   secondary_port: 443
 
   # External page
-  - name: Llamastack Docs
-    url: 'https://llama-stack.readthedocs.io/en/latest/'
+  - name: Antora
+    url: 'https://antora.org'
