@@ -1,0 +1,475 @@
+= Marketplaces and Plugins
+:navtitle: 4. Marketplaces and Plugins
+
+You now have two skills living in `~/.claude/skills/`: `abstract-writer` and `conf-finder`. They work well, but they're just loose files. In this module, you'll bundle them with a third skill (`trip-report`) into a **plugin** and distribute it via a **marketplace**.
+
+== From Skills to Plugins
+
+Right now, `abstract-writer` and `conf-finder` live as independent skills in your `~/.claude/skills/` directory. They're related — both serve the conference-speaking workflow — but Claude Code sees them as unrelated:
+
+- They have no shared identity
+- You can't distribute them as a set
+- There's no versioning
+- Name collisions are possible if someone installs another `abstract-writer` skill
+
+The solution is to bundle them into a **plugin** and distribute via a **marketplace**.
+
+=== Key Terms
+
+**Plugin**:: A collection of related skills (and optionally agents, commands, hooks) packaged as a directory with a `.claude-plugin/plugin.json` manifest. Plugins provide namespace isolation: skills are invoked as `/plugin-name:skill-name`.
+
+**Marketplace**:: A git repository containing one or more plugins, with a `marketplace.json` catalog file at the root. Claude Code can install plugins from any marketplace you add — Anthropic's official marketplace or your own.
+
+== Marketplace Anatomy
+
+Let's examine the structure of a marketplace using Anthropic's official `claude-plugins-official` repository as a reference.
+
+A marketplace has:
+
+- **`marketplace.json`** at the repository root — lists available plugins
+- **Plugin directories** under `plugins/`
+- Each plugin has **`.claude-plugin/plugin.json`** for metadata
+- Skills live under **`plugins/<plugin-name>/skills/<skill-name>/SKILL.md`**
+
+When you install a plugin from a marketplace, skills are namespaced: `plugin-name:skill-name`. For example, `/conference-toolkit:abstract-writer`.
+
+=== marketplace.json Format
+
+The `marketplace.json` file catalogs all plugins available in the repository:
+
+[source,json]
+----
+{
+  "name": "conference-toolkit-marketplace",
+  "owner": {
+    "name": "Your Name"
+  },
+  "plugins": [
+    {
+      "name": "conference-toolkit",
+      "source": "./plugins/conference-toolkit",
+      "description": "Skills for conference speakers: abstract writing, conference discovery, and trip reports"
+    }
+  ]
+}
+----
+
+=== plugin.json Format
+
+Each plugin has a manifest at `.claude-plugin/plugin.json`:
+
+[source,json]
+----
+{
+  "name": "conference-toolkit",
+  "description": "A toolkit for conference speakers",
+  "version": "1.0.0"
+}
+----
+
+The `version` field is optional but recommended. When present, Claude Code only updates the plugin when you bump the version.
+
+=== Directory Structure
+
+Here's the complete structure for our `conference-toolkit` marketplace:
+
+[source,text]
+----
+conference-toolkit/
+├── marketplace.json
+├── plugins/
+│   └── conference-toolkit/
+│       ├── .claude-plugin/
+│       │   └── plugin.json
+│       └── skills/
+│           ├── abstract-writer/
+│           │   ├── SKILL.md
+│           │   └── templates/
+│           ├── conf-finder/
+│           │   └── SKILL.md
+│           └── trip-report/
+│               ├── SKILL.md
+│               └── scripts/
+│                   └── format-report.py
+----
+
+== Building trip-report
+
+Before packaging our existing skills, we'll create a third skill: `trip-report`. This skill generates structured post-conference trip reports.
+
+=== Create the Skill Directory
+
+[source,bash,role="execute"]
+----
+mkdir -p ~/.claude/skills/trip-report/scripts
+----
+
+=== Write SKILL.md
+
+Create `~/.claude/skills/trip-report/SKILL.md`:
+
+[source,markdown]
+----
+---
+name: trip-report
+description: Generate structured post-conference trip reports with executive summary, session notes, and action items
+---
+
+# Trip Report Generator
+
+Generate a comprehensive post-conference trip report.
+
+## Input Requirements
+
+Accept from the user:
+- Conference name
+- Conference dates
+- Location
+- Your name (as attendee)
+- List of sessions attended (titles and brief notes)
+- Overall impressions
+
+## Report Structure
+
+Generate a markdown report with:
+
+1. **Header**
+   - Conference name, dates, location
+   - Attendee name
+   - Report date
+
+2. **Executive Summary**
+   - 2-3 paragraphs summarizing the conference value
+   - Key themes observed
+   - Overall recommendation
+
+3. **Sessions Attended**
+   - For each session:
+     - Session title
+     - Speaker(s)
+     - 3-5 key takeaways
+     - Relevance to our work
+
+4. **Action Items**
+   - Specific follow-up tasks
+   - Formatted as checkboxes
+   - Include owner if mentioned
+
+5. **Recommendations**
+   - Should we attend next year?
+   - Who else should attend?
+   - Related conferences to consider
+
+## Formatting
+
+After generating the report, pipe it through the formatting script:
+
+```bash
+python ~/.claude/skills/trip-report/scripts/format-report.py
+```
+
+This adds consistent formatting, timestamps, and checkbox rendering.
+
+## Output
+
+Return the formatted report ready for sharing with stakeholders.
+----
+
+=== Write the Formatting Script
+
+Create `~/.claude/skills/trip-report/scripts/format-report.py`:
+
+[source,python]
+----
+#!/usr/bin/env python3
+"""
+Format conference trip reports with consistent styling.
+Reads markdown from stdin, outputs formatted version to stdout.
+"""
+
+import sys
+from datetime import datetime
+import re
+
+def format_report(content):
+    """Format a trip report with standard styling."""
+    lines = content.strip().split('\n')
+    output = []
+
+    # Add timestamp
+    now = datetime.now().strftime('%Y-%m-%d')
+    output.append(f'<!-- Generated: {now} -->')
+    output.append('')
+
+    # Process content
+    in_action_items = False
+    for line in lines:
+        # Detect action items section
+        if line.startswith('## Action Items') or line.startswith('### Action Items'):
+            in_action_items = True
+            output.append(line)
+            continue
+
+        # End of action items section
+        if in_action_items and line.startswith('#'):
+            in_action_items = False
+
+        # Convert action items to checkboxes
+        if in_action_items and line.strip().startswith('-'):
+            # Convert "- Task" to "- [ ] Task"
+            formatted = re.sub(r'^(\s*)-\s+', r'\1- [ ] ', line)
+            output.append(formatted)
+        else:
+            output.append(line)
+
+    return '\n'.join(output)
+
+def main():
+    """Read from stdin, format, write to stdout."""
+    content = sys.stdin.read()
+    formatted = format_report(content)
+    print(formatted)
+
+if __name__ == '__main__':
+    main()
+----
+
+Make it executable:
+
+[source,bash,role="execute"]
+----
+chmod +x ~/.claude/skills/trip-report/scripts/format-report.py
+----
+
+=== Test the Skill
+
+Try it out:
+
+[source,text]
+----
+/trip-report I attended DevConf 2025 in Boston from April 15-17. Sessions: "Observability at Scale" by Jane Doe (key takeaway: use OpenTelemetry), "Kubernetes Security" by John Smith (takeaway: Pod Security Standards are critical). Overall: excellent technical depth, recommend for platform engineers.
+----
+
+Claude should generate a structured report and format it via the Python script.
+
+== Creating the conference-toolkit Marketplace
+
+Now we'll package all three skills into a marketplace.
+
+=== Create Directory Structure
+
+[source,bash,role="execute"]
+----
+mkdir -p ~/conference-toolkit/plugins/conference-toolkit/.claude-plugin
+mkdir -p ~/conference-toolkit/plugins/conference-toolkit/skills
+----
+
+=== Create marketplace.json
+
+Create `~/conference-toolkit/marketplace.json`:
+
+[source,json]
+----
+{
+  "name": "conference-toolkit-marketplace",
+  "owner": {
+    "name": "Your Name"
+  },
+  "plugins": [
+    {
+      "name": "conference-toolkit",
+      "source": "./plugins/conference-toolkit",
+      "description": "Skills for conference speakers: abstract writing, conference discovery, and trip reports"
+    }
+  ]
+}
+----
+
+=== Create plugin.json
+
+Create `~/conference-toolkit/plugins/conference-toolkit/.claude-plugin/plugin.json`:
+
+[source,json]
+----
+{
+  "name": "conference-toolkit",
+  "description": "A toolkit for conference speakers: write abstracts, discover conferences, generate trip reports",
+  "version": "1.0.0",
+  "author": "Your Name",
+  "repository": "https://github.com/your-username/conference-toolkit"
+}
+----
+
+=== Copy Skills
+
+[source,bash,role="execute"]
+----
+cp -r ~/.claude/skills/abstract-writer ~/conference-toolkit/plugins/conference-toolkit/skills/
+cp -r ~/.claude/skills/conf-finder ~/conference-toolkit/plugins/conference-toolkit/skills/
+cp -r ~/.claude/skills/trip-report ~/conference-toolkit/plugins/conference-toolkit/skills/
+----
+
+=== Initialize Git Repository
+
+[source,bash,role="execute"]
+----
+cd ~/conference-toolkit
+git init
+git add -A
+git commit -m "Initial conference-toolkit marketplace"
+----
+
+=== Push to GitHub
+
+If you have the `gh` CLI:
+
+[source,bash,role="execute"]
+----
+gh repo create conference-toolkit --public --source=. --remote=origin --push
+----
+
+Or manually:
+
+1. Create a new repository on GitHub named `conference-toolkit`
+2. Add the remote and push:
+
+[source,bash,role="execute"]
+----
+git remote add origin https://github.com/your-username/conference-toolkit.git
+git branch -M main
+git push -u origin main
+----
+
+Your marketplace is now live at `https://github.com/your-username/conference-toolkit`.
+
+== Installing and Verifying
+
+Let's install the plugin from your marketplace and verify namespaced access.
+
+=== Remove Local Skills
+
+First, remove the loose skills from `~/.claude/skills/`:
+
+[source,bash,role="execute"]
+----
+rm -rf ~/.claude/skills/abstract-writer
+rm -rf ~/.claude/skills/conf-finder
+rm -rf ~/.claude/skills/trip-report
+----
+
+=== Add the Marketplace
+
+For testing with the local path:
+
+[source,bash,role="execute"]
+----
+claude plugin marketplace add ~/conference-toolkit
+----
+
+Or from GitHub (recommended):
+
+[source,bash,role="execute"]
+----
+claude plugin marketplace add your-username/conference-toolkit
+----
+
+=== Install the Plugin
+
+[source,bash,role="execute"]
+----
+claude plugin install conference-toolkit@conference-toolkit-marketplace
+----
+
+This installs the `conference-toolkit` plugin from the `conference-toolkit-marketplace`.
+
+=== Verify Namespaced Access
+
+Skills are now namespaced. Try:
+
+[source,text]
+----
+/conference-toolkit:abstract-writer Write an abstract about observability for KubeCon
+----
+
+[source,text]
+----
+/conference-toolkit:conf-finder Find upcoming Kubernetes conferences
+----
+
+[source,text]
+----
+/conference-toolkit:trip-report Generate a report for KubeCon EU 2025
+----
+
+The `conference-toolkit:` prefix disambiguates these skills from any others with similar names.
+
+== Distribution and Scope
+
+=== Installation Scopes
+
+Claude Code supports three installation scopes:
+
+**`--scope user`** (default):: Installs to `~/.claude/` — available in all Claude Code sessions for your user account.
+
+**`--scope project`**:: Writes marketplace and plugin configuration to `.claude/settings.json` in the current repository. When teammates clone the repo and run Claude Code, they automatically get the plugin.
+
+**`--scope local`**:: Installs only for the current working directory, not persisted.
+
+To install project-scoped:
+
+[source,bash,role="execute"]
+----
+claude plugin marketplace add your-username/conference-toolkit --scope project
+claude plugin install conference-toolkit@conference-toolkit-marketplace --scope project
+----
+
+Now `.claude/settings.json` contains:
+
+[source,json]
+----
+{
+  "marketplaces": [
+    "your-username/conference-toolkit"
+  ],
+  "plugins": [
+    "conference-toolkit@conference-toolkit-marketplace"
+  ]
+}
+----
+
+Teammates who pull this repository and run Claude Code will automatically have access to `/conference-toolkit:*` skills.
+
+=== Versioning
+
+The `version` field in `plugin.json` controls updates. Claude Code only updates installed plugins when you bump the version and users run:
+
+[source,bash,role="execute"]
+----
+claude plugin update conference-toolkit
+----
+
+This allows you to push non-breaking changes without forcing updates.
+
+=== Skill Evolution and Evaluation
+
+An open question: how do you evaluate whether your skills are working as intended? As skills evolve, how do you prevent regressions?
+
+Some approaches:
+
+- **Manual testing:** Invoke skills with known prompts and review outputs
+- **Example-driven:** Maintain a `examples/` directory with test prompts and expected outputs
+- **Automated testing:** Write scripts that invoke skills via `claude` CLI and check outputs
+
+There's no definitive answer yet — skill evaluation is an emerging practice. The key is to establish feedback loops: use your skills regularly, observe where they fall short, and iterate.
+
+== Summary
+
+You've built a complete marketplace with three skills bundled into a plugin:
+
+- **trip-report** generates structured post-conference reports
+- **abstract-writer** and **conf-finder** from previous modules
+- All three packaged as `conference-toolkit` plugin
+- Distributed via GitHub as a marketplace
+- Installed with namespace isolation: `/conference-toolkit:skill-name`
+
+Next, we'll use your marketplace alongside two other skill layers — superpowers and beads — in a real-world workflow.
