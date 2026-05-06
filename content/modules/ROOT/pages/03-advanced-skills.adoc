@@ -1,0 +1,203 @@
+= Advanced Skills with skill-creator
+:navtitle: 3. Advanced Skills with skill-creator
+
+In Module 2, you hand-crafted a skill from scratch.
+That's the best way to understand what skills are and how they work — but it's not the only way to create them.
+In this module, you'll use `skill-creator`, a meta-skill that generates other skills for you.
+
+== The skill-creator Skill
+
+`skill-creator` is what we call a _meta-skill_: a skill whose purpose is to create other skills.
+This demonstrates that skills can be sophisticated tools, not just behavioral tweaks.
+It's also your first encounter with a skill from Anthropic's official marketplace.
+
+Install skill-creator from the official marketplace:
+
+[source,bash,role="execute"]
+----
+claude plugin install skill-creator@claude-plugins-official
+----
+
+The marketplace concept will be explained fully in Module 4.
+For now, know that you've installed a pre-built skill maintained by Anthropic.
+
+After installation, read the skill-creator's own `SKILL.md` to see how a well-crafted skill is structured:
+
+[source,bash,role="execute"]
+----
+cat ~/.claude/plugins/cache/claude-plugins-official/*/skills/skill-creator/SKILL.md
+----
+
+Notice how the skill describes its own purpose, provides clear examples, and sets constraints.
+This is the template that skill-creator itself will follow when generating new skills.
+
+== Generating conf-finder
+
+Now use skill-creator to generate a new skill called `conf-finder`.
+This skill will help identify relevant conferences for a given topic or domain.
+
+Invoke skill-creator with a description:
+
+[source,text]
+----
+> /skill-creator Create a skill called "conf-finder" that helps identify relevant
+  conferences for a given topic or domain. It should search for conferences by
+  topic area, geographic region, and time frame. Output should include conference
+  name, dates, location, CFP deadline, and a relevance note.
+----
+
+skill-creator will generate a new `SKILL.md` file at `~/.claude/skills/conf-finder/SKILL.md`.
+
+Inspect what was generated:
+
+[source,bash,role="execute"]
+----
+cat ~/.claude/skills/conf-finder/SKILL.md
+----
+
+Compare this to your manual work in Module 2.
+What did skill-creator do well?
+What would you change?
+
+Common observations:
+
+* The description might be too broad or too narrow for reliable triggering
+* Body instructions might be generic rather than domain-specific
+* Templates or examples might be missing entirely
+* The overall structure follows skill conventions correctly
+
+skill-creator gives you a solid starting point, but generated skills always need refinement.
+
+== Refining Generated Skills
+
+Let's improve the generated `conf-finder` skill with hands-on refinements.
+
+=== Tighten the Description
+
+The description controls when Claude invokes the skill.
+A vague description leads to missed triggers or false positives.
+
+Before:
+[source,text]
+----
+A skill that helps find conferences
+----
+
+After:
+[source,text]
+----
+Find technology conferences relevant to a specific topic. Use when the user wants
+to discover conferences, find CFP deadlines, or identify speaking opportunities.
+----
+
+The refined version is specific about domain (technology), use cases (discover, find CFPs, identify speaking opportunities), and trigger conditions.
+
+Edit `~/.claude/skills/conf-finder/SKILL.md` and update the description with this more precise version.
+
+=== Add Constraints to the Body
+
+The body tells Claude _how_ to behave when the skill is invoked.
+Generic instructions lead to generic results.
+
+Add these constraints to the body section:
+
+[source,asciidoc]
+----
+When searching for conferences:
+
+- Prioritize conferences with upcoming CFP deadlines
+- Filter by geographic region if the user specifies one
+- Note conference size (regional vs. international) and audience type
+- Include both free and paid events unless the user constrains otherwise
+- Highlight virtual vs. in-person format
+----
+
+These constraints shape Claude's output without requiring code.
+
+=== Add Examples to the Body
+
+Show Claude what good output looks like by including a sample response.
+
+Add this example to the body:
+
+[source,text]
+----
+Example output format:
+
+**KubeCon + CloudNativeCon North America**
+- Dates: November 12-15, 2026
+- Location: Salt Lake City, UT (in-person)
+- CFP Deadline: June 18, 2026
+- Relevance: Major international conference for Kubernetes and cloud-native technologies. 8,000+ attendees. Best for advanced technical talks on CNCF projects.
+
+**DevOpsDays Boston**
+- Dates: September 23-24, 2026
+- Location: Boston, MA (in-person)
+- CFP Deadline: July 1, 2026
+- Relevance: Regional conference for DevOps practitioners. 300-400 attendees. Great for experience reports and local networking.
+----
+
+Examples ground Claude's behavior and ensure consistent output quality.
+
+Save your refined `SKILL.md`.
+
+=== Test the Refined Skill
+
+Test the skill with a prompt:
+
+[source,text]
+----
+> I'm looking for conferences where I could speak about Kubernetes security.
+  I'm based in Europe and prefer events in Q3 or Q4 2026.
+----
+
+Compare Claude's response quality before and after your refinements.
+The refined skill should:
+
+* Filter by region (Europe)
+* Filter by timeframe (Q3/Q4 2026)
+* Note conference size and audience type
+* Highlight CFP deadlines
+* Use the structured format from your example
+
+If the output doesn't match your expectations, iterate on the skill description and body until it does.
+
+== Skill Complexity Spectrum
+
+Skills exist on a complexity spectrum.
+Understanding where a skill falls helps you choose the right approach.
+
+[cols="1,2,2",options="header"]
+|===
+|Level |Description |Example
+
+|Instruction-only
+|Pure `SKILL.md` — behavioral instructions, no supporting files
+|`conf-finder` — tells Claude how to search and format results
+
+|With supporting files
+|`SKILL.md` + templates, reference data, or configuration
+|`abstract-writer` — includes format templates for different talk types
+
+|With executable components
+|`SKILL.md` + Python/bash scripts that Claude can run
+|`trip-report` (Module 4) — includes a formatting script
+|===
+
+Your `abstract-writer` from Module 2 could include supporting files — example abstracts, CFP templates, conference-specific guidelines.
+
+The `conf-finder` you just created is instruction-only, but could be extended with a database of conferences or a script to fetch CFP deadlines from a web API.
+
+Module 4 will introduce `trip-report`, a skill with executable components that demonstrates the full power of the skill system.
+
+== Summary
+
+You've now created a skill using skill-creator and refined it to meet your needs.
+Key takeaways:
+
+* skill-creator accelerates skill creation but generated skills need refinement
+* Descriptions control when a skill triggers — make them specific
+* Body instructions and examples shape output quality
+* Skills range from instruction-only to fully executable tools
+
+Next up: Module 4, where you'll build the third skill (`trip-report`) with executable components, then bundle all three into a distributable marketplace that others can install.
