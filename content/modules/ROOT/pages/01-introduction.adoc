@@ -1,0 +1,155 @@
+= Introduction to Agent Skills
+:navtitle: 1. Introduction to Agent Skills
+
+Welcome to the first module of this course on Claude Code Agent Skills. In this module, you'll learn what agent skills are, how they work, and how to use your first skill from the Claude Code marketplace.
+
+== What are Agent Skills?
+
+Agent skills are reusable instruction sets packaged as `SKILL.md` files that shape how Claude Code behaves. Think of them as specialized knowledge modules that teach Claude how to handle specific tasks, follow particular conventions, or work with certain technologies.
+
+Skills are fundamentally different from other AI customization approaches:
+
+*Skills vs. System Prompts*
+
+System prompts are monolithic instructions baked into an AI application. They set the baseline behavior for every interaction but can't be easily swapped out or combined. Skills, by contrast, are modular and composable — you can mix and match multiple skills in a single session, and different skills can activate for different tasks.
+
+*Skills vs. MCP Servers*
+
+MCP (Model Context Protocol) servers provide *tools* — external capabilities like reading databases, calling APIs, or accessing file systems. Skills provide *behavioral instructions* — they tell Claude *how* to use those tools, what patterns to follow, and what conventions to respect. Think of MCP as expanding what Claude can do; skills define how Claude should do it.
+
+*Skills vs. Projects (Claude.ai)*
+
+Claude.ai's "Projects" feature lets you create custom instruction sets with uploaded knowledge. These are powerful but platform-specific — they only work in the Claude.ai web interface. Skills work in Claude Code CLI, can be version-controlled alongside your codebase, and can be distributed through marketplaces for others to use.
+
+*Brief History*
+
+The agent skills concept evolved from Cursor's `.cursorrules` convention — a single markdown file at the project root that influences Cursor AI's behavior. Claude Code's `SKILL.md` convention builds on this foundation but adds directory-based structure (skills can include templates, scripts, and reference files), multi-scope resolution (global, project, or marketplace), and a plugin ecosystem for sharing skills across the community.
+
+== Where Skills Live
+
+Claude Code resolves skills from three distinct scopes, each serving different use cases:
+
+[cols="1,2,2",options="header"]
+|===
+|Scope |Location |Use when...
+
+|Global (user)
+|`~/.claude/skills/<skill-name>/SKILL.md`
+|You want the skill available in every project you work on
+
+|Project
+|`.claude/skills/<skill-name>/SKILL.md`
+|The skill is specific to this codebase (typically committed to git)
+
+|Plugin/Marketplace
+|Installed via `claude plugin install`
+|The skill comes from a shared collection or official marketplace
+|===
+
+*Precedence Rules*
+
+When multiple skills exist with the same name across different scopes, project-level skills override global skills. Additionally, explicitly triggered skills (using `/skill-name`) take precedence over implicit activation based on context.
+
+This hierarchy gives you fine-grained control: use global skills for your personal coding conventions, project skills for team-wide patterns, and marketplace skills for community best practices.
+
+== Using Your First Skill
+
+Let's walk through installing and using a skill from Anthropic's official marketplace. We'll use the `brand-guidelines` skill as an example — it helps ensure visual design elements align with brand standards.
+
+*Step 1: List Available Marketplaces*
+
+First, see which plugin marketplaces you have access to:
+
+[source,bash,role="execute"]
+----
+claude plugin marketplace list
+----
+
+You should see `claude-plugins-official` among the results — this is Anthropic's curated collection.
+
+*Step 2: Install the Skill*
+
+Install the brand guidelines skill from the official marketplace:
+
+[source,bash,role="execute"]
+----
+claude plugin install brand-guidelines@claude-plugins-official
+----
+
+Claude Code will download the skill and make it available for all your sessions.
+
+*Step 3: Implicit Trigger*
+
+Skills can activate automatically based on context. Try asking a question that relates to brand consistency:
+
+[source,text]
+----
+> review these colors for brand consistency: #FF6B35 and #004E89
+----
+
+Claude will detect that your query involves brand/design elements and automatically engage the `brand-guidelines` skill. The response will reference brand principles, color accessibility standards, and consistency checks — behavior shaped by the skill's instructions.
+
+*Step 4: Explicit Trigger*
+
+You can also invoke skills directly using slash commands:
+
+[source,text]
+----
+> /brand-guidelines check the hero section colors
+----
+
+The explicit trigger guarantees the skill activates regardless of context. This is useful when you want to apply a specific lens to your query, even if the context doesn't naturally suggest it.
+
+*Step 5: Observe the Difference*
+
+Compare these two prompts:
+
+Without the skill:
+[source,text]
+----
+> what do you think of using #FF6B35 for buttons?
+----
+
+With the skill (explicit):
+[source,text]
+----
+> /brand-guidelines what do you think of using #FF6B35 for buttons?
+----
+
+The first might give you general color theory advice. The second will evaluate the choice through a brand lens — checking contrast ratios, consistency with existing palette, accessibility compliance, and alignment with brand values.
+
+*Step 6: Verify Installation*
+
+Confirm the skill is installed by listing your plugins directory:
+
+[source,bash,role="execute"]
+----
+ls ~/.claude/plugins/
+----
+
+You should see a `brand-guidelines` directory containing the skill's files.
+
+[NOTE]
+.Coming from Cursor?
+====
+Cursor uses `.cursorrules` files — a single markdown file at the project root that influences Cursor's AI behavior. Claude Code skills are conceptually similar but more powerful:
+
+* *Directory-based* — a skill can include templates, scripts, and reference files alongside its instructions
+* *Multi-scope* — global, project, or marketplace-distributed
+* *Composable* — multiple skills activate simultaneously without conflicting
+* *Namespaced* — skills from different sources coexist cleanly
+
+If you've been using `.cursorrules`, think of Claude Code skills as `.cursorrules` that can travel with you across projects, be versioned independently, and combine with other skills from the community.
+====
+
+== Summary
+
+In this module, you learned three foundational concepts:
+
+1. *Skills are instruction files* — they're `SKILL.md` files that teach Claude how to behave in specific contexts
+2. *Skills live in a scope hierarchy* — global (user-wide), project (repo-specific), or marketplace (community-shared)
+3. *Skills activate implicitly or explicitly* — Claude can detect when to use them, or you can trigger them with slash commands
+
+You also installed your first skill from the official marketplace and saw how it shapes Claude's responses differently than default behavior.
+
+Next, in Module 2, you'll build your own skill from scratch — learning the anatomy of a `SKILL.md` file and how to package instructions Claude can follow.
