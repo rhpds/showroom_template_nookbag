@@ -223,6 +223,7 @@ Now test your skill to see how it performs.
 Start a new Claude Code session (or use `/clear` to reset context).
 Then try a natural language request:
 
+[source,text]
 ----
 I need to write an abstract for a talk about building CLI tools with Python, targeting PyCon
 ----
@@ -230,14 +231,16 @@ I need to write an abstract for a talk about building CLI tools with Python, tar
 Claude should recognize this matches the `abstract-writer` description and activate the skill automatically.
 You'll see a message like:
 
+[source,text]
 ----
-🔧 Using skill: abstract-writer
+Using skill: abstract-writer
 ----
 
 === Test Explicit Triggering
 
 You can also invoke the skill directly:
 
+[source,text]
 ----
 /abstract-writer Write an abstract about Kubernetes security for KubeCon
 ----
@@ -248,6 +251,7 @@ This forces the skill to activate, even if Claude wouldn't have chosen it automa
 
 Try requesting a short format:
 
+[source,text]
 ----
 /abstract-writer I need a lightning talk abstract about prompt engineering for a local meetup
 ----
