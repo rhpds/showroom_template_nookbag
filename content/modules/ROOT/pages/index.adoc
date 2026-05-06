@@ -35,7 +35,7 @@ These three skills will be bundled into a distributable marketplace called `conf
 
 . xref:05-full-monty.adoc[The Full Monty] — Use superpowers + beads + your marketplace together in a real workflow.
 
-. xref:06-programmatic.adoc[Bonus: Programmatic Skills] — (Coming soon) Using skills in Deep Agents and skills-calling-skills patterns.
+. xref:06-bonus-programmatic.adoc[Bonus: Programmatic Skills] — (Coming soon) Using skills in Deep Agents and skills-calling-skills patterns.
 
 [NOTE]
 ====
