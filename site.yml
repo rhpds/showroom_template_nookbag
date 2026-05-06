@@ -1,6 +1,6 @@
 ---
 site:
-  title: Showroom Template Demo
+  title: Claude Code Agent Skills
   url: https://github.com/rhpds/showroom_template_nookbag
   start_page: modules::index.adoc
 

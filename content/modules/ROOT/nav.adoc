@@ -1,19 +1,9 @@
-* xref:index.adoc[What is Showroom?]
+* xref:index.adoc[Course Overview]
 
-.Content Developer Guide
-* xref:quick-start.adoc[Quick Start]
-* xref:content-repo.adoc[Creating a Content Repository]
-* xref:agnosticv-config.adoc[AgnosticV Configuration]
-* xref:ui-config.adoc[UI Configuration]
-* xref:user-data.adoc[User Data and Variables]
-* xref:attribute-example.adoc[Attribute Injection Example]
-* xref:ocp4-role-reference.adoc[OCP4 Role Reference]
-* xref:vm-role-reference.adoc[VM Role Reference]
-
-.Showroom Developer Guide
-* xref:architecture.adoc[Architecture]
-* xref:deployer.adoc[Showroom Deployer]
-* xref:images.adoc[Showroom Images]
-* xref:nookbag.adoc[Nookbag UI]
-* xref:ocp-integration.adoc[OCP Integration]
-* xref:contributing.adoc[Contributing]
+.Modules
+* xref:01-introduction.adoc[1. Introduction to Agent Skills]
+* xref:02-first-skill.adoc[2. Creating Your First Skill]
+* xref:03-advanced-skills.adoc[3. Advanced Skills with skill-creator]
+* xref:04-marketplaces.adoc[4. Marketplaces and Plugins]
+* xref:05-full-monty.adoc[5. The Full Monty]
+* xref:06-bonus-programmatic.adoc[6. Bonus: Programmatic Skills]
