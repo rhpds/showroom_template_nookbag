@@ -1,0 +1,279 @@
+= Creating Your First Skill
+:navtitle: 2. Creating Your First Skill
+
+In this module, you'll build a skill from scratch.
+You'll learn how skills are structured, how Claude activates them, and how to test and iterate on your design.
+
+By the end, you'll have a working `abstract-writer` skill that generates conference talk abstracts tailored to specific formats and conferences.
+
+== Skill Anatomy
+
+Every skill lives in a directory under `~/.claude/skills/` and contains a `SKILL.md` file.
+The `SKILL.md` file has two parts: frontmatter and body.
+
+=== Frontmatter
+
+The frontmatter is a YAML block at the top of `SKILL.md`:
+
+[source,yaml]
+----
+---
+name: abstract-writer
+description: Generate conference talk abstracts tailored to specific conferences. Use when the user wants to write, draft, or improve a conference talk abstract, CFP submission, or speaking proposal.
+---
+----
+
+*Key fields:*
+
+* `name` — becomes the `/slash-command` and identifies the skill
+* `description` — Claude reads this to decide whether to activate the skill automatically.
+This is the most important field for implicit triggering.
+A good description is specific enough to trigger on relevant requests but not so broad it triggers on everything.
+* `allowed-tools` (optional) — restrict which tools the skill can use
+* `disable-model-invocation` (optional) — for pure data/template skills
+
+=== Body
+
+The body contains markdown instructions that Claude follows when the skill activates.
+These are the behavioral instructions.
+You can include:
+
+* Step-by-step workflows
+* Output format specifications
+* References to template files
+* Conditional logic
+
+=== Directory Structure
+
+Skills can reference additional files in their directory:
+
+----
+~/.claude/skills/abstract-writer/
+├── SKILL.md
+├── templates/
+│   ├── lightning-talk.md
+│   └── full-session.md
+└── examples/
+    └── sample-abstract.md
+----
+
+Claude can read any file in the skill directory when the skill is active.
+
+== Progressive Disclosure
+
+Claude Code uses a two-phase loading model to keep context efficient:
+
+. *Always in context:* Skill name + description (from frontmatter). Claude sees these for ALL installed skills at all times.
+This is why descriptions must be concise — they consume tokens constantly.
+
+. *Loaded on activation:* The full SKILL.md body + any files the skill references.
+Only loaded when Claude decides to use the skill or the user invokes it.
+
+[TIP]
+====
+Keep descriptions compact.
+Every skill description is loaded into every Claude Code session, even when the skill isn't used.
+A 500-word description costs tokens on every message.
+Aim for 1-2 sentences that capture when to use the skill.
+====
+
+For a deeper dive into how context works in agent systems, see https://tonykay.github.io/showroom-deep-agents/modules/07-subagent-fundamentals.html#_exercise_1_the_context_bloat_problem[Deep Agents: Subagent Fundamentals^].
+
+== Building `abstract-writer`
+
+You'll create a skill that generates conference talk abstracts.
+This is a real-world use case: many developers speak at conferences and need to write compelling abstracts for CFP (Call for Proposals) submissions.
+
+=== Step 1: Create the Skill Directory
+
+[source,bash,role="execute"]
+----
+mkdir -p ~/.claude/skills/abstract-writer/templates
+----
+
+=== Step 2: Write the SKILL.md File
+
+Create `~/.claude/skills/abstract-writer/SKILL.md` with the following content:
+
+[source,markdown]
+----
+---
+name: abstract-writer
+description: Generate conference talk abstracts tailored to specific conferences. Use when the user wants to write, draft, or improve a conference talk abstract, CFP submission, or speaking proposal.
+---
+
+# Conference Abstract Writer
+
+Generate professional conference talk abstracts optimized for CFP submissions.
+
+## Workflow
+
+1. **Gather information:**
+   - If the user hasn't provided a talk topic, ask for it
+   - Ask for the target conference (or accept "general" for a generic abstract)
+   - Ask for the talk format if not clear: lightning talk (5-10 min), short talk (20-30 min), or full session (45-60 min)
+
+2. **Check for templates:**
+   - Look in the `templates/` directory for relevant templates
+   - Use `lightning-talk.md` for short talks (5-10 minutes)
+   - Use `full-session.md` for longer talks (30+ minutes)
+
+3. **Generate the abstract:**
+   - **Title:** Clear, engaging, under 100 characters
+   - **Summary:** 2-3 sentences explaining what the talk covers
+   - **Key takeaways:** 3-5 bullet points describing what attendees will learn
+   - **Target audience:** One sentence describing who should attend
+   - **Speaker bio placeholder:** Remind the user to customize this section
+
+4. **Format constraints:**
+   - Keep abstracts under 300 words (standard CFP limit)
+   - Use active voice and present tense
+   - Avoid jargon unless the conference is technical
+   - Emphasize actionable takeaways
+
+5. **Output:**
+   - Provide the abstract in markdown format
+   - Include word count
+   - Suggest 2-3 alternative titles if appropriate
+----
+
+Save this file to `~/.claude/skills/abstract-writer/SKILL.md`.
+
+=== Step 3: Create the Lightning Talk Template
+
+Create `~/.claude/skills/abstract-writer/templates/lightning-talk.md`:
+
+[source,markdown]
+----
+# Lightning Talk Template (5-10 minutes)
+
+## Format
+
+Lightning talks are short, focused presentations designed to introduce a concept or tool quickly.
+
+## Structure
+
+**Title:** [Engaging, action-oriented title under 80 characters]
+
+**Abstract:** [Single paragraph, 80-100 words max]
+
+**Key Takeaways:**
+- [Takeaway 1]
+- [Takeaway 2]
+- [Takeaway 3]
+
+**Target Audience:** [One sentence]
+
+## Tips for Lightning Talks
+
+- Focus on ONE key idea
+- Skip background and theory
+- Show, don't tell (demos work great)
+- End with a clear call to action or next step
+----
+
+=== Step 4: Create the Full Session Template
+
+Create `~/.claude/skills/abstract-writer/templates/full-session.md`:
+
+[source,markdown]
+----
+# Full Session Template (30-60 minutes)
+
+## Format
+
+Full sessions allow deep exploration of a topic with examples, case studies, and audience interaction.
+
+## Structure
+
+**Title:** [Clear, descriptive title under 100 characters]
+
+**Abstract:** [2-3 paragraphs, 250-300 words total]
+
+Paragraph 1: The problem or opportunity this talk addresses
+Paragraph 2: What you'll cover and how you'll approach it
+Paragraph 3: What attendees will take away
+
+**Learning Objectives:**
+- [Objective 1: Specific skill or knowledge]
+- [Objective 2: Specific skill or knowledge]
+- [Objective 3: Specific skill or knowledge]
+- [Objective 4: Specific skill or knowledge]
+- [Objective 5: Specific skill or knowledge]
+
+**Target Audience:** [Description of ideal attendees and their experience level]
+
+**Prerequisites:** [What attendees should know or have done before attending]
+
+## Tips for Full Sessions
+
+- Structure with clear sections (intro, 2-3 main points, conclusion)
+- Include real-world examples or case studies
+- Plan for Q&A time (reserve 5-10 minutes)
+- Provide resources for further learning
+- Consider live demos or interactive elements
+----
+
+== Testing and Iterating
+
+Now test your skill to see how it performs.
+
+=== Test Implicit Triggering
+
+Start a new Claude Code session (or use `/clear` to reset context).
+Then try a natural language request:
+
+----
+I need to write an abstract for a talk about building CLI tools with Python, targeting PyCon
+----
+
+Claude should recognize this matches the `abstract-writer` description and activate the skill automatically.
+You'll see a message like:
+
+----
+🔧 Using skill: abstract-writer
+----
+
+=== Test Explicit Triggering
+
+You can also invoke the skill directly:
+
+----
+/abstract-writer Write an abstract about Kubernetes security for KubeCon
+----
+
+This forces the skill to activate, even if Claude wouldn't have chosen it automatically.
+
+=== Test the Lightning Talk Template
+
+Try requesting a short format:
+
+----
+/abstract-writer I need a lightning talk abstract about prompt engineering for a local meetup
+----
+
+Claude should recognize this matches the lightning talk format and use the `templates/lightning-talk.md` file.
+
+=== Iteration Guidance
+
+If the output doesn't match your expectations:
+
+* *Adjust the SKILL.md body:* Add more specific instructions or constraints
+* *Refine templates:* Make them more prescriptive or add examples
+* *Test edge cases:* Try vague requests, conflicting requirements, or missing information
+* *Update the description:* If Claude isn't activating the skill when you expect, make the description more specific
+
+Skills improve through use.
+Don't aim for perfection on the first iteration — build, test, refine.
+
+== Summary
+
+You've built a skill from scratch, understanding:
+
+* Frontmatter fields (`name`, `description`)
+* Body instructions (the behavioral logic)
+* Directory structure (templates and supporting files)
+* Progressive disclosure (how Claude loads skills)
+* The test and iteration cycle
+
+Next, you'll use a meta-skill — `skill-creator` — to generate a skill automatically.
