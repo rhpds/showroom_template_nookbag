@@ -1,0 +1,25 @@
+= Bonus: Programmatic Skills
+:navtitle: 6. Bonus: Programmatic Skills
+
+[NOTE]
+====
+This module is under development. The sections below outline what's coming.
+====
+
+== Programmatic Skill Invocation
+
+_Coming soon_ — Using skills in Deep Agents agent code. Build the "hello world" of multi-skill agents: an outliner, a researcher, and a reviewer working together, each powered by a different skill.
+
+== Skills Calling Skills
+
+_Coming soon_ — A validator skill that invokes other skills as part of its workflow. Skills as composable building blocks in agent architectures.
+
+== Next Steps and Resources
+
+Whether you're ready to build your own skills or contribute to the ecosystem, here are the key resources:
+
+* https://code.claude.com/docs/en/skills[Claude Code Skills Documentation] — Official reference for skill creation and distribution
+* https://agentskills.io/home[Agent Skills Hub] — Community hub for discovering and sharing skills
+* https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md[skill-creator source] — The meta-skill that builds skills
+* https://claude.com/blog/skills-explained[Skills Explained] — How skills compare to prompts, Projects, MCP, and subagents
+* https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview[Agent Skills API Docs] — For programmatic skill use in the Agent SDK
